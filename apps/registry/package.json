@@ -7,7 +7,7 @@
     "build": "bun run registry:build && next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "registry:build": "shadcn build ./registry.json --output ./public/r && bun scripts/version-registry.ts"
   },
   "dependencies": {

@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+#
+# CodeRabbit reads every AGENTS.md and CLAUDE.md by default, which is where most of this
+# repo's rules live. This file adds the rest of the guidelines, keeps it off generated
+# output, and turns the invariants a reviewer can check from a diff into pre-merge checks.
+# It reads the diff; it runs nothing. .github/workflows/check.yml runs the commands.
+
+reviews:
+  path_filters:
+    - "!bun.lock"
+    - "!**/*.webp"
+    - "!**/*.png"
+
+  # Generated paths stay in the review, with instructions instead of `!` filters: the
+  # pre-merge checks below need to see theme.css and public/r/v/* in the diff to pass or fail.
+  path_instructions:
+    - path: "apps/registry/registry/**"
+      instructions: >-
+        Shipped: copied into other people's projects. Contract tokens only, no raw colours.
+        Imports only @/lib/utils and @/registry/groundwork/{ui,lib,hooks}/*, never
+        @/components/*; install-time rewriting maps only those prefixes. Comments should say
+        why a value is what it is (context/standards.md).
+    - path: "apps/registry/app/**"
+      instructions: >-
+        The site, never installed anywhere. Contract tokens only; the kit docs read skills/,
+        knowledge/ and context/ at build time through app/_site/repo.ts rather than
+        restating them.
+    - path: "packages/tokens/{theme.css,TOKENS.md}"
+      instructions: >-
+        Generated from contract.json by `bun run tokens`. Do not review line by line; only
+        flag a change that has no matching contract.json change in the same PR.
+    - path: "apps/registry/public/r/**"
+      instructions: >-
+        Built by registry:build. Do not review contents. public/r/v/* are immutable merge
+        bases for kit sync and must be committed, never edited.
+
+  pre_merge_checks:
+    custom_checks:
+      - name: "Registry version bump"
+        mode: error
+        instructions: >-
+          If any file under apps/registry/registry/** changes, the matching item's
+          meta.version in apps/registry/registry.json must change in the same PR, and a new
+          apps/registry/public/r/v/<name>@<version>.json must be added. Fail and name the
+          item otherwise. Pass if no file under apps/registry/registry/** changed.
+      - name: "Generated token files"
+        mode: error
+        instructions: >-
+          If packages/tokens/theme.css or packages/tokens/TOKENS.md changes,
+          packages/tokens/contract.json must also change in this PR. Fail otherwise. Pass if
+          neither generated file changed.
+      - name: "Feature evidence"
+        mode: warning
+        instructions: >-
+          If the PR adds or changes context/features/<NN-slug>/spec.md, every item under its
+          "Done when" heading must have a line in the same folder's log.md saying how it was
+          checked (browser, script, SQL, test) or an explicit "not verified, because …".
+          List each criterion without one. Pass if no spec.md changed.
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "context/standards.md"
+      - "knowledge/*.md"
