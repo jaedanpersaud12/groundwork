@@ -93,8 +93,11 @@ const SAMPLE_APPLICATIONS: Application[] = Array.from({ length: 46 }, (_, i) => 
 
 const PAGE_SIZE = 8;
 
-/** Fixed widths, so columns hold still while paging, sorting and filtering. Role takes the rest. */
-const COLUMNS = ["w-52", "", "w-40", "w-36", "w-28", "w-36"] as const;
+/**
+ * Fixed widths, so columns hold still while paging, sorting and filtering. Role takes
+ * the rest: the fixed columns sum to 672px, so at the 880px minimum it keeps 208px.
+ */
+const COLUMNS = ["w-48", "", "w-36", "w-28", "w-24", "w-32"] as const;
 
 const DENSITY_OPTIONS = [
   { value: "comfortable", label: "Comfortable", icon: <Rows2Icon aria-hidden /> },
