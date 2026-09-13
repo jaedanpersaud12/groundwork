@@ -118,9 +118,38 @@ check, and step 1 exists to settle the riskiest one before the rest is built on 
    jobpilot and stripped of jobpilot, plus the empty `library-docs.md`, the short
    `progress.md` and `features/README.md`. Grep for the four product-specific names to prove
    the strip.
-6. **Surface it on the site.** A `/docs/kickoff` page carrying the three prompts with copy
-   buttons and a plain description of what each produces. This is where 06 touches 08; the
-   page is the only part of 08 that needs to change.
+6. **Surface it on the site.** A `/docs/kickoff` page with the three prompts, copy buttons,
+   and a plain description of what each produces. 08 has merged since this plan was
+   written, and it changes how this step is done — see *What 08 changed* below. It is no
+   longer the only part of the site that needs to change.
+
+## What 08 changed
+
+08 (the groundwork site) merged after this plan was confirmed. Four things in it bear on
+step 6 and on the template:
+
+- **The site reads the kit from the repo; it doesn't restate it.** `apps/registry/app/_site/repo.ts`
+  reads `skills/*/SKILL.md`, `knowledge/*.md` and `context/` at build time, and
+  `app/_site/kit.ts` fails the build when a skill or a `context/*.md` has no place on the
+  site. `/docs/kickoff` should read `prompts/*.md` the same way rather than paste them into
+  a page, or the prompts and the page drift the first time a prompt is revised. `CopyButton`
+  and `SourceBlock` in `app/_site/code.tsx` already do the copy UI.
+- **`/docs/context` and the landing page describe groundwork's own `context/`** — `overview.md`,
+  `standards.md`, `build-plan.md`, `progress.md` — not what kickoff produces
+  (`project-overview.md`, `architecture.md`, `build-plan.md`, plus the copied files). Once
+  the template exists, those pages should show the template's tree, or say plainly that
+  they show groundwork's. **An open decision for this feature**, not a detail.
+- **`/docs` says kickoff isn't built yet.** Its setup section tells readers `shadcn init`
+  creates no context and to copy the scaffold by hand until `/kickoff` exists. That
+  paragraph changes when this ships.
+- **The feature-folder tree is parsed, not just read.** `repo.ts` reads the fenced tree in
+  `context/features/README.md` line by line (`  name.md   note   (by)`). If the template
+  ships its own `features/README.md`, keep that exact shape, or the site's parser and the
+  template diverge.
+
+Verifying the page: `knowledge/browser-verification.md` covers what the Browser pane gets
+wrong (a stalled renderer that still reports "hidden"; `resize_window` for 400px) and how
+08 measured overflow instead of arguing it.
 
 ## Out of scope
 

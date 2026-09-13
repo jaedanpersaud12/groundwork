@@ -36,3 +36,23 @@ stage 2 splits and the stage count becomes four.
   both exist.
 - **`imprint` is the missing skill.** Its absence is why 06 ships no `ui-registry.md`.
   Recorded in the build plan under Later.
+
+## 2026-09-13 — carried to the stages that need it
+
+This log was the only place these findings existed, on a branch nothing else reads. They
+now live where the dependent work will find them:
+
+- **The lock overlap** is in `context/build-plan.md` under 03 and 04, with the shape read
+  from jobpilot's actual `skills-lock.json`: `version: 1`, and per skill `source`,
+  `sourceType: "github"`, `skillPath`, `computedHash`. Skills came from
+  `JavaScript-Mastery-Pro/jsm-agent-skill` and `jakubkrehel/skills`. 04's plan gains a
+  decision point before its lock schema is fixed.
+- **`kit init` has no stage.** This spec deferred it to "04 and 05", but neither includes
+  it. The build plan now lists it under "Needs a stage", carrying the throwaway-project
+  criterion.
+- **`imprint`** is under Later. It isn't lost: jobpilot installed it from
+  `jsm-agent-skill`, the same source as `architect`, `recover` and `remember`.
+- **08 merged first**, and `plan.md` gains a section on what that changes for step 6.
+
+Nothing in `prompts/` or `templates/` exists yet; the stage-2 length test is still the first
+step.
