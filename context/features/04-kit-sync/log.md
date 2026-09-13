@@ -51,3 +51,29 @@ the local registry served by `next dev` on :3001, and `git` 2.53.0. Fixtures wer
   entry `source`, `sourceType`, `computedHash`, plus `version` and `track`. Kit doesn't touch
   `skills-lock.json`. The schema is in `plan.md`. The spec's "hash" is `computedHash`, the
   same value as `versions.json`.
+
+## Step 2 — `packages/kit` scaffolded
+
+- **Package:** `@ja3dan/kit` 0.1.0, `type: module`, `bin: kit → dist/kit.js`, Node
+  ≥20.18.1 (shadcn's own floor).
+- **Build:** `bun build src/cli.ts --target node` keeps the `#!/usr/bin/env node` line
+  and the executable bit. `node dist/kit.js --version` → `0.1.0`, `--help` prints the
+  usage, and an unbuilt command exits 1 with a message.
+- **shadcn is a pinned dependency** (`"shadcn": "4.21.0"`, exact), and kit runs its own copy,
+  resolved from its `package.json`, never whatever `bunx shadcn` finds.
+- **`src/shadcn.ts`:** `planAdd` parses a dry run's file list; `viewFile` parses `--view`.
+  These are the two places kit reads undocumented output.
+- **`src/testing/fixture.ts`** is the start of step 3's harness: a real HTTP registry on
+  a random port that can publish any version, and a minimal git-initialised project with
+  non-default aliases.
+- **`src/shadcn.test.ts`**, the format contract. The pinned shadcn runs against the
+  fabricated registry:
+  - the file list has the right project path and status;
+  - `--view` content is byte-for-byte what `add` writes, blank lines and trailing newline
+    included, with nothing written to the project;
+  - on a locally edited copy, the plan says `overwrite` and `--view` still returns the
+    registry's version.
+
+  Plus parser unit tests for dependency lines, empty lines and no-content output.
+- **Checks:** 7 pass. `tsc --noEmit` clean. `bun run check` passes with kit in the
+  workspace (spec criterion 8, so far). CI gains `bun run --filter @ja3dan/kit typecheck`.

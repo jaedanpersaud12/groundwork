@@ -1,0 +1,32 @@
+{
+  "name": "@ja3dan/kit",
+  "version": "0.1.0",
+  "description": "Keep installed @ja3dan registry items current: lock, status, update with a 3-way merge, and link to a local registry.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "kit": "./dist/kit.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20.18.1"
+  },
+  "scripts": {
+    "build": "bun build src/cli.ts --target node --outfile dist/kit.js",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "bun run build"
+  },
+  "dependencies": {
+    "shadcn": "4.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "typescript": "^5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
