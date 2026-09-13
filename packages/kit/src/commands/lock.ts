@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import { LOCK_FILE, readLock, writeLock, type Lock } from "../lockfile";
+import { distance, locateFiles } from "../project";
 import { bySemver, itemRef, loadRegistry, NAMESPACE, versionUrl, type Registry, type RegistryItem } from "../registry";
 import { planAdd, viewFile, type PlannedFile } from "../shadcn";
 
@@ -19,50 +20,6 @@ type LockedItem = {
 };
 
 type LockResult = { lock: Lock; items: LockedItem[] };
-
-/**
- * Lines in one text and not the other, counted as multisets. Crude next to a real diff, but
- * this only ranks candidate versions against each other to pick the closest.
- */
-function distance(a: string, b: string): number {
-  const counts = new Map<string, number>();
-  for (const line of a.split("\n")) counts.set(line, (counts.get(line) ?? 0) + 1);
-  for (const line of b.split("\n")) counts.set(line, (counts.get(line) ?? 0) - 1);
-  let total = 0;
-  for (const count of counts.values()) total += Math.abs(count);
-  return total;
-}
-
-/**
- * Each item's own files, located in one dry run of every item at once. The dry run lists
- * dependencies' files too and doesn't say which item a file belongs to, so files are matched
- * by basename — safe because the registry's basenames are unique, and checked here so the
- * day they aren't, lock fails instead of guessing.
- */
-function locateFiles(items: RegistryItem[], plan: PlannedFile[]): Map<string, PlannedFile[]> {
-  const byBasename = new Map<string, PlannedFile>();
-  for (const file of plan) byBasename.set(path.basename(file.path), file);
-
-  const seen = new Map<string, string>();
-  const located = new Map<string, PlannedFile[]>();
-  for (const item of items) {
-    located.set(
-      item.name,
-      item.files.map((file) => {
-        const basename = path.basename(file.path);
-        const owner = seen.get(basename);
-        if (owner && owner !== item.name) {
-          throw new Error(`${owner} and ${item.name} both ship a file named ${basename}; kit can't tell their copies apart.`);
-        }
-        seen.set(basename, item.name);
-        const planned = byBasename.get(basename);
-        if (!planned) throw new Error(`shadcn's plan didn't include ${file.path} from ${item.name}.`);
-        return planned;
-      }),
-    );
-  }
-  return located;
-}
 
 async function identify(cwd: string, registry: Registry, item: RegistryItem, files: PlannedFile[]): Promise<LockedItem> {
   const installed = files.filter((file) => file.status !== "create");
@@ -135,4 +92,4 @@ async function lock(cwd: string, { force = false }: { force?: boolean } = {}): P
   return { lock: result, items };
 }
 
-export { distance, lock, type LockedItem, type LockResult };
+export { lock, type LockedItem, type LockResult };

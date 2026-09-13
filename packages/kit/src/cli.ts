@@ -4,6 +4,7 @@ import { parseArgs } from "node:util";
 
 import pkg from "../package.json" with { type: "json" };
 import { lock, type LockedItem } from "./commands/lock";
+import { status, type ItemStatus } from "./commands/status";
 import { LOCK_FILE } from "./lockfile";
 
 const USAGE = `kit ${pkg.version} — keep installed @ja3dan registry items current
@@ -46,6 +47,38 @@ async function runLock(cwd: string, force: boolean): Promise<number> {
   return 0;
 }
 
+/** One short phrase per item: what, if anything, needs doing. */
+function describe(item: ItemStatus): string {
+  const parts: string[] = [];
+  if (item.baseChanged) parts.push(`⚠ published ${item.installed} changed since it was locked`);
+  if (item.bump === "none") parts.push("up to date");
+  else if (item.withinTrack) parts.push(`${item.bump} update available`);
+  else parts.push(`${item.bump} update — outside its ${item.track} track`);
+  if (item.edited.length) parts.push(`edited: ${item.edited.join(", ")}`);
+  if (item.missing.length) parts.push(`missing: ${item.missing.join(", ")}`);
+  return parts.join("; ");
+}
+
+async function runStatus(cwd: string): Promise<number> {
+  const result = await status(cwd);
+  const rows = [
+    ["item", "installed", "latest", "status"],
+    ...result.items.map((item) => [item.name, item.installed, item.latest, describe(item)]),
+  ];
+  process.stdout.write(`${table(rows)}\n`);
+  if (result.unlocked.length) {
+    process.stdout.write(`\nInstalled but not in ${LOCK_FILE}: ${result.unlocked.join(", ")}. \`kit lock --force\` adds them.\n`);
+  }
+  if (result.removed.length) {
+    process.stdout.write(`\nIn ${LOCK_FILE} but no longer in the registry: ${result.removed.join(", ")}.\n`);
+  }
+  const updates = result.items.filter((item) => item.withinTrack);
+  if (updates.length) {
+    process.stdout.write(`\n${updates.length} update${updates.length === 1 ? "" : "s"} available. \`kit sync update <item>\` applies one.\n`);
+  }
+  return 0;
+}
+
 async function main(argv: string[]): Promise<number> {
   const { values, positionals } = parseArgs({
     args: argv,
@@ -71,6 +104,7 @@ async function main(argv: string[]): Promise<number> {
   const command = positionals.join(" ");
 
   if (command === "lock") return runLock(cwd, values.force ?? false);
+  if (command === "sync status") return runStatus(cwd);
 
   process.stderr.write(`kit: \`${command}\` isn't built yet.\n\n${USAGE}`);
   return 1;

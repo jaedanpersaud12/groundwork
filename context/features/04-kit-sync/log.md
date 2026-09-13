@@ -151,3 +151,47 @@ held before 1.0.1 shipped.
     (**spec criterion 1**);
   - a second run exits 1 with the `--force` hint.
 - **Checks:** 17 kit tests pass, `tsc --noEmit` is clean, and `bun run check` passes.
+
+## Step 5 — `kit sync status`
+
+Read-only. For each locked item, it reports:
+
+- **The bump** to the registry's latest version (patch, minor or major), and whether the
+  item's `track` takes it: `minor` takes minor and patch, `patch` takes patch only, `none`
+  takes nothing.
+- **Which files are edited**, meaning different from the *locked* version's content,
+  derived fresh through `viewFile` rather than trusted from a hash. A file already
+  identical to the latest version, when that's also the locked version, skips the extra
+  call, so an up-to-date project costs one dry run.
+- **Missing files.**
+- **`baseChanged`**, when the registry's hash for the locked version no longer matches the
+  lock. Published versions are immutable, so this is reported and never worked around.
+
+Also listed: items installed but not locked, and locked items the registry no longer has.
+Shared file location and line distance moved from `lock.ts` to `src/project.ts`.
+
+### Evidence
+
+`commands/status.test.ts`, 10 tests against the fabricated registry:
+
+- **Spec criterion 2, outdated.** Installed and locked at 1.0.0, then 1.1.0 published:
+  `installed 1.0.0, latest 1.1.0, bump minor, withinTrack true, edited []`.
+- **Spec criterion 2, edited, separately.** A hand edit gives `edited ["ui/chip.tsx"]`
+  with `bump none`. After 1.1.0 is published, it's still reported as edited, alongside the
+  minor bump.
+- **Behind isn't edited.** An unedited file behind a 2.0.0 publish: `bump major`,
+  `withinTrack false`, `edited []`.
+- **Tracks.** A `patch`-track item takes 1.0.1 (`withinTrack true`) but not 1.1.0
+  (`false`).
+- **The rest:** a deleted file shows as missing; an item installed after locking shows as
+  unlocked; a locked item the registry dropped shows as removed; a tampered
+  `computedHash` gives `baseChanged true`.
+- **Writes nothing.** `git status --porcelain` is empty after `status`, with an edit and a
+  newer version both present.
+- **No lock:** asks for `kit lock` instead of guessing.
+
+**Real registry, built CLI, under Node** (the fixture locked in step 4): `node dist/kit.js
+sync status` printed `motion`/`sortable-table-head` 1.0.0 "up to date", and `table-card`
+"up to date; edited: ui/table-card.tsx", in 2.3s.
+
+**Checks:** 27 kit tests pass, `tsc` is clean, and `bun run check` passes.
