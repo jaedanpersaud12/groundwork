@@ -6,12 +6,106 @@
 @import "@ja3dan/tokens/themes/jobpilot.css";
 
 @theme {
-  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+}
+
+/*
+ * The contract leaves `--typeface-heading` for a theme to set and falls back to the sans
+ * face when it doesn't. Setting it here is the app playing the part of a consuming
+ * project, which is the whole point of this app.
+ */
+:root {
+  --typeface-heading: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
   html {
     @apply font-sans;
+  }
+}
+
+/*
+ * The headline voice: Archivo pushed toward its expanded width, set the way a survey
+ * plate or a trailhead sign is set. The width axis does the work — Tailwind's named
+ * `font-stretch` steps land either side of where this wants to sit, and the weight falls
+ * between semibold and bold, which only the variable axis can reach.
+ */
+@utility type-display {
+  @apply font-heading;
+  font-stretch: 112%;
+  font-weight: 620;
+  line-height: 0.96;
+  text-wrap: balance;
+}
+
+/*
+ * Section headings share the display face at normal width, so the page has one voice
+ * without the hero's shout repeating down the page.
+ */
+@utility type-section {
+  @apply font-heading;
+  font-weight: 560;
+}
+
+/*
+ * Three gradients the hero needs that a utility class can't express.
+ *
+ * `plate-copy` is a soft lift directly behind the words. The flat wash has to serve the
+ * whole illustration, so it can only be as strong as the picture tolerates; this puts the
+ * extra contrast where the type actually is and nowhere else.
+ *
+ * `plate-top` settles the band the header floats in. The wordmark sits on bare plate, and
+ * in dark the brightest cloud behind it measured 3.6:1 against the ink without this; the
+ * nav and the button carry their own pills and don't need it.
+ *
+ * `plate-fade` dissolves the plate into the page. The stops are weighted late on purpose —
+ * a plain two-stop fade reads as a hard edge near the bottom, because most of the change
+ * happens in the last fifth of it.
+ *
+ * Both are built from `--background`, so the hero belongs to the theme rather than sitting
+ * on top of it, and both follow a theme swap without being touched.
+ */
+@utility plate-copy {
+  background: radial-gradient(
+    70% 46% at 50% 42%,
+    color-mix(in oklab, var(--background) 55%, transparent) 0%,
+    color-mix(in oklab, var(--background) 28%, transparent) 58%,
+    transparent 100%
+  );
+}
+
+@utility plate-top {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--background) 55%, transparent) 0%,
+    color-mix(in oklab, var(--background) 35%, transparent) 55%,
+    transparent 100%
+  );
+}
+
+@utility plate-fade {
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    color-mix(in oklab, var(--background) 30%, transparent) 40%,
+    color-mix(in oklab, var(--background) 75%, transparent) 74%,
+    var(--background) 100%
+  );
+}
+
+/*
+ * Reduced motion is honoured globally rather than per-animation: this site's only
+ * non-user-triggered motion is the hero settling, and nothing about the page depends
+ * on it having happened.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

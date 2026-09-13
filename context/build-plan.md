@@ -61,9 +61,21 @@ only the kit — and every rough edge hit along the way has gone back in as a ch
 
 ## 07 — `apps/site`
 
-Marketing site. Design TBD.
+**On hold — re-scope before starting.** 08 put the explainer on `apps/registry`'s landing
+page, which meets this stage's original "done when" (explain groundwork to someone who has
+never seen it). A separate `apps/site` is only worth building if it has a job that page
+doesn't do; write that job down here first, or drop the stage.
 
-**Done when:** it explains what groundwork is to someone who has never seen it.
+## 08 — Groundwork site
+
+`apps/registry` becomes the site for the whole of groundwork, not just the registry: an
+illustrated landing page, then docs for **both halves** — the agent kit (the loop, the
+`context/` scaffold, the knowledge base) and the design system (the contract, and a page
+per component generated from `registry.json`).
+
+**Done when:** someone who has never seen groundwork can land on `/` and tell that it
+bootstraps a repo's skills and architecture as well as its components — and get from there
+to a working `shadcn add` without being told how.
 
 ---
 

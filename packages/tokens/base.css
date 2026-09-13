@@ -4,8 +4,14 @@
   * {
     @apply border-border outline-ring/50;
   }
+  /*
+   * Tracking is part of the foundation, not a per-project choice. Every groundwork
+   * project sets type tighter than the browser default, so a registry component dropped
+   * into any of them sits on the same rhythm as the text around it — and so the house
+   * look survives a project that never thinks about typography.
+   */
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground tracking-tight;
   }
 }
 

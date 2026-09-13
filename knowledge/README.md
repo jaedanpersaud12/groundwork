@@ -11,6 +11,8 @@ anything that restates the docs makes the rest less likely to be read.
 | File | Scope | Stack | Verified |
 | --- | --- | --- | --- |
 | [shadcn-registry.md](shadcn-registry.md) | stack | `nextjs-16`, `tailwind-4`, `shadcn-4` | shadcn 4.21.0, 2026-09-13 |
+| [nextjs-app-router.md](nextjs-app-router.md) | stack | `nextjs-16` | next 16.3.5, 2026-09-13 |
+| [browser-verification.md](browser-verification.md) | stack | `claude-code-desktop` | Claude Code 2.1.266, 2026-09-13 |
 
 ## Format
 

@@ -38,19 +38,27 @@ export function Examples({ name, fallback }: { name: string; fallback: string })
     );
   }
   return (
-    <div className="grid gap-4">
+    // `grid-cols-1` and `min-w-0` both, or a wide preview's content width becomes the grid
+    // track's width and the page scrolls sideways instead of the panel.
+    <div className="grid grid-cols-1 gap-4">
       {entries.map((entry) => (
-        <figure key={entry.title} className="grid gap-2">
+        <figure key={entry.title} className="grid min-w-0 grid-cols-1 gap-2">
           {entries.length > 1 || entry.description ? (
             <figcaption className="grid gap-0.5">
               <span className="text-sm font-medium text-foreground">{entry.title}</span>
               {entry.description ? <span className="text-xs text-muted-foreground">{entry.description}</span> : null}
             </figcaption>
           ) : null}
+          {/*
+           * Every panel scrolls sideways, not only the wide ones: a pagination bar is narrow
+           * at 1440px and wider than a 400px phone. `justify-center-safe`, not
+           * `justify-center`, because a centred child that overflows is cut off on the left
+           * where no scrollbar can reach it; the safe form falls back to the start edge.
+           */}
           <div
             className={cn(
-              "flex min-h-32 rounded-lg border border-border bg-card",
-              entry.wide ? "items-start overflow-x-auto p-4" : "items-center justify-center p-6",
+              "flex min-h-32 min-w-0 overflow-x-auto rounded-lg border border-border bg-card",
+              entry.wide ? "items-start p-4" : "items-center justify-center-safe p-6",
             )}
           >
             <Render entry={entry} />

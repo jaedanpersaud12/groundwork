@@ -4,8 +4,10 @@
  * changed without a version bump. `kit sync` needs these copies as the base of a
  * 3-way merge when a project has edited its installed file.
  *
- * Also substitutes {{REGISTRY_URL}} (env REGISTRY_URL, default http://localhost:3100)
- * so the setup item points projects at the registry they were installed from.
+ * Also substitutes {{REGISTRY_URL}} so the setup item points projects at the registry they
+ * were installed from: env REGISTRY_URL, else the Vercel production domain, else
+ * http://localhost:3100. `app/_site/registry.ts` resolves it the same way, so the init
+ * command shown on /docs and the URL written into setup.json agree.
  */
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -24,7 +26,12 @@ const out = join(root, "public", "r");
 const versionsDir = join(out, "v");
 const registry = JSON.parse(readFileSync(join(root, "registry.json"), "utf8")) as { items: Item[] };
 
-const registryUrl = (process.env.REGISTRY_URL ?? "http://localhost:3100").replace(/\/$/, "");
+const registryUrl = (
+  process.env.REGISTRY_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "http://localhost:3100")
+).replace(/\/$/, "");
 
 mkdirSync(versionsDir, { recursive: true });
 
