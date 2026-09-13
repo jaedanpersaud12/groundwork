@@ -1,0 +1,44 @@
+name: check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A newer push to the same PR makes the older run's result irrelevant.
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      # No version input: setup-bun reads `packageManager` from package.json, so CI runs the
+      # same Bun the lockfile was written with.
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install --frozen-lockfile
+
+      # Tokens, lint-rule tests, eslint (no-raw-colors included) and the versioned registry
+      # build, which fails if a published item's content changed without a version bump.
+      - run: bun run check
+
+      # `check` regenerates theme.css, TOKENS.md and public/r. Any diff here means a
+      # generated file was committed out of step with its source — a contract change without
+      # `bun run tokens`, or an item change without a rebuild — or a merge base under
+      # public/r/v was never committed.
+      - name: Generated files match their sources
+        run: |
+          git status --porcelain
+          test -z "$(git status --porcelain)"
+
+      # `typecheck` runs `next typegen` first: LayoutProps and PageProps are generated into
+      # .next/types, which a fresh checkout doesn't have, so bare `tsc` fails in CI.
+      - run: bun run --filter registry typecheck
+
+      - run: bunx next build
+        working-directory: apps/registry
