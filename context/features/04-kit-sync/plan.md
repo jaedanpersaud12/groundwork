@@ -94,8 +94,8 @@ shape for skills.** Its `skills-lock.json`, as committed:
 
 Both record a source, an identity and a content hash for something copied into a project
 that may later drift from upstream. Whatever `kit.lock.json` becomes, 03 has to live with it
-beside that file, and whichever stage takes `kit init` (it has none yet — see the build
-plan) installs skills. So before step 4 fixes the schema, decide:
+beside that file, and 09 (`kit init`) installs skills and writes the lock — starting from
+whatever this feature decides. So before step 4 fixes the schema, decide:
 
 - **One lock** — `kit.lock.json` gains a `skills` section, and kit eventually owns skill
   installs too. Fewer files; kit takes on a job the external skills CLI already does.
