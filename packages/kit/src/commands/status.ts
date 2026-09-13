@@ -44,6 +44,7 @@ function bumpBetween(from: string, to: string): Bump {
   return "patch";
 }
 
+/** What each track accepts. Shared with `update`, which picks its default target by it. */
 const TAKES: Record<Track, Bump[]> = {
   minor: ["minor", "patch"],
   patch: ["patch"],
@@ -112,4 +113,4 @@ async function status(cwd: string): Promise<StatusResult> {
   return { items, removed, unlocked };
 }
 
-export { bumpBetween, status, type Bump, type ItemStatus, type StatusResult };
+export { bumpBetween, status, TAKES, type Bump, type ItemStatus, type StatusResult };

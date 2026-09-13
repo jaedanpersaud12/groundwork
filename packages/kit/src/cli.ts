@@ -5,6 +5,7 @@ import { parseArgs } from "node:util";
 import pkg from "../package.json" with { type: "json" };
 import { lock, type LockedItem } from "./commands/lock";
 import { status, type ItemStatus } from "./commands/status";
+import { PENDING_MESSAGE, update } from "./commands/update";
 import { LOCK_FILE } from "./lockfile";
 
 const USAGE = `kit ${pkg.version} — keep installed @ja3dan registry items current
@@ -12,7 +13,8 @@ const USAGE = `kit ${pkg.version} — keep installed @ja3dan registry items curr
 Usage:
   kit lock [--force]        write kit.lock.json for the items already installed
   kit sync status           what's outdated, and what's been edited locally
-  kit sync update <item>    update one item: overwrite if unedited, 3-way merge if edited
+  kit sync update <item>    update one item on a branch: overwrite if unedited, 3-way merge if edited
+    [--to <version>]        take a specific version, including one outside the item's track
   kit link [--off]          point @ja3dan at a local registry, or restore it
 
 Options:
@@ -79,6 +81,21 @@ async function runStatus(cwd: string): Promise<number> {
   return 0;
 }
 
+async function runUpdate(cwd: string, name: string | undefined, to: string | undefined): Promise<number> {
+  if (!name) {
+    process.stderr.write("kit: which item? `kit sync update <item>`, e.g. `kit sync update button`.\n");
+    return 1;
+  }
+  const result = await update(cwd, name.replace(/^@ja3dan\//, ""), { to });
+  process.stdout.write(`On branch ${result.branch}.\n\n${result.description}\n`);
+  if (result.conflicted) {
+    process.stdout.write(`Resolve the conflicts, then: git add -A && git commit -F ${PENDING_MESSAGE}\n`);
+    return 1;
+  }
+  process.stdout.write(`Committed. Push ${result.branch} and open a PR; the commit message is the description.\n`);
+  return 0;
+}
+
 async function main(argv: string[]): Promise<number> {
   const { values, positionals } = parseArgs({
     args: argv,
@@ -86,6 +103,7 @@ async function main(argv: string[]): Promise<number> {
     options: {
       cwd: { type: "string" },
       force: { type: "boolean" },
+      to: { type: "string" },
       help: { type: "boolean", short: "h" },
       version: { type: "boolean", short: "v" },
     },
@@ -105,6 +123,7 @@ async function main(argv: string[]): Promise<number> {
 
   if (command === "lock") return runLock(cwd, values.force ?? false);
   if (command === "sync status") return runStatus(cwd);
+  if (positionals[0] === "sync" && positionals[1] === "update") return runUpdate(cwd, positionals[2], values.to);
 
   process.stderr.write(`kit: \`${command}\` isn't built yet.\n\n${USAGE}`);
   return 1;

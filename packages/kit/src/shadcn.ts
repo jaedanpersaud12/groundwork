@@ -97,4 +97,12 @@ async function viewFile(cwd: string, item: string, file: string): Promise<string
   return content;
 }
 
-export { parsePlan, parseView, planAdd, SHADCN_BIN, viewFile, type PlannedFile };
+/**
+ * Installs items for real. Only used for items that aren't in the project yet, so every file it
+ * writes is new — it never answers an overwrite prompt on the project's behalf.
+ */
+async function installItems(cwd: string, items: string[]): Promise<void> {
+  await shadcn(cwd, ["add", ...items, "-y"]);
+}
+
+export { installItems, parsePlan, parseView, planAdd, SHADCN_BIN, viewFile, type PlannedFile };

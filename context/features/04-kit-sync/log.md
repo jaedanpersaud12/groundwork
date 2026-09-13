@@ -195,3 +195,100 @@ sync status` printed `motion`/`sortable-table-head` 1.0.0 "up to date", and `tab
 "up to date; edited: ui/table-card.tsx", in 2.3s.
 
 **Checks:** 27 kit tests pass, `tsc` is clean, and `bun run check` passes.
+
+## Steps 6–7 — `kit sync update`, overwrite and merge
+
+### How it works
+
+1. **Refuses up front, before touching anything:**
+   - no lock, or an item that isn't in it;
+   - not a git repository, or uncommitted changes;
+   - the registry's hash for the locked version doesn't match the lock (the base can't be
+     trusted);
+   - nothing newer within the track, where the message names `--to`;
+   - a major update (step 8);
+   - the target branch already exists.
+2. **Target:** the newest version the item's track takes, or `--to <version>`.
+3. **Paths:** both versions are planned from **their own** versioned URLs (step 1: a
+   parent's plan only shows dependencies at current), and the item's files are located by
+   basename.
+4. **On a new branch `kit/<item>-<version>`, per file of the target:**
+   - **added** when it isn't on disk;
+   - **unchanged** when the disk already equals the new version;
+   - **overwritten** when the disk equals the locked version;
+   - otherwise `git merge-file` of disk / locked / new, giving **merged** or
+     **conflicted**, with markers labelled `project` / `base` / `registry`.
+
+   Files the new version no longer ships are left in place and listed.
+5. **New dependencies:**
+   - **Registry dependencies** that aren't installed are installed. Doing that only creates
+     files, so it can't disturb the merge, and they're added to the lock.
+   - **npm packages** that `package.json` doesn't list are **named in the description, not
+     installed**: the package manager and the dependency field are the project's call.
+6. **The lock entry** moves to the new version and hash.
+7. **The description** names the item, `from → to`, "Merged cleanly." or which files
+   conflicted, and one line per file.
+   - **A clean update** is committed with it as the message.
+   - **A conflicted update** is not committed: the files keep their markers and the
+     description waits in `.git/KIT_UPDATE_MSG` for `git commit -F`. The CLI exits 1.
+
+### A test-infrastructure bug found on the way
+
+The update suite failed intermittently: 1 or 2 of 12, a different test each time, always
+at ~5,040ms with "killed 1 dangling process". Bun's 5s default test timeout was killing
+tests that drive shadcn several times. **The `timeout = 60000` added to `bunfig.toml`
+in step 4 had never applied: Bun 1.4.2 ignores that key without complaint.** A probe test
+sleeping 6s timed out at 5,000ms with it in place. It's now `setDefaultTimeout(60_000)` in
+a `[test] preload` (`src/testing/setup.ts`). The same probe passes, and the update suite
+passed 12/12 on three consecutive runs.
+
+### Evidence
+
+`commands/update.test.ts`, 12 tests against the fabricated registry. Chip's body is ten
+numbered lines, so edits on lines 2 and 9 are guaranteed separate hunks.
+
+- **Spec criterion 3.** Unedited chip, 1.1.0 published → `overwritten`. The file has the
+  new line 9, imports stay `@/shared/cn`, and the lock entry is `1.1.0` with 1.1.0's
+  history hash.
+- **Spec criterion 4, non-overlapping.** Local edit on line 2, upstream change on line
+  9 → `merged`. Both are present and there are no markers.
+- **Spec criterion 4, overlapping.** Both sides change line 5 → `conflicted`, not
+  committed. The file has `<<<<<<< project`, both versions of line 5, and
+  `>>>>>>> registry`.
+- **Spec criterion 7.** A clean update:
+  - lands on `kit/chip-1.1.0` with a clean tree;
+  - the commit message equals the description, which contains
+    "Update @ja3dan/chip 1.0.0 → 1.1.0", "Merged cleanly." and
+    "ui/chip.tsx: merged — local edits kept".
+
+  A conflicted update stays uncommitted on its branch, with "Conflicted: local edits
+  overlap the update in ui/chip.tsx" saved to `.git/KIT_UPDATE_MSG`.
+- **New files and dependencies:** a file new in the target version is `added`; a newly
+  depended-on `badge` is installed and locked at its version and track.
+- **Refusals:** uncommitted changes (no branch created); already current; outside the
+  `patch` track without `--to` (and accepted with it); a tampered lock hash; an item not
+  in the lock.
+
+**Real registry, built CLI, under Node: `data-table` 1.0.0 → 1.0.1**, the genuine version
+pair from `fix/data-table-widths`.
+
+1. **Setup.** A scratch project with non-default aliases, `shadcn add
+   …/r/v/data-table@1.0.0.json` (18 files, 4.9s), committed.
+   - **`kit lock`:** `data-table 1.0.0 behind`, and its 17 dependencies current.
+   - **Edit:** the search placeholder changed and committed. 1.0.1's change is `COLUMNS`,
+     near line 96; the placeholder is at line 150.
+2. **`kit sync status`:** "patch update — outside its none track; edited:
+   components/applications-table.tsx". `data-table` is pinned (`track: none`) in
+   `registry.json`.
+3. **`kit sync update data-table`:** refused, naming `--to 1.0.1`.
+4. **`kit sync update data-table --to 1.0.1`:** exit 0, "Merged cleanly.", committed on
+   `kit/data-table-1.0.1` with nothing uncommitted.
+   - The placeholder edit and the new `COLUMNS` widths are both present, with no markers.
+   - Imports are still `@/hooks/…`, `@/shared/…`, `@/ui/…`, with no `@/registry/`.
+   - **With the placeholder restored, the merged file is byte-identical to 1.0.1 as shadcn
+     installs it.**
+   - The lock entry is `1.0.1` with hash `69528d15…`, equal to `versions.json`.
+5. **`kit sync status` afterwards:** "up to date; edited", which is correct because the
+   local edit is still there.
+
+**Checks:** 39 kit tests pass, `tsc` is clean, and `bun run check` passes.
