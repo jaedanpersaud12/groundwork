@@ -1,0 +1,21 @@
+{
+  "name": "groundwork",
+  "private": true,
+  "packageManager": "bun@1.4.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "tokens": "bun run --filter @ja3dan/tokens build",
+    "registry:dev": "bun run --filter registry dev",
+    "registry:build": "bun run --filter registry registry:build",
+    "lint": "bun run --filter '*' lint",
+    "test": "bun run --filter '*' test",
+    "check": "bun run tokens && bun run test && bun run lint && bun run registry:build"
+  },
+  "trustedDependencies": [
+    "sharp",
+    "unrs-resolver"
+  ]
+}

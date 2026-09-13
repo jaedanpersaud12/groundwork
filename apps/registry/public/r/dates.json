@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "dates",
+  "title": "Date helpers",
+  "description": "Local-midnight day helpers: today, addDays, isSameDay, ISO parse/format, and range formatting.",
+  "files": [
+    {
+      "path": "registry/groundwork/lib/dates.ts",
+      "content": "// Calendar-day helpers. Everything works in local time at midnight, which is what\n// react-day-picker uses; ISO `YYYY-MM-DD` strings are for URLs and storage.\n\nexport type DayRange = { from: Date | undefined; to?: Date | undefined };\n\nexport function startOfDay(date: Date): Date {\n  return new Date(date.getFullYear(), date.getMonth(), date.getDate());\n}\n\nexport function today(): Date {\n  return startOfDay(new Date());\n}\n\nexport function addDays(date: Date, days: number): Date {\n  const next = startOfDay(date);\n  next.setDate(next.getDate() + days);\n  return next;\n}\n\nexport function isSameDay(a: Date | undefined, b: Date | undefined): boolean {\n  return !!a && !!b && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();\n}\n\n/** `date` moved inside [min, max] when it falls outside. */\nexport function clampDate(date: Date, min?: Date, max?: Date): Date {\n  if (min && date < min) return min;\n  if (max && date > max) return max;\n  return date;\n}\n\n/** `2026-09-13`. */\nexport function toIsoDate(date: Date): string {\n  const month = String(date.getMonth() + 1).padStart(2, \"0\");\n  const day = String(date.getDate()).padStart(2, \"0\");\n  return `${date.getFullYear()}-${month}-${day}`;\n}\n\n/** Parses `YYYY-MM-DD` as local midnight; anything else is undefined. */\nexport function parseIsoDate(value: string | null | undefined): Date | undefined {\n  if (!value || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return undefined;\n  const [year, month, day] = value.split(\"-\").map(Number);\n  const date = new Date(year, month - 1, day);\n  return date.getMonth() === month - 1 ? date : undefined;\n}\n\n/** `Sep 13, 2026`. */\nexport function formatDate(date: Date, locale = \"en-US\"): string {\n  return date.toLocaleDateString(locale, { month: \"short\", day: \"numeric\", year: \"numeric\" });\n}\n\n/** `Sep 7 – Sep 13, 2026`, dropping the year from the start when both ends share it. */\nexport function formatDateRange(range: DayRange | undefined, locale = \"en-US\"): string | null {\n  const { from, to } = range ?? {};\n  if (!from && !to) return null;\n  if (from && !to) return `From ${formatDate(from, locale)}`;\n  if (!from && to) return `Until ${formatDate(to, locale)}`;\n  if (isSameDay(from, to)) return formatDate(from!, locale);\n  const sameYear = from!.getFullYear() === to!.getFullYear();\n  const start = from!.toLocaleDateString(locale, { month: \"short\", day: \"numeric\", ...(sameYear ? {} : { year: \"numeric\" }) });\n  return `${start} – ${formatDate(to!, locale)}`;\n}\n",
+      "type": "registry:lib"
+    }
+  ],
+  "meta": {
+    "version": "1.0.0",
+    "tier": "lib",
+    "track": "minor"
+  },
+  "type": "registry:lib"
+}

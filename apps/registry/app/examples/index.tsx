@@ -1,0 +1,62 @@
+"use client";
+
+import { cn } from "@/lib/utils";
+
+import { dateExamples } from "./dates";
+import { pillExamples } from "./pills";
+import { primitiveExamples } from "./primitives";
+import { tableExamples } from "./table";
+import type { ExampleEntry, ExampleSet } from "./types";
+
+/**
+ * Concatenates rather than spreading: a name that appears in two files — a chip shown
+ * on its own in one and inside a band in another — should gain an example, not lose
+ * whichever file the spread happened to read first.
+ */
+function merge(sets: ExampleSet[]): ExampleSet {
+  const all: ExampleSet = {};
+  for (const set of sets) {
+    for (const [name, entries] of Object.entries(set)) {
+      all[name] = [...(all[name] ?? []), ...entries];
+    }
+  }
+  return all;
+}
+
+const ALL = merge([primitiveExamples, tableExamples, pillExamples, dateExamples]);
+
+function Render({ entry }: { entry: ExampleEntry }) {
+  return <>{entry.render()}</>;
+}
+
+/** Every example for a registry item, or a note when it has no visual preview. */
+export function Examples({ name, fallback }: { name: string; fallback: string }) {
+  const entries = ALL[name];
+  if (!entries?.length) {
+    return (
+      <div className="rounded-lg border border-dashed border-border p-6 text-sm text-muted-foreground">{fallback}</div>
+    );
+  }
+  return (
+    <div className="grid gap-4">
+      {entries.map((entry) => (
+        <figure key={entry.title} className="grid gap-2">
+          {entries.length > 1 || entry.description ? (
+            <figcaption className="grid gap-0.5">
+              <span className="text-sm font-medium text-foreground">{entry.title}</span>
+              {entry.description ? <span className="text-xs text-muted-foreground">{entry.description}</span> : null}
+            </figcaption>
+          ) : null}
+          <div
+            className={cn(
+              "flex min-h-32 rounded-lg border border-border bg-card",
+              entry.wide ? "items-start overflow-x-auto p-4" : "items-center justify-center p-6",
+            )}
+          >
+            <Render entry={entry} />
+          </div>
+        </figure>
+      ))}
+    </div>
+  );
+}

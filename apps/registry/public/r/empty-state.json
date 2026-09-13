@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "empty-state",
+  "title": "Empty state",
+  "description": "Icon, one line and a way forward, for empty tables and no-results.",
+  "files": [
+    {
+      "path": "registry/groundwork/ui/empty-state.tsx",
+      "content": "import type { ReactNode } from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\ntype EmptyStateProps = {\n  icon: ReactNode;\n  title: string;\n  description: string;\n  /** A way forward: clear filters, create the first item. */\n  action?: ReactNode;\n  className?: string;\n};\n\n/** Icon, one line, a way forward. For empty tables, lists and search results. */\nfunction EmptyState({ icon, title, description, action, className }: EmptyStateProps) {\n  return (\n    <div data-slot=\"empty-state\" className={cn(\"flex flex-col items-center gap-3 px-6 py-16 text-center\", className)}>\n      <span aria-hidden className=\"grid size-10 place-items-center rounded-full bg-muted text-subtle-foreground [&_svg]:size-5\">\n        {icon}\n      </span>\n      <div className=\"flex flex-col gap-1\">\n        <p className=\"text-sm font-medium text-foreground\">{title}</p>\n        <p className=\"mx-auto max-w-sm text-xs text-muted-foreground\">{description}</p>\n      </div>\n      {action}\n    </div>\n  );\n}\n\nexport { EmptyState };\n",
+      "type": "registry:ui"
+    }
+  ],
+  "meta": {
+    "version": "1.0.0",
+    "tier": "primitive",
+    "track": "minor",
+    "source": "jobpilot"
+  },
+  "type": "registry:ui"
+}

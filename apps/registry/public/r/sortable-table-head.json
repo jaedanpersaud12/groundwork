@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "sortable-table-head",
+  "title": "Sortable table head",
+  "description": "Clickable table-card column head with an arrow that turns with the sort direction and sets aria-sort. Button or link.",
+  "dependencies": [
+    "motion",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "@ja3dan/table-card",
+    "@ja3dan/motion"
+  ],
+  "files": [
+    {
+      "path": "registry/groundwork/ui/sortable-table-head.tsx",
+      "content": "\"use client\";\n\n// Source: interior.dev Sortable Table → flvs → jobpilot, on table-card's Th. The header affordance only:\n// a clickable column head whose arrow turns with the direction. Sorting itself is\n// the caller's job (useDataTable, or the server).\n\nimport type { MouseEvent, ReactNode } from \"react\";\nimport { motion, useReducedMotion } from \"motion/react\";\nimport { ArrowUp } from \"lucide-react\";\n\nimport { STILL, TURN } from \"@/registry/groundwork/lib/motion\";\nimport { Th } from \"@/registry/groundwork/ui/table-card\";\nimport { cn } from \"@/lib/utils\";\n\ntype SortableTableHeadProps = {\n  /** The direction this column is sorted in, or null when it is not the sorted column. */\n  direction: \"asc\" | \"desc\" | null;\n  onSort: () => void;\n  /** Make the head a real link (URL-driven sorting). A plain click still calls `onSort`. */\n  href?: string;\n  align?: \"start\" | \"end\";\n  className?: string;\n  children: ReactNode;\n};\n\nfunction SortableTableHead({ direction, onSort, href, align = \"start\", className, children }: SortableTableHeadProps) {\n  const reduced = useReducedMotion();\n  const active = direction !== null;\n\n  const inner = (\n    <>\n      <span>{children}</span>\n      <motion.span\n        aria-hidden\n        className=\"shrink-0\"\n        initial={false}\n        animate={{ rotate: direction === \"desc\" ? 180 : 0, opacity: active ? 1 : 0.35, scale: active ? 1 : 0.8 }}\n        transition={reduced ? STILL : TURN}\n      >\n        <ArrowUp className=\"size-3\" />\n      </motion.span>\n    </>\n  );\n\n  const controlClassName = cn(\n    \"flex w-full items-center gap-1 px-4 py-2.5 font-medium outline-none transition-colors duration-150 ease-out hover:text-foreground focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-inset\",\n    align === \"end\" && \"flex-row-reverse text-right\",\n    active && \"text-foreground\",\n  );\n\n  function handleLinkClick(event: MouseEvent<HTMLAnchorElement>) {\n    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;\n    event.preventDefault();\n    onSort();\n  }\n\n  return (\n    <Th\n      aria-sort={active ? (direction === \"asc\" ? \"ascending\" : \"descending\") : \"none\"}\n      align={align === \"end\" ? \"right\" : \"left\"}\n      className={cn(\"p-0\", className)}\n    >\n      {href ? (\n        <a href={href} onClick={handleLinkClick} className={controlClassName}>\n          {inner}\n        </a>\n      ) : (\n        <button type=\"button\" onClick={onSort} className={controlClassName}>\n          {inner}\n        </button>\n      )}\n    </Th>\n  );\n}\n\nexport { SortableTableHead };\n",
+      "type": "registry:ui"
+    }
+  ],
+  "meta": {
+    "version": "1.0.0",
+    "tier": "pattern",
+    "track": "patch",
+    "source": "interior.dev → flvs → jobpilot"
+  },
+  "type": "registry:ui"
+}

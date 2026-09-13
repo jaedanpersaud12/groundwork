@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "label",
+  "title": "Label",
+  "description": "Form label, sentence case, text-xs medium.",
+  "files": [
+    {
+      "path": "registry/groundwork/ui/label.tsx",
+      "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\nfunction Label({ className, ...props }: React.ComponentProps<\"label\">) {\n  return (\n    <label\n      data-slot=\"label\"\n      className={cn(\n        \"flex items-center gap-2 text-xs leading-4 font-medium text-foreground select-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport { Label };\n",
+      "type": "registry:ui"
+    }
+  ],
+  "meta": {
+    "version": "1.0.0",
+    "tier": "primitive",
+    "track": "minor",
+    "source": "jobpilot"
+  },
+  "type": "registry:ui"
+}

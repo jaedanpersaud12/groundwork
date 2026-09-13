@@ -1,0 +1,549 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "ja3dan",
+  "homepage": "https://github.com/jaedanpersaud12/groundwork",
+  "items": [
+    {
+      "name": "setup",
+      "type": "registry:base",
+      "title": "Groundwork setup",
+      "description": "Initialises a project on the token contract: installs @ja3dan/tokens and the lint plugin, wires the theme into global CSS, adds the @ja3dan registry to components.json. Run with shadcn init.",
+      "extends": "none",
+      "config": {
+        "style": "base-nova",
+        "iconLibrary": "lucide",
+        "tailwind": {
+          "baseColor": "neutral",
+          "cssVariables": true
+        },
+        "registries": {
+          "@ja3dan": "{{REGISTRY_URL}}/r/{name}.json"
+        }
+      },
+      "dependencies": [
+        "@ja3dan/tokens",
+        "@base-ui/react",
+        "class-variance-authority",
+        "cn",
+        "lucide-react",
+        "tw-animate-css"
+      ],
+      "devDependencies": [
+        "@ja3dan/eslint-plugin"
+      ],
+      "files": [
+        {
+          "path": "registry/groundwork/lib/utils.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "css": {
+        "@import \"tw-animate-css\"": {},
+        "@import \"@ja3dan/tokens/theme.css\"": {},
+        "@import \"@ja3dan/tokens/base.css\"": {},
+        "@import \"@ja3dan/tokens/themes/neutral.css\"": {}
+      },
+      "docs": "Swap themes/neutral.css for another theme, or copy it into your project as your brand theme. Add @ja3dan/eslint-plugin's recommended config to eslint.config.mjs.",
+      "meta": {
+        "version": "1.0.0",
+        "tier": "setup",
+        "track": "minor"
+      }
+    },
+    {
+      "name": "data-table",
+      "type": "registry:block",
+      "title": "Data table",
+      "description": "Complete table card: search, status and date-range filter pills, sortable columns, status pills, stage meters, density toggle, pagination, empty and no-results states. Replace the sample data with yours.",
+      "dependencies": [
+        "lucide-react",
+        "react-day-picker"
+      ],
+      "registryDependencies": [
+        "@ja3dan/use-data-table",
+        "@ja3dan/dates",
+        "@ja3dan/button",
+        "@ja3dan/date-range-picker",
+        "@ja3dan/empty-state",
+        "@ja3dan/filter-chip",
+        "@ja3dan/input-group",
+        "@ja3dan/pagination",
+        "@ja3dan/progress-meter",
+        "@ja3dan/sortable-table-head",
+        "@ja3dan/status-pill",
+        "@ja3dan/table-card",
+        "@ja3dan/view-toggle"
+      ],
+      "files": [
+        {
+          "path": "registry/groundwork/blocks/data-table/applications-table.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "block",
+        "track": "none"
+      }
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "Base UI button with default, outline, secondary, ghost, destructive and link variants and optical icon padding.",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority"
+      ],
+      "files": [
+        {
+          "path": "registry/groundwork/ui/button.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "primitive",
+        "track": "minor",
+        "source": "jobpilot"
+      }
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "Input",
+      "description": "Single-line text field with focus ring and aria-invalid state.",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "registry/groundwork/ui/input.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "primitive",
+        "track": "minor",
+        "source": "jobpilot"
+      }
+    },
+    {
+      "name": "input-group",
+      "type": "registry:ui",
+      "title": "Input group",
+      "description": "Input with a leading icon and a trailing slot for clear buttons or units. The wrapper carries the border and focus ring.",
+      "files": [
+        {
+          "path": "registry/groundwork/ui/input-group.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "primitive",
+        "track": "minor"
+      }
+    },
+    {
+      "name": "textarea",
+      "type": "registry:ui",
+      "title": "Textarea",
+      "description": "Auto-growing multi-line field matching Input.",
+      "files": [
+        {
+          "path": "registry/groundwork/ui/textarea.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "primitive",
+        "track": "minor",
+        "source": "jobpilot"
+      }
+    },
+    {
+      "name": "label",
+      "type": "registry:ui",
+      "title": "Label",
+      "description": "Form label, sentence case, text-xs medium.",
+      "files": [
+        {
+          "path": "registry/groundwork/ui/label.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "primitive",
+        "track": "minor",
+        "source": "jobpilot"
+      }
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "title": "Checkbox",
+      "description": "Base UI checkbox with an enlarged hit area.",
+      "dependencies": [
+        "@base-ui/react",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/groundwork/ui/checkbox.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "primitive",
+        "track": "minor",
+        "source": "jobpilot"
+      }
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "title": "Popover",
+      "description": "Base UI popover with header, title and description slots.",
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "files": [
+        {
+          "path": "registry/groundwork/ui/popover.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "primitive",
+        "track": "minor",
+        "source": "jobpilot"
+      }
+    },
+    {
+      "name": "status-pill",
+      "type": "registry:ui",
+      "title": "Status pill",
+      "description": "Status chip with a leading dot or icon in six tones (success, warning, danger, info, neutral, solid). Exports PILL and PILL_TONES for other pills.",
+      "files": [
+        {
+          "path": "registry/groundwork/ui/status-pill.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "primitive",
+        "track": "minor",
+        "source": "flvs"
+      }
+    },
+    {
+      "name": "progress-meter",
+      "type": "registry:ui",
+      "title": "Progress meter",
+      "description": "Progress as filled segments rather than a bar, for things that move in steps.",
+      "files": [
+        {
+          "path": "registry/groundwork/ui/progress-meter.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "primitive",
+        "track": "minor",
+        "source": "flvs"
+      }
+    },
+    {
+      "name": "view-toggle",
+      "type": "registry:ui",
+      "title": "View toggle",
+      "description": "Segmented control for swapping one view of the same data for another.",
+      "files": [
+        {
+          "path": "registry/groundwork/ui/view-toggle.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "primitive",
+        "track": "minor",
+        "source": "flvs"
+      }
+    },
+    {
+      "name": "table-card",
+      "type": "registry:ui",
+      "title": "Table card",
+      "description": "The table look: TableCard with a titled header, tinted sentence-case column band, fixed row heights by density, hairline rows, StackedCell, and fixed column widths via `columns`.",
+      "files": [
+        {
+          "path": "registry/groundwork/ui/table-card.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "primitive",
+        "track": "minor",
+        "source": "flvs"
+      }
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "title": "Table",
+      "description": "shadcn-compatible table primitives (Table, TableHeader, TableRow\u2026) styled like table-card, for code that expects shadcn's API. New tables should use table-card.",
+      "files": [
+        {
+          "path": "registry/groundwork/ui/table.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "primitive",
+        "track": "minor",
+        "source": "jobpilot"
+      }
+    },
+    {
+      "name": "sortable-table-head",
+      "type": "registry:ui",
+      "title": "Sortable table head",
+      "description": "Clickable table-card column head with an arrow that turns with the sort direction and sets aria-sort. Button or link.",
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@ja3dan/table-card",
+        "@ja3dan/motion"
+      ],
+      "files": [
+        {
+          "path": "registry/groundwork/ui/sortable-table-head.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "pattern",
+        "track": "patch",
+        "source": "interior.dev \u2192 flvs \u2192 jobpilot"
+      }
+    },
+    {
+      "name": "pagination",
+      "type": "registry:ui",
+      "title": "Pagination",
+      "description": "Page numbers with collapsing gaps, a sliding thumb and rolling numbers. Buttons, or real links via hrefFor. Includes PaginationSummary.",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "@ja3dan/motion"
+      ],
+      "files": [
+        {
+          "path": "registry/groundwork/ui/pagination.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "pattern",
+        "track": "patch",
+        "source": "interior.dev \u2192 flvs \u2192 jobpilot"
+      }
+    },
+    {
+      "name": "filter-chip",
+      "type": "registry:ui",
+      "title": "Filter chip",
+      "description": "Filter pill: \u201cStatus = Active\u201d with a \u00d7 to clear, options in a Base UI menu. Includes FilterBand and ClearFilters.",
+      "dependencies": [
+        "@base-ui/react",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/groundwork/ui/filter-chip.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "pattern",
+        "track": "patch",
+        "source": "flvs \u2192 jobpilot"
+      }
+    },
+    {
+      "name": "empty-state",
+      "type": "registry:ui",
+      "title": "Empty state",
+      "description": "Icon, one line and a way forward, for empty tables and no-results.",
+      "files": [
+        {
+          "path": "registry/groundwork/ui/empty-state.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "primitive",
+        "track": "minor",
+        "source": "jobpilot"
+      }
+    },
+    {
+      "name": "calendar",
+      "type": "registry:ui",
+      "title": "Calendar",
+      "description": "react-day-picker calendar with single and range selection, month/year dropdowns.",
+      "dependencies": [
+        "react-day-picker",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@ja3dan/button"
+      ],
+      "files": [
+        {
+          "path": "registry/groundwork/ui/calendar.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "primitive",
+        "track": "minor",
+        "source": "jobpilot (from flvs)"
+      }
+    },
+    {
+      "name": "date-picker",
+      "type": "registry:ui",
+      "title": "Date picker",
+      "description": "Field that opens a calendar. min/max, disabled days, month-year dropdowns for far-off dates, clearable, invalid state.",
+      "dependencies": [
+        "motion",
+        "lucide-react",
+        "react-day-picker"
+      ],
+      "registryDependencies": [
+        "@ja3dan/calendar",
+        "@ja3dan/popover",
+        "@ja3dan/dates",
+        "@ja3dan/motion"
+      ],
+      "files": [
+        {
+          "path": "registry/groundwork/ui/date-picker.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "pattern",
+        "track": "patch",
+        "source": "jobpilot"
+      }
+    },
+    {
+      "name": "date-range-picker",
+      "type": "registry:ui",
+      "title": "Date range picker",
+      "description": "Range calendar with preset column (past or future), one or two months, bounds and disabled days. Includes DateRangeChip for filter bars.",
+      "dependencies": [
+        "motion",
+        "lucide-react",
+        "react-day-picker"
+      ],
+      "registryDependencies": [
+        "@ja3dan/date-picker",
+        "@ja3dan/filter-chip",
+        "@ja3dan/calendar",
+        "@ja3dan/popover",
+        "@ja3dan/dates",
+        "@ja3dan/motion"
+      ],
+      "files": [
+        {
+          "path": "registry/groundwork/ui/date-range-picker.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "pattern",
+        "track": "patch",
+        "source": "flvs \u2192 jobpilot"
+      }
+    },
+    {
+      "name": "use-data-table",
+      "type": "registry:hook",
+      "title": "useDataTable",
+      "description": "Client-side search, typed filters, column sorting (nulls last) and pagination for any array of rows.",
+      "files": [
+        {
+          "path": "registry/groundwork/hooks/use-data-table.ts",
+          "type": "registry:hook"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "hook",
+        "track": "minor"
+      }
+    },
+    {
+      "name": "dates",
+      "type": "registry:lib",
+      "title": "Date helpers",
+      "description": "Local-midnight day helpers: today, addDays, isSameDay, ISO parse/format, and range formatting.",
+      "files": [
+        {
+          "path": "registry/groundwork/lib/dates.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "lib",
+        "track": "minor"
+      }
+    },
+    {
+      "name": "motion",
+      "type": "registry:lib",
+      "title": "Motion presets",
+      "description": "Shared spring and easing values for sliding thumbs and rolling content, with a reduced-motion fallback.",
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/groundwork/lib/motion.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
+        "tier": "lib",
+        "track": "minor",
+        "source": "flvs \u2192 jobpilot"
+      }
+    }
+  ]
+}

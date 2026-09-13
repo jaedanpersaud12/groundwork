@@ -1,0 +1,252 @@
+{
+  "version": "1.0.0",
+  "description": "Semantic token contract. Components may only use these names. Themes supply the values, in both :root (light) and .dark.",
+  "tokens": {
+    "background": {
+      "group": "surface",
+      "required": true,
+      "role": "Page ground."
+    },
+    "foreground": {
+      "group": "surface",
+      "required": true,
+      "role": "Primary text on background."
+    },
+    "card": {
+      "group": "surface",
+      "required": true,
+      "role": "Card and panel ground."
+    },
+    "card-foreground": {
+      "group": "surface",
+      "required": true,
+      "role": "Text on card."
+    },
+    "popover": {
+      "group": "surface",
+      "required": true,
+      "role": "Floating surfaces: popovers, menus, listboxes."
+    },
+    "popover-foreground": {
+      "group": "surface",
+      "required": true,
+      "role": "Text on popover."
+    },
+    "muted": {
+      "group": "surface",
+      "required": true,
+      "role": "Quiet fill: table header, row hover, disabled field."
+    },
+    "muted-foreground": {
+      "group": "text",
+      "required": true,
+      "role": "Secondary text: labels, meta, table headers."
+    },
+    "subtle-foreground": {
+      "group": "text",
+      "required": true,
+      "role": "Tertiary text: placeholders, captions, weekday labels. Lowest contrast that still reads."
+    },
+    "primary": {
+      "group": "action",
+      "required": true,
+      "role": "Brand action: primary button, selected state, links."
+    },
+    "primary-foreground": {
+      "group": "action",
+      "required": true,
+      "role": "Text and icons on primary."
+    },
+    "secondary": {
+      "group": "action",
+      "required": true,
+      "role": "Secondary button fill."
+    },
+    "secondary-foreground": {
+      "group": "action",
+      "required": true,
+      "role": "Text on secondary."
+    },
+    "accent": {
+      "group": "action",
+      "required": true,
+      "role": "Hover/highlight fill for menu items and ghost controls. Not the brand colour."
+    },
+    "accent-foreground": {
+      "group": "action",
+      "required": true,
+      "role": "Text on accent."
+    },
+    "border": {
+      "group": "line",
+      "required": true,
+      "role": "Default hairline for cards, tables, dividers."
+    },
+    "input": {
+      "group": "line",
+      "required": true,
+      "role": "Form control border."
+    },
+    "ring": {
+      "group": "line",
+      "required": true,
+      "role": "Focus ring."
+    },
+    "destructive": {
+      "group": "status",
+      "required": true,
+      "role": "Errors and destructive actions. Must read as small text on background and on its own 10% tint."
+    },
+    "destructive-foreground": {
+      "group": "status",
+      "required": true,
+      "role": "Text on a destructive fill."
+    },
+    "destructive-subtle": {
+      "group": "status",
+      "required": true,
+      "role": "Tinted ground for error banners and tags; text on it uses destructive."
+    },
+    "success": {
+      "group": "status",
+      "required": true,
+      "role": "Positive state. Must read as small text on background and on its own 10% tint."
+    },
+    "success-foreground": {
+      "group": "status",
+      "required": true,
+      "role": "Text on a success fill."
+    },
+    "success-subtle": {
+      "group": "status",
+      "required": true,
+      "role": "Tinted ground for success banners and badges; text on it uses success."
+    },
+    "warning": {
+      "group": "status",
+      "required": true,
+      "role": "Needs-attention state. Must read as small text on background and on its own 10% tint."
+    },
+    "warning-foreground": {
+      "group": "status",
+      "required": true,
+      "role": "Text on a warning fill."
+    },
+    "warning-subtle": {
+      "group": "status",
+      "required": true,
+      "role": "Tinted ground for warning banners and badges."
+    },
+    "info": {
+      "group": "status",
+      "required": true,
+      "role": "Neutral informational state. Must read as small text on background and on its own 10% tint."
+    },
+    "info-foreground": {
+      "group": "status",
+      "required": true,
+      "role": "Text on an info fill."
+    },
+    "info-subtle": {
+      "group": "status",
+      "required": true,
+      "role": "Tinted ground for info banners and badges."
+    },
+    "chart-1": {
+      "group": "chart",
+      "required": false,
+      "role": "Categorical series 1."
+    },
+    "chart-2": {
+      "group": "chart",
+      "required": false,
+      "role": "Categorical series 2."
+    },
+    "chart-3": {
+      "group": "chart",
+      "required": false,
+      "role": "Categorical series 3."
+    },
+    "chart-4": {
+      "group": "chart",
+      "required": false,
+      "role": "Categorical series 4."
+    },
+    "chart-5": {
+      "group": "chart",
+      "required": false,
+      "role": "Categorical series 5."
+    },
+    "sidebar": {
+      "group": "sidebar",
+      "required": false,
+      "role": "Sidebar ground."
+    },
+    "sidebar-foreground": {
+      "group": "sidebar",
+      "required": false,
+      "role": "Sidebar text."
+    },
+    "sidebar-primary": {
+      "group": "sidebar",
+      "required": false,
+      "role": "Active sidebar item."
+    },
+    "sidebar-primary-foreground": {
+      "group": "sidebar",
+      "required": false,
+      "role": "Text on active sidebar item."
+    },
+    "sidebar-accent": {
+      "group": "sidebar",
+      "required": false,
+      "role": "Sidebar hover fill."
+    },
+    "sidebar-accent-foreground": {
+      "group": "sidebar",
+      "required": false,
+      "role": "Text on sidebar hover fill."
+    },
+    "sidebar-border": {
+      "group": "sidebar",
+      "required": false,
+      "role": "Sidebar divider."
+    },
+    "sidebar-ring": {
+      "group": "sidebar",
+      "required": false,
+      "role": "Sidebar focus ring."
+    }
+  },
+  "radius": {
+    "base": "--radius",
+    "scale": {
+      "xs": 0.25,
+      "sm": 0.5,
+      "md": 1,
+      "lg": 1.5,
+      "xl": 2
+    },
+    "role": "Themes set --radius; the scale multiplies it. A theme may pin individual steps in its own @theme block."
+  },
+  "shadows": {
+    "border": {
+      "required": true,
+      "role": "Raised surfaces (cards, table cards): a transparent hairline plus soft lift, so the card keeps its weight on any ground. Use `shadow-border` instead of a border."
+    },
+    "border-hover": {
+      "required": true,
+      "role": "The same surface under the pointer."
+    },
+    "popover": {
+      "required": true,
+      "role": "Floating surfaces: menus, popovers, date pickers."
+    }
+  },
+  "typography": {
+    "heading": {
+      "required": false,
+      "role": "Card and section headings (`font-heading`). Themes set --typeface-heading; defaults to the sans font."
+    }
+  }
+}

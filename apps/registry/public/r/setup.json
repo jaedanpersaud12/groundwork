@@ -1,0 +1,49 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "extends": "none",
+  "name": "setup",
+  "title": "Groundwork setup",
+  "description": "Initialises a project on the token contract: installs @ja3dan/tokens and the lint plugin, wires the theme into global CSS, adds the @ja3dan registry to components.json. Run with shadcn init.",
+  "dependencies": [
+    "@ja3dan/tokens",
+    "@base-ui/react",
+    "class-variance-authority",
+    "cn",
+    "lucide-react",
+    "tw-animate-css"
+  ],
+  "devDependencies": [
+    "@ja3dan/eslint-plugin"
+  ],
+  "files": [
+    {
+      "path": "registry/groundwork/lib/utils.ts",
+      "content": "export { cn } from \"cn\";\n",
+      "type": "registry:lib"
+    }
+  ],
+  "css": {
+    "@import \"tw-animate-css\"": {},
+    "@import \"@ja3dan/tokens/theme.css\"": {},
+    "@import \"@ja3dan/tokens/base.css\"": {},
+    "@import \"@ja3dan/tokens/themes/neutral.css\"": {}
+  },
+  "meta": {
+    "version": "1.0.0",
+    "tier": "setup",
+    "track": "minor"
+  },
+  "docs": "Swap themes/neutral.css for another theme, or copy it into your project as your brand theme. Add @ja3dan/eslint-plugin's recommended config to eslint.config.mjs.",
+  "type": "registry:base",
+  "config": {
+    "style": "base-nova",
+    "tailwind": {
+      "baseColor": "neutral",
+      "cssVariables": true
+    },
+    "iconLibrary": "lucide",
+    "registries": {
+      "@ja3dan": "http://localhost:3100/r/{name}.json"
+    }
+  }
+}

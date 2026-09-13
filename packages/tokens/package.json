@@ -1,0 +1,37 @@
+{
+  "name": "@ja3dan/tokens",
+  "version": "0.1.0",
+  "description": "Semantic design token contract, Tailwind v4 theme mapping and themes.",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "contract.json",
+    "theme.css",
+    "base.css",
+    "themes",
+    "TOKENS.md"
+  ],
+  "exports": {
+    "./contract.json": "./contract.json",
+    "./theme.css": {
+      "style": "./theme.css",
+      "default": "./theme.css"
+    },
+    "./base.css": {
+      "style": "./base.css",
+      "default": "./base.css"
+    },
+    "./themes/*": {
+      "style": "./themes/*",
+      "default": "./themes/*"
+    },
+    "./TOKENS.md": "./TOKENS.md"
+  },
+  "scripts": {
+    "build": "bun scripts/build.ts",
+    "prepublishOnly": "bun scripts/build.ts"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

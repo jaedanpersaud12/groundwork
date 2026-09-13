@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "registry",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["--cwd=apps/registry", "run", "dev", "--", "--port", "3100"],
+      "port": 3100
+    }
+  ]
+}

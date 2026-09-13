@@ -1,0 +1,36 @@
+/* Base layer and utilities shared by every project. Import after tailwindcss and theme.css. */
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/*
+ * A scrollbar that belongs to the panel it sits in: a hairline in the foreground
+ * colour at low opacity that darkens under the pointer, instead of the platform's
+ * grey slab. Firefox takes the standard properties; WebKit/Chromium the pseudo-elements.
+ */
+@utility scroll-slim {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--foreground) 18%, transparent) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track,
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--foreground) 18%, transparent);
+    border-radius: 999px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklab, var(--foreground) 32%, transparent);
+  }
+}

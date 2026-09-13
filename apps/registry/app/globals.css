@@ -1,0 +1,17 @@
+/* This app consumes the tokens exactly the way a project does after installing @ja3dan/setup. */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@ja3dan/tokens/theme.css";
+@import "@ja3dan/tokens/base.css";
+@import "@ja3dan/tokens/themes/jobpilot.css";
+
+@theme {
+  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
+}
+
+@layer base {
+  html {
+    @apply font-sans;
+  }
+}

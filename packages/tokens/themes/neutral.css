@@ -1,0 +1,95 @@
+/* Neutral starter theme: greyscale surfaces, near-black primary. Copy it to start a new brand. */
+
+:root {
+  --radius: 0.5rem;
+
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.205 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.205 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.52 0 0);
+  --subtle-foreground: oklch(0.65 0 0);
+
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.96 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --accent: oklch(0.955 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+
+  --border: oklch(0.915 0 0);
+  --input: oklch(0.9 0 0);
+  --ring: oklch(0.6 0 0);
+
+  --destructive: oklch(0.51 0.19 27);
+  --destructive-foreground: oklch(0.985 0 0);
+  --destructive-subtle: oklch(0.97 0.015 20);
+  --success: oklch(0.52 0.12 160);
+  --success-foreground: oklch(0.985 0 0);
+  --success-subtle: oklch(0.97 0.02 160);
+  --warning: oklch(0.5 0.12 60);
+  --warning-foreground: oklch(0.985 0 0);
+  --warning-subtle: oklch(0.97 0.03 80);
+  --info: oklch(0.52 0.16 255);
+  --info-foreground: oklch(0.985 0 0);
+  --info-subtle: oklch(0.97 0.02 255);
+
+  --depth-border:
+    0 0 0 1px oklch(0 0 0 / 0.06),
+    0 1px 2px -1px oklch(0 0 0 / 0.06),
+    0 2px 4px 0 oklch(0 0 0 / 0.04);
+  --depth-border-hover:
+    0 0 0 1px oklch(0 0 0 / 0.08),
+    0 1px 2px -1px oklch(0 0 0 / 0.08),
+    0 2px 4px 0 oklch(0 0 0 / 0.06);
+  --depth-popover:
+    0 0 0 1px oklch(0 0 0 / 0.07),
+    0 1px 2px 0 oklch(0 0 0 / 0.06),
+    0 16px 36px -18px oklch(0 0 0 / 0.5);
+}
+
+.dark {
+  --background: oklch(0.16 0 0);
+  --foreground: oklch(0.96 0 0);
+  --card: oklch(0.2 0 0);
+  --card-foreground: oklch(0.96 0 0);
+  --popover: oklch(0.23 0 0);
+  --popover-foreground: oklch(0.96 0 0);
+  --muted: oklch(0.25 0 0);
+  --muted-foreground: oklch(0.72 0 0);
+  --subtle-foreground: oklch(0.56 0 0);
+
+  --primary: oklch(0.93 0 0);
+  --primary-foreground: oklch(0.2 0 0);
+  --secondary: oklch(0.27 0 0);
+  --secondary-foreground: oklch(0.96 0 0);
+  --accent: oklch(0.29 0 0);
+  --accent-foreground: oklch(0.96 0 0);
+
+  --border: oklch(1 0 0 / 11%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.55 0 0);
+
+  --destructive: oklch(0.7 0.17 25);
+  --destructive-foreground: oklch(0.18 0.03 25);
+  --destructive-subtle: oklch(0.25 0.05 25);
+  --success: oklch(0.74 0.13 160);
+  --success-foreground: oklch(0.18 0.03 160);
+  --success-subtle: oklch(0.25 0.04 160);
+  --warning: oklch(0.8 0.13 75);
+  --warning-foreground: oklch(0.2 0.04 75);
+  --warning-subtle: oklch(0.26 0.04 75);
+  --info: oklch(0.72 0.12 255);
+  --info-foreground: oklch(0.18 0.04 255);
+  --info-subtle: oklch(0.25 0.05 255);
+
+  /* On a dark ground the lift layers are invisible; one light ring is the whole effect. */
+  --depth-border: 0 0 0 1px oklch(1 0 0 / 0.08);
+  --depth-border-hover: 0 0 0 1px oklch(1 0 0 / 0.13);
+  --depth-popover:
+    0 0 0 1px oklch(1 0 0 / 0.12),
+    0 16px 36px -18px oklch(0 0 0 / 0.8);
+}

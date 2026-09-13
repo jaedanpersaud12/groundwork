@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "input-group",
+  "title": "Input group",
+  "description": "Input with a leading icon and a trailing slot for clear buttons or units. The wrapper carries the border and focus ring.",
+  "files": [
+    {
+      "path": "registry/groundwork/ui/input-group.tsx",
+      "content": "import type { ComponentProps, ReactNode } from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\ntype InputGroupProps = ComponentProps<\"input\"> & {\n  /** Leading icon, rendered at 16px in the subtle text colour. */\n  icon?: ReactNode;\n  /** Trailing content: a clear button, a unit, a keyboard hint. */\n  trailing?: ReactNode;\n  /** Classes for the wrapper, which carries the border and focus ring. */\n  className?: string;\n  inputClassName?: string;\n};\n\n/** An input with a leading icon and optional trailing slot. The wrapper is the field. */\nfunction InputGroup({ icon, trailing, className, inputClassName, ...props }: InputGroupProps) {\n  return (\n    <div\n      data-slot=\"input-group\"\n      className={cn(\n        \"flex h-9 min-w-0 items-center gap-2 rounded-md border border-input bg-card px-3 transition-[border-color,box-shadow] duration-150 ease-out focus-within:border-ring focus-within:ring-1 focus-within:ring-ring has-disabled:bg-muted has-aria-invalid:border-destructive has-aria-invalid:ring-1 has-aria-invalid:ring-destructive [&_svg]:size-4 [&_svg]:shrink-0 [&>svg]:text-subtle-foreground\",\n        className,\n      )}\n    >\n      {icon}\n      <input\n        className={cn(\n          \"h-full min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-subtle-foreground disabled:cursor-not-allowed disabled:text-muted-foreground [&::-webkit-search-cancel-button]:appearance-none\",\n          inputClassName,\n        )}\n        {...props}\n      />\n      {trailing}\n    </div>\n  );\n}\n\nexport { InputGroup };\n",
+      "type": "registry:ui"
+    }
+  ],
+  "meta": {
+    "version": "1.0.0",
+    "tier": "primitive",
+    "track": "minor"
+  },
+  "type": "registry:ui"
+}
