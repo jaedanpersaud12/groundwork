@@ -34,7 +34,8 @@ Swap jobpilot's local copies for installed registry items; write its `kit.lock.j
 *Already in jobpilot, and relevant here:* a `skills-lock.json` (`version: 1`; per skill
 `source`, `sourceType: "github"`, `skillPath`, `computedHash`) from installing skills out of
 `JavaScript-Mastery-Pro/jsm-agent-skill` and `jakubkrehel/skills`. 04 decides whether
-`kit.lock.json` absorbs it or sits beside it; 03 lives with the result. And its 426-line
+`kit.lock.json` absorbs it or sits beside it; 03 lives with the result, and 09 installs
+skills against it. And its 426-line
 `ui-tokens.md` is what the token contract replaces — measured in
 `context/features/06-kickoff/plan.md`.
 
@@ -46,8 +47,9 @@ jobpilot's typecheck and lint are clean.
 `kit sync status | update`, `kit link`. The 3-way merge against `public/r/v/*`.
 
 *Before fixing the `kit.lock.json` schema:* jobpilot already has a lock of the same shape for
-skills (see 03). Decide whether one lock covers registry items and skills, or two locks
-share a format — deciding after both exist means migrating one of them.
+skills (see 03), and 09 (`kit init`) will install skills. Decide whether one lock covers
+registry items and skills, or two locks share a format — deciding after both exist means
+migrating one of them.
 
 **Done when:** an unedited file updates by overwrite; an edited file merges via
 `git merge-file` against the installed version as base; a major version follows its
@@ -97,15 +99,19 @@ per component generated from `registry.json`).
 bootstraps a repo's skills and architecture as well as its components — and get from there
 to a working `shadcn add` without being told how.
 
-## Needs a stage — `kit init`
+## 09 — `packages/kit`: `kit init`
 
-The deterministic half of kickoff: copy `templates/<preset>/`, install the skills, run the
-installs. 06 deliberately leaves it out because it needs `packages/kit` — but neither 04
-(sync) nor 05 (check, doctor) includes it, so as written nothing builds it.
+The deterministic half of kickoff: copy `templates/<preset>/` into a new repo, install the
+skills, run `shadcn init` against the `setup` item, and write the lock. Its own stage
+because neither 04 (sync) nor 05 (check, doctor) includes it, and 06 deliberately leaves it
+out — so without a number, nothing builds it.
 
-It carries the criterion 06 used to have: **a throwaway project goes from an empty folder
-to feature 01 merged using only the kit**, with every rough edge fed back as a change.
-Assign it to 05, or give it its own number, before 06 is finished.
+Needs `packages/kit` from 04, the lock format 04 settles (one lock or two — see 04), and a
+template from 06. Starts after both.
+
+**Done when:** a throwaway project goes from an empty folder to feature 01 merged using
+only the kit and the 06 prompts — and every rough edge hit along the way has gone back in
+as a change here.
 
 ---
 

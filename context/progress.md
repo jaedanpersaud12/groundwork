@@ -21,6 +21,7 @@ version of it that grew to 450 lines is the reason the feature folders exist.
 - [ ] **06** `templates/`, `presets/`, `/kickoff`
 - [ ] **07** `apps/site` — *on hold; 08 may have absorbed it, see build-plan*
 - [x] **08** Groundwork site
+- [ ] **09** `packages/kit`: `kit init` — *after 04 and 06*
 
 ## Notes
 
