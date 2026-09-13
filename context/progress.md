@@ -1,9 +1,9 @@
 # Progress
 
-**Stage:** 04 — kit sync engine
-**Last completed:** 08 — Groundwork site
-**Active feature:** 04-kit-sync — spec and plan written; next is the build
-**Next:** build 04, then 03 — jobpilot becomes the first consumer
+**Stage:** 05 — kit check and doctor
+**Last completed:** 04 — kit sync engine
+**Active feature:** none
+**Next:** 05 (`packages/kit`: check and doctor), or 03 — jobpilot becomes the first consumer
 **Blocker:** none
 
 Keep this short. Detail belongs in the feature's own folder — `spec.md`, `plan.md`,
@@ -16,7 +16,7 @@ version of it that grew to 450 lines is the reason the feature folders exist.
 - [x] **02** Agent kit scaffold — *08 was the first feature run through the loop end to
       end; `/feature finish` refused it once, on a criterion the branch really did fail*
 - [ ] **03** jobpilot becomes the first consumer
-- [~] **04** `packages/kit`: sync engine — *in progress, `feat/04-kit-sync`*
+- [x] **04** `packages/kit`: sync engine
 - [ ] **05** `packages/kit`: check and doctor
 - [ ] **06** `templates/`, `presets/`, `/kickoff`
 - [ ] **07** `apps/site` — *on hold; 08 may have absorbed it, see build-plan*

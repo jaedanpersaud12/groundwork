@@ -33,22 +33,22 @@ nothing yet using them.
 
 ## Done when
 
-- [ ] `kit lock` in the fixture writes `kit.lock.json` listing every installed item with
+- [x] `kit lock` in the fixture writes `kit.lock.json` listing every installed item with
       `version`, `hash` and `track`, and the hashes match `public/r/versions.json`
-- [ ] `kit sync status` reports an item as outdated after its `meta.version` is bumped and
+- [x] `kit sync status` reports an item as outdated after its `meta.version` is bumped and
       the registry rebuilt, and separately marks a locally-edited file as edited
-- [ ] `kit sync update <item>` on an **unedited** file replaces it and bumps the lock entry
-- [ ] `kit sync update <item>` on an **edited** file merges via `git merge-file` using
+- [x] `kit sync update <item>` on an **unedited** file replaces it and bumps the lock entry
+- [x] `kit sync update <item>` on an **edited** file merges via `git merge-file` using
       `public/r/v/<name>@<installed>.json` as the base — a non-overlapping local edit
       survives the update; an overlapping one leaves conflict markers rather than
       silently picking a side
-- [ ] A major-version update surfaces the item's migration note instead of merging silently
-- [ ] `kit link` makes the fixture resolve `@ja3dan/*` from `localhost:3100`, and an
+- [x] A major-version update surfaces the item's migration note instead of merging silently
+- [x] `kit link` makes the fixture resolve `@ja3dan/*` from `localhost:3100`, and an
       un-published change to a groundwork component appears in the fixture
-- [ ] The update lands on a branch in the fixture with a description naming the item, the
+- [x] The update lands on a branch in the fixture with a description naming the item, the
       version change and whether it merged or conflicted
-- [ ] `bun run check` passes with `packages/kit` in the workspace
-- [ ] `npm pack` produces a tarball containing the bin and its dependencies
+- [x] `bun run check` passes with `packages/kit` in the workspace
+- [x] `npm pack` produces a tarball containing the bin and its dependencies
       *(publishing itself is the developer's call, not this feature's)*
 
 ## Out of scope

@@ -10,6 +10,7 @@ This file is an index, not a reading list. Read what the task needs.
 | --- | --- | --- |
 | `packages/tokens` | `contract.json` (source of truth), generated `theme.css` + `TOKENS.md`, `base.css`, `themes/*.css` | npm `@ja3dan/tokens` |
 | `packages/eslint-plugin` | `no-raw-colors` rule; allowlist comes from the contract | npm `@ja3dan/eslint-plugin` |
+| `packages/kit` | CLI a consuming project runs against the registry: `lock`, `sync status`, `sync update`, `link` | npm `@ja3dan/kit` |
 | `apps/registry` | Next 16 site for all of groundwork: landing page, docs for the kit (read from `skills/`, `knowledge/`, `context/` at build time) and the design system; `registry.json` + `registry/groundwork/**` are the component sources; builds `public/r/*.json` | shadcn registry `@ja3dan` + the site, deployed on Vercel |
 | `skills/` | The lifecycle skills kickoff installs into a new project | agent kit |
 | `knowledge/` | Gotchas tagged by stack, installed into projects by kickoff | agent kit |
@@ -18,7 +19,7 @@ This file is an index, not a reading list. Read what the task needs.
 
 Folder-scoped `AGENTS.md` in `apps/registry` and `packages/tokens` carry the rules for those trees; they load when you work there.
 
-Planned, not built: `packages/kit` (CLI: check, doctor, sync, link), `templates/`, `presets/`, and `apps/site` (on hold — 08's landing page may already do its job). See `context/build-plan.md`.
+Planned, not built: `kit check` and `kit doctor` (feature 05), `templates/`, `presets/`, and `apps/site` (on hold — 08's landing page may already do its job). See `context/build-plan.md`.
 
 ## Commands
 

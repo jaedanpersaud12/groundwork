@@ -292,3 +292,148 @@ pair from `fix/data-table-widths`.
    local edit is still there.
 
 **Checks:** 39 kit tests pass, `tsc` is clean, and `bun run check` passes.
+
+## Step 8 — migration notes
+
+### The registry side
+
+- **Where notes live:** `meta.migrations: { "<version>": "<note>" }`, inside the item.
+  `meta` survives `shadcn build`, and the note is hashed content. So it ships with its
+  version, can't be changed afterwards without a bump, and a later major keeps the notes
+  of earlier ones.
+- **`registry:build` enforces it.** `migrationProblem` in `version-registry.ts` runs only
+  for a *new* version, one with no `public/r/v` file yet, and checks two things:
+  - **the field's shape:** version keys and non-empty strings;
+  - **the note:** a version whose major is above every published version's must carry a
+    note for itself. First releases are exempt.
+- **Probed on the real registry**, by temporarily bumping `empty-state` to 2.0.0:
+  - no note → `✗ empty-state@2.0.0 is a new major version with no
+    meta.migrations["2.0.0"]…`, and no `v/` file written;
+  - a whitespace note → `✗ … must be a non-empty note`;
+  - a real note → built, with the note carried into `v/empty-state@2.0.0.json`'s `meta`.
+
+  Then `registry.json` was restored from a copy, the probe file deleted, and `public/r`
+  rebuilt: only the script differs from `HEAD`.
+- **Documented** in `apps/registry/AGENTS.md` (invariants) and the `registry-item` skill
+  (step 3: when a change is major, and what the note needs).
+
+### The kit side
+
+- **`update` on a major:**
+  - **Without `--accept-major`:** throws `MajorUpdateNeedsReview` carrying every note the
+    update crosses. It reads them from the target version's item, for versions after the
+    installed one up to the target. It's thrown before any branch or file is touched.
+  - **With `--accept-major`:** merges as usual, and the notes go into the description under
+    "Migration notes — this is a major update:".
+  - **With no note published:** it still stops, and says there's no note.
+- **`status`** gains `migrationNote`, meaning whether the latest version publishes a note
+  for a major bump. The CLI reads "major update — has a migration note".
+
+### Evidence
+
+- **Spec criterion 5.** Chip 1.0.0 installed, 2.0.0 published with a note:
+  - `update --to 2.0.0` rejects with `MajorUpdateNeedsReview`, whose `notes` equal
+    `[{ version: "2.0.0", note }]`;
+  - `HEAD` is unchanged, no `kit/` branch exists, `git status` is empty, and the file is
+    byte-identical.
+- **With `--accept-major`:** overwritten; the description and the commit message contain
+  the note; the lock is at 2.0.0.
+- **A major with no published note** is refused, and the message says so.
+- **`notesBetween`** from 1.4.0 to 3.0.0 gives the 2.0.0 and 3.0.0 notes, not 4.0.0's;
+  2.0.0 → 2.1.0 gives none.
+- **`status`** reports `migrationNote: true` for a major published with a note.
+
+### Test timeouts, again
+
+A slow test (installing a new dependency, ~4.5–5s alone) died once at 5,036ms in a
+combined run, with the step 6–7 preload in place. Separate runs showed the preload *does*
+apply across files: a 6s probe passed alone, before `registry.test.ts`, and after it. The
+cause wasn't pinned down, and a long repeated stress run was stopped. The `test` script now
+passes `--timeout 60000` explicitly, as well as the preload. **Not verified:** that this
+removes the intermittent failure, because it wasn't reproduced on demand. `bun run test`
+passed 44/44 once afterwards (106s).
+
+`registry-review` on the build rule: pending.
+
+## Step 9 — `kit link`, and closing out the spec
+
+- **`kit link [--url]` / `kit link --off`** in `src/commands/link.ts`: swaps the `@ja3dan`
+  registry template in `components.json` (default `http://localhost:3100`), refusing when
+  `components.json` itself is dirty — that guard is what makes `--off` trustworthy, since it
+  restores from `git show HEAD:components.json` rather than anything kit remembers.
+  `replaceTemplate` does a string swap when the registry entry is the plain string form (the
+  common case, and the reason linking is a one-line diff), falling back to a full
+  re-serialise only for the `{ url: … }` object form.
+- **Tests** (`link.test.ts`, 6 cases) use two fixture registries — `published` and `local` —
+  publishing the *same version number* with different content, which is exactly what an
+  unreleased working-tree edit looks like. Covered: the local registry's content actually
+  installs; the diff is one line; `--off` restores byte-identical and the published content
+  comes back; uncommitted `components.json` is refused; linking twice or unlinking when
+  already unlinked is a no-op; the default URL is `:3100`.
+- **Evidence for spec criterion 6:** `points @ja3dan at the local registry, and an
+  unpublished change appears in the project` installs `button` after linking and asserts the
+  file content is the `local` registry's ("unreleased"), not `published`'s.
+
+### Closing checks
+
+- `bun run typecheck` and `bun run test` in `packages/kit`: clean, 50/50 (up from 44 — the 6
+  new `link` tests), 100s.
+- `bun run check` at the root: tokens, all workspace tests (`kit` + `eslint-plugin`), lint,
+  and `registry:build` (24 items versioned) all pass with `packages/kit` in the workspace.
+- `npm pack --dry-run` on `packages/kit`: 2 files, `dist/kit.js` (bundled — `bun build`
+  inlines all 11 modules, so the tarball is self-contained) and `package.json`. Satisfies
+  "contains the bin and its dependencies" without a `node_modules` — there's nothing left to
+  resolve at install time.
+- All nine `Done when` criteria in `spec.md` are now checked.
+
+`registry-review` on the migration-note build rule: re-run, and it found one real gap.
+
+### Registry review's finding, and the fix
+
+**Important, confirmed.** `migrationProblem` only checked that a *new major* carries its
+own note — it never checked that a version retains the notes of majors published before
+it. But `notesBetween` (kit) reads migration notes off whichever version a project updates
+*to*, not off every version crossed, so if an author forgot to copy an old major's note
+forward into a later build, `registry:build` wouldn't catch it, and a project jumping past
+that version would silently lose the earlier note — the exact failure mode this feature
+exists to prevent, one layer up. Also flagged: `AGENTS.md`'s wording implied retention was
+already build-enforced when it wasn't; `SKILL.md`'s wording was more careful but still
+incomplete.
+
+**Fix:** `migrationProblem` now also finds the immediately-preceding published version (by
+semver) and fails the build if the new version's `meta.migrations` is missing any key that
+version had. Monotonic retention, checked one step at a time, so it holds transitively
+across the item's whole history without re-deriving it on every build.
+
+**Verified on the real registry**, by temporarily walking `empty-state` through
+1.0.1 → 2.0.0 (own note) → 3.0.0 (note that dropped `"2.0.0"`) → 3.0.0 (both notes kept):
+- 2.0.0 with its own note: built, matching the existing major-note check.
+- 3.0.0 with only `"3.0.0"`: `✗ empty-state@3.0.0 drops migration note(s) for 2.0.0,
+  carried by 2.0.0. Copy them into meta.migrations before publishing.` — no `v/` file
+  written.
+- 3.0.0 with both keys: built.
+
+`registry.json` restored from a pre-probe copy (byte-identical after), the two probe `v/`
+files deleted, and `public/r` rebuilt — same as step 8's original probe. `AGENTS.md` and
+the `registry-item` skill updated to describe retention as build-enforced. `bun run check`
+passes.
+
+**Minor findings not acted on:** a duplicated published-versions directory scan
+(`migrationProblem` vs `historyOf`), and an unchecked cast relying on validation order —
+both harmless given current control flow, left as the reviewer suggested (developer's
+call, not blocking).
+
+## Harvest
+
+Four things this build learned the hard way, promoted to `knowledge/`:
+
+- Two bullets added to `shadcn-registry.md`: `--path` isn't fully isolated (still touches
+  the calling project's `package.json`/install when a new npm dependency is needed), and a
+  versioned item's `registryDependencies` always point at a dependency's *current* version,
+  never a pinned one — each file's own merge base has to come from its own item's versioned
+  URL.
+- New `knowledge/bun.md`: `bunfig.toml`'s `[test] timeout` key is silently ignored by Bun
+  1.4.2 (use `setDefaultTimeout` in a `[test] preload` script instead), and
+  `require.resolve("<pkg>/package.json")` works under `bun test` but throws
+  `ERR_PACKAGE_PATH_NOT_EXPORTED` under plain Node when the package's `exports` map omits
+  `package.json` — only surfaces running the built CLI, not the test suite.
