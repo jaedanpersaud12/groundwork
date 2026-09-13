@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { CopyButton } from "./copy-button";
 
 /** A command to run, presented as the one line you paste. */
-export function Command({ value, className }: { value: string; className?: string }) {
+function Command({ value, className }: { value: string; className?: string }) {
   return (
     <div
       className={cn(
@@ -24,7 +24,7 @@ export function Command({ value, className }: { value: string; className?: strin
  * pushing the rest of the page down — `scroll-slim` comes from the tokens package, so
  * the scrollbar belongs to the panel instead of the platform.
  */
-export function SourceBlock({ path, content }: { path: string; content: string }) {
+function SourceBlock({ path, content }: { path: string; content: string }) {
   const file = path.split("/").pop() ?? path;
   const lines = content.split("\n").length;
   return (
@@ -42,7 +42,7 @@ export function SourceBlock({ path, content }: { path: string; content: string }
 }
 
 /** Labelled cells with hairline gaps — the facts about an item, not a meta string. */
-export function DataPlate({ cells }: { cells: { label: string; value: string }[] }) {
+function DataPlate({ cells }: { cells: { label: string; value: string }[] }) {
   return (
     <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-border bg-border sm:grid-cols-4">
       {cells.map((cell) => (
@@ -54,3 +54,5 @@ export function DataPlate({ cells }: { cells: { label: string; value: string }[]
     </dl>
   );
 }
+
+export { Command, DataPlate, SourceBlock };

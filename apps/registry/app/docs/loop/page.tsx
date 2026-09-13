@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
-import { LOOP, OUT_OF_BAND } from "../../_site/kit";
-import { DocPage, Section } from "../../_site/prose";
+import { LOOP, OUT_OF_BAND, SKILLS } from "../../_site/kit";
+import { DocPage, RepoText, Section } from "../../_site/prose";
 import type { TocEntry } from "../../_site/toc";
 
 export const metadata: Metadata = {
@@ -19,13 +19,13 @@ export default function LoopPage() {
   return (
     <DocPage
       title="The loop"
-      lead="Six commands, installed into the project so the agent has them from the first session. Five run in order around a piece of work; three more run when something happens."
+      lead={`${SKILLS.length} skills, installed into the project so the agent has them from the first session. ${LOOP.length} steps run in order around a piece of work — /feature opens and closes it — and ${OUT_OF_BAND.length} more skills run when something happens.`}
       toc={TOC}
     >
       <Section
         id="order"
         title="In order"
-        lead="Each step leaves a file behind, in the feature's own folder. That is what lets the next step — and the next session — start from something other than the conversation."
+        lead="Most steps leave a file behind, in the feature's own folder. That is what lets the next step — and the next session — start from something other than the conversation. Each description below is the skill's own, read from its SKILL.md."
       >
         <ol className="grid gap-px overflow-hidden rounded-md border border-border bg-border">
           {LOOP.map((stage, index) => (
@@ -40,10 +40,12 @@ export default function LoopPage() {
                     </code>
                   ) : null}
                 </div>
-                <p className="max-w-prose text-sm text-muted-foreground">{stage.body}</p>
-                {stage.writes ? (
+                <p className="max-w-prose text-sm text-muted-foreground">
+                  <RepoText>{stage.body}</RepoText>
+                </p>
+                {stage.writes.length ? (
                   <p className="text-xs text-subtle-foreground">
-                    Writes <span className="font-mono">{stage.writes}</span>
+                    Writes <span className="font-mono">{stage.writes.join(", ")}</span>
                   </p>
                 ) : null}
               </div>
@@ -64,7 +66,9 @@ export default function LoopPage() {
                 <span className="type-section text-sm text-foreground">{stage.title}</span>
                 <code className="font-mono text-xs text-muted-foreground">{stage.command}</code>
               </dt>
-              <dd className="max-w-prose text-sm text-muted-foreground">{stage.body}</dd>
+              <dd className="max-w-prose text-sm text-muted-foreground">
+                <RepoText>{stage.body}</RepoText>
+              </dd>
             </div>
           ))}
         </dl>

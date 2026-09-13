@@ -1,8 +1,8 @@
 # Progress
 
-**Stage:** 08 — Registry site
-**Last completed:** 02 — Agent kit scaffold
-**Active feature:** 08-registry-site — spec written, needs /architect
+**Stage:** 04 — kit sync engine
+**Last completed:** 08 — Groundwork site
+**Active feature:** none
 **Next:** 04 — kit sync engine (spec and plan already on `feat/04-kit-sync`)
 **Blocker:** none
 
@@ -13,14 +13,14 @@ version of it that grew to 450 lines is the reason the feature folders exist.
 ## Checklist
 
 - [x] **01** Design registry, minimal version
-- [x] **02** Agent kit scaffold — *one criterion open: no feature has been run through the
-      loop end to end yet, which is the actual test of it*
+- [x] **02** Agent kit scaffold — *08 was the first feature run through the loop end to
+      end; `/feature finish` refused it once, on a criterion the branch really did fail*
 - [ ] **03** jobpilot becomes the first consumer
 - [ ] **04** `packages/kit`: sync engine
 - [ ] **05** `packages/kit`: check and doctor
 - [ ] **06** `templates/`, `presets/`, `/kickoff`
-- [ ] **07** `apps/site`
-- [~] **08** Registry site — *in progress, `feat/08-registry-site`*
+- [ ] **07** `apps/site` — *on hold; 08 may have absorbed it, see build-plan*
+- [x] **08** Groundwork site
 
 ## Notes
 

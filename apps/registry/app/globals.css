@@ -32,7 +32,7 @@
  * between semibold and bold, which only the variable axis can reach.
  */
 @utility type-display {
-  font-family: var(--typeface-heading, var(--font-sans));
+  @apply font-heading;
   font-stretch: 112%;
   font-weight: 620;
   line-height: 0.96;
@@ -44,16 +44,20 @@
  * without the hero's shout repeating down the page.
  */
 @utility type-section {
-  font-family: var(--typeface-heading, var(--font-sans));
+  @apply font-heading;
   font-weight: 560;
 }
 
 /*
- * Two gradients the hero needs that a utility class can't express.
+ * Three gradients the hero needs that a utility class can't express.
  *
  * `plate-copy` is a soft lift directly behind the words. The flat wash has to serve the
  * whole illustration, so it can only be as strong as the picture tolerates; this puts the
  * extra contrast where the type actually is and nowhere else.
+ *
+ * `plate-top` settles the band the header floats in. The wordmark sits on bare plate, and
+ * in dark the brightest cloud behind it measured 3.6:1 against the ink without this; the
+ * nav and the button carry their own pills and don't need it.
  *
  * `plate-fade` dissolves the plate into the page. The stops are weighted late on purpose —
  * a plain two-stop fade reads as a hard edge near the bottom, because most of the change
@@ -67,6 +71,15 @@
     70% 46% at 50% 42%,
     color-mix(in oklab, var(--background) 55%, transparent) 0%,
     color-mix(in oklab, var(--background) 28%, transparent) 58%,
+    transparent 100%
+  );
+}
+
+@utility plate-top {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--background) 55%, transparent) 0%,
+    color-mix(in oklab, var(--background) 35%, transparent) 55%,
     transparent 100%
   );
 }

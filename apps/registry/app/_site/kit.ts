@@ -1,108 +1,139 @@
+import { contextFiles, featureFolder, readSkill, skillNames, skillSection } from "./repo";
+
 /**
- * The agent-kit half of groundwork, as the site needs to describe it. Kept beside the
- * registry data rather than inside a page so the landing page and the docs pages cannot
- * drift into describing the loop two different ways.
+ * The agent-kit half of groundwork, as the site describes it. The words come from the
+ * repo — each skill's own description, the feature folder drawn in
+ * `context/features/README.md` — and this file supplies only the order and the headings.
+ *
+ * Every skill in `skills/` has to appear in the loop or out of band, and every file in
+ * `context/` needs a note. Either mismatch fails the build, so the site cannot quietly fall
+ * behind the kit it describes.
  */
 
-export type Stage = {
+type Stage = {
   command: string;
   title: string;
   body: string;
-  writes?: string;
+  writes: string[];
 };
 
+const folder = featureFolder();
+
+/**
+ * Files in the feature folder written by a step, per the README's "(by)" column. Matched
+ * either way round, because the README says `/remember save` where the site says
+ * `/remember`, and `/feature start` where the site says `/feature start NN`.
+ */
+function writtenBy(step: string): string[] {
+  return folder.filter((file) => file.by.startsWith(step) || step.startsWith(file.by)).map((file) => file.name);
+}
+
+function note(name: string): string {
+  const file = folder.find((entry) => entry.name === name);
+  if (!file) throw new Error(`context/features/README.md no longer lists ${name}.`);
+  return file.note.charAt(0).toUpperCase() + file.note.slice(1) + ".";
+}
+
+function stage(command: string, title: string, skill: string, body?: string): Stage {
+  return { command, title, body: body ?? readSkill(skill).description, writes: writtenBy(command) };
+}
+
+const featureSkill = readSkill("feature");
+
 /** The loop, in the order it runs. A real sequence, which is why it is numbered. */
-export const LOOP: Stage[] = [
-  {
-    command: "/feature start NN",
-    title: "Open the work",
-    body: "Looks the number up in the build plan, refuses to start on a dirty tree, cuts the branch and writes the spec — including criteria someone other than you could check. “Filtering works” is not one. “Selecting a status narrows the table and the count updates” is.",
-    writes: "spec.md",
-  },
-  {
-    command: "/architect",
-    title: "Decide before building",
-    body: "A senior engineer sitting with you before you start, not a grilling. It surfaces the decisions that change the implementation, names the assumptions that have not been tested yet, and orders the work so the riskiest one is settled first.",
-    writes: "plan.md",
-  },
+const LOOP: (Stage & { skill?: string })[] = [
+  { ...stage("/feature start NN", "Open the work", "feature"), skill: "feature" },
+  { ...stage("/architect", "Decide before building", "architect"), skill: "architect" },
   {
     command: "",
     title: "Build it",
-    body: "Decisions and evidence go into the log as they happen, not reconstructed afterwards. This is the step the other five exist to protect.",
-    writes: "log.md",
+    body: note("log.md"),
+    writes: writtenBy("during"),
   },
+  { ...stage("/review", "Check it with fresh eyes", "review"), skill: "review" },
   {
-    command: "/review",
-    title: "Check it with fresh eyes",
-    body: "Cheap automated checks first, because they cost nothing. Then a subagent that sees only the spec, the plan, the diff and the rules — not the conversation that produced them, which is what makes it a second opinion rather than an echo.",
-    writes: "review.md",
-  },
-  {
-    command: "/feature finish",
-    title: "Close it, or don't",
-    body: "Every criterion needs a line saying how it was checked. “Not verified, because the staging data has no failed payment yet” closes a criterion. Silence does not. Then the docs get fixed, the gotchas get harvested, and the PR is written from the log.",
+    ...stage("/feature finish", "Close it, or don't", "feature", skillSection(featureSkill, "`/feature finish`")),
+    skill: "feature",
   },
 ];
 
-/** The three that run when something happens, rather than in order. */
-export const OUT_OF_BAND: Stage[] = [
-  {
-    command: "/remember",
-    title: "Across sessions",
-    body: "Sessions start blank. `save` writes where you got to into the feature's handoff; `restore` reads it back at the start of the next one.",
-    writes: "handoff.md",
-  },
-  {
-    command: "/recover",
-    title: "When a fix doesn't take",
-    body: "The instinct when something breaks is to keep prompting. The session gets longer, the context gets polluted, the code gets worse. This diagnoses which kind of failure it is first — targeted fix, hard reset, or rethink — because the right response depends on that answer.",
-  },
-  {
-    command: "/harvest",
-    title: "So it's only paid for once",
-    body: "A gotcha you solve and don't write down, you solve again in the next project. This promotes it into the knowledge base, tagged by stack, where the next project's kickoff will install it.",
-    writes: "knowledge/*.md",
-  },
+/** The ones that run when something happens, rather than in order. */
+const OUT_OF_BAND: (Stage & { skill: string })[] = [
+  { ...stage("/remember", "Across sessions", "remember"), skill: "remember" },
+  { ...stage("/recover", "When a fix doesn't take", "recover"), skill: "recover" },
+  { ...stage("/harvest", "So it's only paid for once", "harvest"), skill: "harvest", writes: ["knowledge/*.md"] },
 ];
 
-export type TreeNode = { name: string; note?: string; children?: TreeNode[] };
+const SKILLS = skillNames();
 
-/** What a project's `context/` holds once groundwork has set it up. */
-export const CONTEXT_TREE: TreeNode[] = [
+{
+  const covered = new Set([...LOOP, ...OUT_OF_BAND].flatMap((entry) => (entry.skill ? [entry.skill] : [])));
+  const missing = SKILLS.filter((name) => !covered.has(name));
+  const stale = [...covered].filter((name) => !SKILLS.includes(name));
+  if (missing.length || stale.length) {
+    throw new Error(
+      `app/_site/kit.ts is out of step with skills/: ${[
+        missing.length ? `not on the site: ${missing.join(", ")}` : "",
+        stale.length ? `no longer in skills/: ${stale.join(", ")}` : "",
+      ]
+        .filter(Boolean)
+        .join("; ")}.`,
+    );
+  }
+}
+
+type TreeNode = { name: string; note?: string; children?: TreeNode[] };
+
+/**
+ * One line each for the top of `context/`. The file list is read from disk; only the notes
+ * are written here, and a file without one fails the build.
+ */
+const CONTEXT_NOTES: Record<string, string> = {
+  "overview.md": "what this project is, what it is not, and who consumes it",
+  "standards.md": "the house style, with a specimen to copy rather than a rule to interpret",
+  "build-plan.md": "numbered stages, each with its own “done when”",
+  "progress.md": "a status block and a checklist — nothing else",
+};
+
+{
+  const onDisk = contextFiles();
+  const unnoted = onDisk.filter((name) => !(name in CONTEXT_NOTES));
+  const stale = Object.keys(CONTEXT_NOTES).filter((name) => !onDisk.includes(name));
+  if (unnoted.length || stale.length) {
+    throw new Error(
+      `CONTEXT_NOTES in app/_site/kit.ts is out of step with context/: ${[...unnoted, ...stale].join(", ")}.`,
+    );
+  }
+}
+
+const CONTEXT_TREE: TreeNode[] = [
   {
     name: "context/",
     children: [
-      { name: "overview.md", note: "what this project is, what it is not, and who consumes it" },
-      { name: "standards.md", note: "the house style, with a specimen to copy rather than a rule to interpret" },
-      { name: "build-plan.md", note: "numbered stages, each with its own “done when”" },
-      { name: "progress.md", note: "a status block and a checklist — nothing else" },
+      // The notes' order, not the directory's: overview first reads as the order to read them in.
+      ...Object.entries(CONTEXT_NOTES).map(([name, note]) => ({ name, note })),
       {
         name: "features/",
         children: [
-          {
-            name: "04-kit-sync/",
-            children: [
-              { name: "spec.md", note: "what it is, and the criteria" },
-              { name: "plan.md", note: "how it gets built" },
-              { name: "log.md", note: "decisions and evidence, as they happen" },
-              { name: "review.md", note: "what the reviewer found" },
-              { name: "handoff.md", note: "where to pick up next session" },
-            ],
-          },
+          { name: "README.md", note: "the folder's shape, and the rule with teeth" },
+          { name: "NN-slug/", children: folder.map((file) => ({ name: file.name, note: file.note })) },
         ],
       },
     ],
   },
 ];
 
-export const HALVES = [
+const HALVES = [
   {
     title: "The agent kit",
     lead: "What makes a new repo start with your context, your guardrails and your loop instead of a blank CLAUDE.md.",
     href: "/docs/loop",
     linkLabel: "Read the loop",
     parts: [
-      { name: "skills/", body: "The six lifecycle commands, installed into the project so the agent has them from day one." },
+      {
+        name: "skills/",
+        body: `The ${SKILLS.length} lifecycle skills, installed into the project so the agent has them from day one.`,
+      },
       { name: "context/", body: "The architecture written down before any code exists — overview, standards, build plan, and a folder per feature." },
       { name: "knowledge/", body: "Gotchas harvested from projects that already paid for them, tagged by stack and installed to match." },
       { name: "hooks", body: "The rules that prose could not hold: generated files refuse edits, raw colours fail at edit time." },
@@ -120,3 +151,5 @@ export const HALVES = [
     ],
   },
 ];
+
+export { CONTEXT_TREE, HALVES, LOOP, OUT_OF_BAND, SKILLS, type Stage, type TreeNode };

@@ -62,31 +62,31 @@ express the design is a finding about the contract.
 
 ## Done when
 
-- [ ] `/` renders the hero with `background.png` through `next/image`, and the headline,
+- [x] `/` renders the hero with `background.png` through `next/image`, and the headline,
       subhead and nav read against the plate in **both** light and dark — checked in the
       browser, not assumed
-- [ ] The landing page and the docs cover **both halves** — a reader who has never seen
+- [x] The landing page and the docs cover **both halves** — a reader who has never seen
       groundwork can tell from `/` alone that it installs skills and a context scaffold,
       not only components
-- [ ] `/docs/loop`, `/docs/context` and `/docs/knowledge` each describe their part of the
+- [x] `/docs/loop`, `/docs/context` and `/docs/knowledge` each describe their part of the
       kit from what the repo actually contains, not from a paraphrase that can drift
-- [ ] Every one of the 23 items in `registry.json` has a page at `/docs/components/<name>`,
+- [x] Every one of the 23 items in `registry.json` has a page at `/docs/components/<name>`,
       and adding an item to `registry.json` produces a page and a sidebar entry with no
       other file edited — verified by adding a throwaway item and removing it again
-- [ ] An item page shows its tier, published version from `versions.json`, track, the
+- [x] An item page shows its tier, published version from `versions.json`, track, the
       description, the live preview (or the "no visual preview" note for libs and hooks),
       the `bunx shadcn@latest add @ja3dan/<name>` command, and its registry dependencies
       as links to their own pages
-- [ ] An item page shows the item's source, taken from `public/r/<name>.json`
-- [ ] The sidebar groups by tier, marks the current item, and is reachable at 400px width
-- [ ] The right-hand TOC lists that page's sections and marks the one in view
-- [ ] The theme choice survives a full page reload and a route change
-- [ ] No horizontal scroll at 400px on `/`, `/docs`, and an item page with a wide preview
-- [ ] `tracking-tight` reaches every groundwork project, not just this app — set in
+- [x] An item page shows the item's source, taken from `public/r/<name>.json`
+- [x] The sidebar groups by tier, marks the current item, and is reachable at 400px width
+- [x] The right-hand TOC lists that page's sections and marks the one in view
+- [x] The theme choice survives a full page reload and a route change
+- [x] No horizontal scroll at 400px on `/`, `/docs`, and an item page with a wide preview
+- [x] `tracking-tight` reaches every groundwork project, not just this app — set in
       `packages/tokens/base.css`, and visible on a registry component's own preview
-- [ ] `bun run check` passes — `no-raw-colors` over `app/**` included, with no rule
+- [x] `bun run check` passes — `no-raw-colors` over `app/**` included, with no rule
       disabled and no token added to the contract purely to make the hero work
-- [ ] `bun run --filter registry build` passes, and `registry:build` reports no item
+- [x] `bun run --filter registry build` passes, and `registry:build` reports no item
       content change (this feature touches `app/**` only)
 
 ## Out of scope

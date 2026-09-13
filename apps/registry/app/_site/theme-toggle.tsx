@@ -4,11 +4,12 @@ import { MoonIcon, SunIcon } from "lucide-react";
 import { useSyncExternalStore } from "react";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/registry/groundwork/ui/button";
 
 /**
  * The `dark` class is already on <html> before React runs — see THEME_SCRIPT in
  * layout.tsx — so the class is the source of truth and this subscribes to it rather
- * than keeping a second copy. Anything else that flips the class keeps the icon honest.
+ * than keeping a second copy. Anything else that flips the class keeps the state honest.
  */
 function subscribe(onChange: () => void) {
   const observer = new MutationObserver(onChange);
@@ -18,10 +19,17 @@ function subscribe(onChange: () => void) {
 
 const isDark = () => document.documentElement.classList.contains("dark");
 
-/** The server has no way to know, so it renders light and hydration corrects it. */
+/** The server has no way to know. Only `aria-pressed` reads this; the icon doesn't. */
 const isDarkOnServer = () => false;
 
-export function ThemeToggle({ className }: { className?: string }) {
+/**
+ * The icon swaps with the `dark:` variant rather than with React state, so a dark reload
+ * paints the moon on the first frame instead of flashing the sun until hydration.
+ *
+ * A fixed label with `aria-pressed` is the whole accessible state: "Dark theme, pressed".
+ * A label that also flipped would announce the opposite of the pressed state half the time.
+ */
+function ThemeToggle({ className }: { className?: string }) {
   const dark = useSyncExternalStore(subscribe, isDark, isDarkOnServer);
 
   function toggle() {
@@ -35,19 +43,18 @@ export function ThemeToggle({ className }: { className?: string }) {
   }
 
   return (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
+      size="icon"
       onClick={toggle}
       aria-pressed={dark}
-      aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
-      className={cn(
-        "inline-flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors",
-        "hover:bg-accent hover:text-accent-foreground",
-        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
-        className,
-      )}
+      aria-label="Dark theme"
+      className={cn("size-8 rounded-full", className)}
     >
-      {dark ? <MoonIcon className="size-4" aria-hidden /> : <SunIcon className="size-4" aria-hidden />}
-    </button>
+      <SunIcon className="dark:hidden" aria-hidden />
+      <MoonIcon className="hidden dark:block" aria-hidden />
+    </Button>
   );
 }
+
+export { ThemeToggle };

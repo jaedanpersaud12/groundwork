@@ -26,9 +26,11 @@ export default function DocsLayout({ children }: LayoutProps<"/docs">) {
   return (
     <div className="min-h-svh">
       <SiteHeader variant="solid" />
-      <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-12">
+      <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-12">
         <Sidebar sections={sections} />
-        <div className="min-w-0">{children}</div>
+        <main id="content" className="min-w-0 scroll-mt-20">
+          {children}
+        </main>
       </div>
     </div>
   );

@@ -4,7 +4,8 @@ import Link from "next/link";
 import { Command } from "../_site/code";
 import { HALVES } from "../_site/kit";
 import { DocPage, Section } from "../_site/prose";
-import { items, setup } from "../_site/registry";
+import { items, setup, setupCommand } from "../_site/registry";
+import { FOCUS_RING, TEXT_LINK } from "../_site/styles";
 import type { TocEntry } from "../_site/toc";
 
 export const metadata: Metadata = {
@@ -18,10 +19,8 @@ const TOC: TocEntry[] = [
   { id: "next", label: "Where to go next" },
 ];
 
-const REGISTRY_URL = "https://<your-registry-domain>";
-
 const NEXT = [
-  { href: "/docs/loop", title: "The loop", body: "The six commands a feature passes through, and the one that refuses to close it." },
+  { href: "/docs/loop", title: "The loop", body: "The skills a feature passes through, and the one that refuses to close it." },
   { href: "/docs/context", title: "Context", body: "What gets written down before any code exists, and why the tracker is four lines long." },
   { href: "/docs/knowledge", title: "Knowledge", body: "Gotchas that only earn a place when the documentation is silent or wrong." },
   { href: "/docs/tokens", title: "Token contract", body: "Every colour name a component is allowed to use, and what each one is for." },
@@ -56,7 +55,7 @@ export default function DocsHome() {
               </dl>
               <Link
                 href={half.href}
-                className="mt-auto justify-self-start rounded-sm pt-1 text-sm text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                className={`mt-auto justify-self-start pt-1 text-sm ${TEXT_LINK}`}
               >
                 {half.linkLabel}
               </Link>
@@ -70,15 +69,15 @@ export default function DocsHome() {
         title="Set up a project"
         lead="Two commands. The first is the only one that differs from any other shadcn project."
       >
-        <ol className="grid gap-6">
-          <li className="grid gap-2">
+        <ol className="grid grid-cols-1 gap-6">
+          <li className="grid min-w-0 grid-cols-1 gap-2">
             <p className="text-sm text-foreground">
               <span className="text-subtle-foreground">1.</span> Initialise on the contract.
             </p>
             <p className="max-w-prose text-sm text-muted-foreground">{setup.description}</p>
-            <Command value={`bunx shadcn@latest init ${REGISTRY_URL}/r/setup.json`} />
+            <Command value={setupCommand} />
           </li>
-          <li className="grid gap-2">
+          <li className="grid min-w-0 grid-cols-1 gap-2">
             <p className="text-sm text-foreground">
               <span className="text-subtle-foreground">2.</span> Replace shadcn&apos;s default button with this one,
               then add any of the other {items.length - 1}.
@@ -88,12 +87,11 @@ export default function DocsHome() {
         </ol>
         <p className="max-w-prose text-sm text-muted-foreground">{setup.docs}</p>
         <p className="max-w-prose text-sm text-muted-foreground">
-          The agent kit installs separately — <code className="font-mono">/kickoff</code> writes the skills, the
-          context scaffold and the stack&apos;s knowledge files into the repo. It is still being built; until then the{" "}
-          <Link
-            href="/docs/context"
-            className="rounded-sm text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-          >
+          These commands set up the design system and nothing else: <code className="font-mono">shadcn init</code>{" "}
+          does not create skills, a <code className="font-mono">context/</code> folder or knowledge files. The agent
+          kit installs separately — <code className="font-mono">/kickoff</code> writes those into the repo. It is
+          still being built; until then the{" "}
+          <Link href="/docs/context" className={TEXT_LINK}>
             context scaffold
           </Link>{" "}
           is worth copying by hand.
@@ -106,7 +104,7 @@ export default function DocsHome() {
             <Link
               key={entry.href}
               href={entry.href}
-              className="grid content-start gap-1 bg-card p-4 transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+              className={`grid content-start gap-1 bg-card p-4 transition-colors hover:bg-accent ${FOCUS_RING}`}
             >
               <dt className="type-section text-sm text-card-foreground">{entry.title}</dt>
               <dd className="text-sm text-muted-foreground">{entry.body}</dd>

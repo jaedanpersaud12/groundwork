@@ -2,12 +2,14 @@ import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 
+import { FOCUS_RING } from "./styles";
 import { ThemeToggle } from "./theme-toggle";
 
 const NAV = [
   { href: "/docs", label: "Start here" },
   { href: "/docs/loop", label: "The loop" },
   { href: "/docs/context", label: "Context" },
+  { href: "/docs/knowledge", label: "Knowledge" },
   { href: "/docs/tokens", label: "Tokens" },
 ];
 
@@ -15,7 +17,7 @@ const NAV = [
  * `plate` floats the header over the hero illustration; `solid` sticks it to the top of
  * a docs page. Same contents, so the wordmark doesn't move between the two.
  */
-export function SiteHeader({ variant }: { variant: "plate" | "solid" }) {
+function SiteHeader({ variant }: { variant: "plate" | "solid" }) {
   const plate = variant === "plate";
   return (
     <header
@@ -27,7 +29,7 @@ export function SiteHeader({ variant }: { variant: "plate" | "solid" }) {
       <div className="mx-auto flex w-full max-w-6xl items-center gap-3 px-4 py-4 sm:px-6">
         <Link
           href="/"
-          className="type-display shrink-0 rounded-sm text-lg text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          className={cn("type-display shrink-0 rounded-sm text-lg text-foreground", FOCUS_RING)}
         >
           groundwork
         </Link>
@@ -43,7 +45,10 @@ export function SiteHeader({ variant }: { variant: "plate" | "solid" }) {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-full px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+              className={cn(
+                "rounded-full px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
+                FOCUS_RING,
+              )}
             >
               {link.label}
             </Link>
@@ -55,7 +60,8 @@ export function SiteHeader({ variant }: { variant: "plate" | "solid" }) {
           <Link
             href="/docs"
             className={cn(
-              "rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+              "rounded-full px-4 py-2 text-sm font-medium transition-colors",
+              FOCUS_RING,
               plate
                 ? "bg-card text-card-foreground shadow-border hover:bg-accent hover:text-accent-foreground"
                 : "bg-primary text-primary-foreground hover:bg-primary/90",
@@ -68,3 +74,5 @@ export function SiteHeader({ variant }: { variant: "plate" | "solid" }) {
     </header>
   );
 }
+
+export { SiteHeader };

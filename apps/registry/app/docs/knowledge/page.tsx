@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { DocPage, Section } from "../../_site/prose";
+import { knowledgeFiles } from "../../_site/repo";
 import type { TocEntry } from "../../_site/toc";
 
 export const metadata: Metadata = {
@@ -10,18 +11,16 @@ export const metadata: Metadata = {
 
 const TOC: TocEntry[] = [
   { id: "bar", label: "What earns a place" },
+  { id: "files", label: "What's in it" },
   { id: "format", label: "The format" },
   { id: "staleness", label: "Staleness" },
 ];
 
-const FRONTMATTER = `---
-scope: stack          # project | stack | universal
-stack: [nextjs-16, tailwind-4, shadcn-4]
-verified_version: shadcn 4.21.0
-verified_on: 2026-09-13
----`;
+/** Read at build time, so a harvested file appears on the next deploy with no page edit. */
+const FILES = knowledgeFiles();
 
 export default function KnowledgePage() {
+  const specimen = FILES[0];
   return (
     <DocPage
       title="Knowledge"
@@ -41,13 +40,65 @@ export default function KnowledgePage() {
       </Section>
 
       <Section
+        id="files"
+        title="What's in it"
+        lead={`${FILES.length} ${FILES.length === 1 ? "file" : "files"} in knowledge/ today, listed from the repo rather than from memory.`}
+      >
+        <div className="scroll-slim overflow-x-auto rounded-md border border-border">
+          <table className="w-full min-w-[34rem] text-start text-sm">
+            <thead className="bg-muted text-muted-foreground">
+              <tr>
+                <th scope="col" className="px-4 py-2 text-start font-normal">
+                  File
+                </th>
+                <th scope="col" className="px-4 py-2 text-start font-normal">
+                  Scope
+                </th>
+                <th scope="col" className="px-4 py-2 text-start font-normal">
+                  Stack
+                </th>
+                <th scope="col" className="px-4 py-2 text-end font-normal">
+                  Gotchas
+                </th>
+                <th scope="col" className="px-4 py-2 text-start font-normal">
+                  Verified
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-card text-card-foreground">
+              {FILES.map((file) => (
+                <tr key={file.file} className="border-t border-border">
+                  <td className="px-4 py-3">
+                    <span className="block font-mono text-xs">{file.file}</span>
+                    <span className="block text-xs text-muted-foreground">{file.title}</span>
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">{file.scope}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{file.stack.join(", ")}</td>
+                  <td className="px-4 py-3 text-end tabular-nums text-muted-foreground">{file.gotchas}</td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {file.verifiedVersion}, {file.verifiedOn}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Section>
+
+      <Section
         id="format"
         title="The format"
-        lead="Frontmatter says who the file is for and how stale it is. Then one bullet per gotcha."
+        lead={
+          specimen
+            ? `Frontmatter says who the file is for and how stale it is. This is ${specimen.file}'s, as committed.`
+            : "Frontmatter says who the file is for and how stale it is. Then one bullet per gotcha."
+        }
       >
-        <pre className="scroll-slim overflow-x-auto rounded-md border border-border bg-card p-4 font-mono text-xs text-card-foreground">
-          <code>{FRONTMATTER}</code>
-        </pre>
+        {specimen ? (
+          <pre className="scroll-slim overflow-x-auto rounded-md border border-border bg-card p-4 font-mono text-xs text-card-foreground">
+            <code>{specimen.frontmatter}</code>
+          </pre>
+        ) : null}
         <p className="max-w-prose text-muted-foreground">
           Each bullet opens with a bolded claim that states the trap, then the detail and the workaround. The bold half
           has to carry the finding on its own, because that is the part someone scanning twenty bullets actually reads.

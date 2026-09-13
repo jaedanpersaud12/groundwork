@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo, IBM_Plex_Mono } from "next/font/google";
 
+import { FOCUS_RING } from "./_site/styles";
 import "./globals.css";
 
 /**
@@ -24,7 +25,7 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: { default: "groundwork", template: "%s — groundwork" },
   description:
-    "Components you copy into your project, one token contract they all obey, and the lint rule that fails the build when anything breaks it.",
+    "The foundation a new repo starts on: the skills and context your agents work from, a token contract your components can't break, and the gotchas you already paid for somewhere else.",
 };
 
 /**
@@ -43,7 +44,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        {/* First tab stop on every page. Invisible until focused, so it costs sighted readers nothing. */}
+        <a
+          href="#content"
+          className={`sr-only rounded-full bg-card px-4 py-2 text-sm text-card-foreground shadow-border focus-visible:not-sr-only focus-visible:fixed focus-visible:top-3 focus-visible:left-3 focus-visible:z-50 ${FOCUS_RING}`}
+        >
+          Skip to content
+        </a>
+        {children}
+      </body>
     </html>
   );
 }

@@ -1,33 +1,49 @@
 "use client";
 
-import { CheckIcon, CopyIcon } from "lucide-react";
+import { CheckIcon, CopyIcon, XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/registry/groundwork/ui/button";
 
-/** Reverts on its own after two seconds; no toast, no layout change. */
-export function CopyButton({ value, label, className }: { value: string; label: string; className?: string }) {
-  const [copied, setCopied] = useState(false);
+type Status = "idle" | "copied" | "failed";
+
+const ICON = { idle: CopyIcon, copied: CheckIcon, failed: XIcon } as const;
+
+/**
+ * Reverts on its own after two seconds; no toast, no layout change. A failed write — an
+ * insecure origin, or a denied clipboard permission — shows a cross rather than nothing,
+ * because a copy button that silently does nothing reads as a copy that worked.
+ */
+function CopyButton({ value, label, className }: { value: string; label: string; className?: string }) {
+  const [status, setStatus] = useState<Status>("idle");
 
   useEffect(() => {
-    if (!copied) return;
-    const id = setTimeout(() => setCopied(false), 2000);
+    if (status === "idle") return;
+    const id = setTimeout(() => setStatus("idle"), 2000);
     return () => clearTimeout(id);
-  }, [copied]);
+  }, [status]);
+
+  const Icon = ICON[status];
 
   return (
-    <button
-      type="button"
-      onClick={() => void navigator.clipboard.writeText(value).then(() => setCopied(true))}
-      aria-label={copied ? `${label} copied` : `Copy ${label}`}
-      className={cn(
-        "inline-flex size-7 shrink-0 items-center justify-center rounded-sm text-subtle-foreground transition-colors",
-        "hover:bg-accent hover:text-accent-foreground",
-        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
-        className,
-      )}
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() =>
+        navigator.clipboard.writeText(value).then(
+          () => setStatus("copied"),
+          () => setStatus("failed"),
+        )
+      }
+      aria-label={
+        status === "copied" ? `${label} copied` : status === "failed" ? `Couldn't copy ${label}` : `Copy ${label}`
+      }
+      className={cn("size-7 rounded-sm text-subtle-foreground", className)}
     >
-      {copied ? <CheckIcon className="size-3.5" aria-hidden /> : <CopyIcon className="size-3.5" aria-hidden />}
-    </button>
+      <Icon className="size-3.5" aria-hidden />
+    </Button>
   );
 }
+
+export { CopyButton };

@@ -61,9 +61,10 @@ only the kit — and every rough edge hit along the way has gone back in as a ch
 
 ## 07 — `apps/site`
 
-Marketing site. Design TBD.
-
-**Done when:** it explains what groundwork is to someone who has never seen it.
+**On hold — re-scope before starting.** 08 put the explainer on `apps/registry`'s landing
+page, which meets this stage's original "done when" (explain groundwork to someone who has
+never seen it). A separate `apps/site` is only worth building if it has a job that page
+doesn't do; write that job down here first, or drop the stage.
 
 ## 08 — Groundwork site
 
