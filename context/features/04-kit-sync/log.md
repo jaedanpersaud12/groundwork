@@ -77,3 +77,77 @@ the local registry served by `next dev` on :3001, and `git` 2.53.0. Fixtures wer
   Plus parser unit tests for dependency lines, empty lines and no-content output.
 - **Checks:** 7 pass. `tsc --noEmit` clean. `bun run check` passes with kit in the
   workspace (spec criterion 8, so far). CI gains `bun run --filter @ja3dan/kit typecheck`.
+
+## Steps 3–4 — the fixture harness, and `kit lock`
+
+### The design `kit lock` ended up with
+
+1. **Registry from the project.** `components.json` → the `@ja3dan` template → a base
+   URL, which has to end `/r/{name}.json` or kit refuses. Then `r/registry.json` and
+   `r/versions.json` are fetched.
+2. **One dry run over every item** (`planAdd` takes several) maps each item's files to
+   their project paths with a status. 23 items took 1.3s, about the same as one. The dry
+   run doesn't say which item a file belongs to, so files are matched by basename. That's
+   safe because the registry's 24 basenames are unique and none uses a custom `target`,
+   and kit checks it, failing loudly the day two items share a name.
+3. **Which version is installed:**
+   - **current** — every file is `skip (identical)` against the current version;
+   - **past** — every file matches an older published version exactly, checked with
+     `viewFile` per version, newest first;
+   - **edited** — nothing matches, so the lock takes the version with the smallest line
+     distance and reports it as edited. Sync treats the difference as local edits either
+     way, so the choice only affects which base a merge starts from.
+4. **Refuses to replace an existing lock** without `--force`.
+
+### A registry change it needed
+
+A static host can't list `public/r/v/`, and `versions.json` only had the current version.
+Without a list of past versions, "which one does this project have" has no answer.
+`scripts/version-registry.ts` now writes `history: { <version>: <hash> }` per item, read
+back from `v/` on every build. The site's reader uses only `.version`, so nothing else
+changes. `data-table`'s history records `1.0.0` as `273d685c…`, the hash `versions.json`
+held before 1.0.1 shipped.
+
+**`registry-review`: no critical or important findings.**
+- **What it confirmed:** the immutability check is untouched; `history` can't disagree with
+  `hash` or the `v/` files, since both come from one hash function; the site's reader still
+  works; no item content or version changed; two consecutive `registry:build` runs give a
+  byte-identical `versions.json`, so CI's generated-files step stays clean.
+- **One minor note:** the hash algorithm now exists twice (`version-registry.ts` and kit),
+  kept in step only by `registry.test.ts`. The build script's copy now says so.
+
+### Bugs the tests and a real run caught
+
+- **Deadlocked tests.** The fixture's `install` used `execFileSync`, which blocked the
+  event loop the in-process fixture registry needed to answer shadcn. Each test hung
+  until Bun's 5s timeout. Now async, with a 60s timeout in `bunfig.toml`, since tests
+  drive the real CLI.
+- **`planAdd` joined an array with commas** into one argument. It now takes `string | string[]`.
+- **`require.resolve("shadcn/package.json")` works in Bun and fails in Node**
+  (`ERR_PACKAGE_PATH_NOT_EXPORTED`), because shadcn's `exports` doesn't list
+  `package.json`. The Bun tests all passed; only running `node dist/kit.js` found it. kit
+  now resolves `shadcn` itself, whose `.` export is the same `dist/index.js` as its `bin`.
+
+### Evidence
+
+- **`registry.test.ts`:** `hashItem` equals `versions.json`'s `history` hash for **every**
+  file in the real `public/r/v/` (25 files). `baseOf` and semver ordering are tested too.
+- **`commands/lock.test.ts`**, all against the fabricated registry with real `shadcn add`
+  installs:
+  - two installed items are locked with `source`, `sourceType`, `version`, `track` and a
+    `computedHash` equal to the served `versions.json`;
+  - an item that isn't installed is left out;
+  - a project installed at 1.0.0, with 1.1.0 then published, locks at **1.0.0** with
+    1.0.0's hash (`past`);
+  - an edited copy with 2.0.0 published locks at the closest version (`edited`);
+  - a second `lock` is refused, and `--force` rebuilds the same file;
+  - a project with no `@ja3dan` registry gets an explanation, not a fetch error.
+- **Real registry, built CLI, plain Node.** `node dist/kit.js lock` in a fixture with
+  `sortable-table-head` installed from the local registry and `table-card` edited by
+  hand, in 2.3s:
+  - `table-card` 1.0.0 was reported "edited — locked at the closest version";
+    `sortable-table-head` and `motion` 1.0.0 "current";
+  - all three `computedHash` values equal `apps/registry/public/r/versions.json`
+    (**spec criterion 1**);
+  - a second run exits 1 with the `--force` hint.
+- **Checks:** 17 kit tests pass, `tsc --noEmit` is clean, and `bun run check` passes.

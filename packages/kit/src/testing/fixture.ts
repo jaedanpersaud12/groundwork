@@ -1,9 +1,13 @@
-import { execFileSync } from "node:child_process";
+import { execFile, execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { promisify } from "node:util";
+
+import { bySemver, hashItem, type RegistryItem } from "../registry";
+import { SHADCN_BIN } from "../shadcn";
 
 /**
  * A consumer project and a registry that exist only for one test. The registry is
@@ -25,12 +29,16 @@ type FixtureItem = {
 
 type Registry = {
   url: string;
-  /** Publishes a version: served at `/r/v/<name>@<version>.json`, and as the current `/r/<name>.json`. */
+  /**
+   * Publishes a version at `/r/v/<name>@<version>.json`. The highest version of each item
+   * becomes its `/r/<name>.json`, and `/r/registry.json` and `/r/versions.json` are rebuilt
+   * the way `apps/registry/scripts/version-registry.ts` builds them.
+   */
   publish: (item: FixtureItem) => void;
   close: () => Promise<void>;
 };
 
-function toRegistryItem(item: FixtureItem) {
+function toRegistryItem(item: FixtureItem): RegistryItem {
   return {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: item.name,
@@ -44,6 +52,25 @@ function toRegistryItem(item: FixtureItem) {
 
 async function startRegistry(): Promise<Registry> {
   const routes = new Map<string, string>();
+  const published = new Map<string, Map<string, RegistryItem>>();
+
+  function rebuildIndexes() {
+    const current: RegistryItem[] = [];
+    const versions: Record<string, { version: string; hash: string; history: Record<string, string> }> = {};
+    for (const [name, byVersion] of published) {
+      const ordered = [...byVersion.keys()].sort(bySemver);
+      const latest = byVersion.get(ordered.at(-1)!)!;
+      current.push(latest);
+      routes.set(`/r/${name}.json`, JSON.stringify(latest, null, 2));
+      versions[name] = {
+        version: ordered.at(-1)!,
+        hash: hashItem(latest),
+        history: Object.fromEntries(ordered.map((version) => [version, hashItem(byVersion.get(version)!)])),
+      };
+    }
+    routes.set("/r/registry.json", JSON.stringify({ name: "fixture", items: current }, null, 2));
+    routes.set("/r/versions.json", JSON.stringify(versions, null, 2));
+  }
   const server: Server = createServer((request, response) => {
     const body = routes.get(new URL(request.url ?? "/", "http://fixture").pathname);
     response.writeHead(body ? 200 : 404, { "content-type": "application/json" });
@@ -55,9 +82,11 @@ async function startRegistry(): Promise<Registry> {
   return {
     url: `http://127.0.0.1:${port}`,
     publish(item) {
-      const json = JSON.stringify(toRegistryItem(item), null, 2);
-      routes.set(`/r/v/${item.name}@${item.version}.json`, json);
-      routes.set(`/r/${item.name}.json`, json);
+      const registryItem = toRegistryItem(item);
+      routes.set(`/r/v/${item.name}@${item.version}.json`, JSON.stringify(registryItem, null, 2));
+      if (!published.has(item.name)) published.set(item.name, new Map());
+      published.get(item.name)!.set(item.version, registryItem);
+      rebuildIndexes();
     },
     close: () => new Promise((resolve) => server.close(() => resolve())),
   };
@@ -103,4 +132,20 @@ function createProject(registryUrl: string): Project {
   return { dir, remove: () => rmSync(dir, { recursive: true, force: true }) };
 }
 
-export { createProject, startRegistry, toRegistryItem, type FixtureFile, type FixtureItem, type Project, type Registry };
+/**
+ * Installs items into a fixture project for real, with the same shadcn kit drives.
+ * Asynchronous on purpose: the fixture registry is an HTTP server in this same process, and
+ * a synchronous child would block the event loop that has to answer shadcn's requests.
+ */
+async function install(project: Project, ...items: string[]): Promise<void> {
+  await promisify(execFile)(process.execPath, [SHADCN_BIN, "add", ...items, "-y", "--cwd", project.dir], { cwd: project.dir });
+}
+
+/** Commits whatever the project holds now, so a later step's changes show up in `git status`. */
+function commit(project: Project, message: string): void {
+  const git = (...args: string[]) => execFileSync("git", args, { cwd: project.dir, stdio: "ignore" });
+  git("add", "-A");
+  git("-c", "user.name=fixture", "-c", "user.email=fixture@example.com", "commit", "-qm", message, "--allow-empty");
+}
+
+export { commit, createProject, install, startRegistry, toRegistryItem, type FixtureFile, type FixtureItem, type Project, type Registry };

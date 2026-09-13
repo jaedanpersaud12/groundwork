@@ -1,0 +1,4 @@
+[test]
+# Tests drive the real shadcn CLI against a fixture registry; one `add` or dry run takes a
+# second or two, and a lock of an out-of-date project runs several.
+timeout = 60000

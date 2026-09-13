@@ -1,6 +1,5 @@
 import { execFile } from "node:child_process";
 import { createRequire } from "node:module";
-import path from "node:path";
 import { promisify } from "node:util";
 
 const run = promisify(execFile);
@@ -10,12 +9,12 @@ const run = promisify(execFile);
  * the functions below read shadcn's human-facing `--dry-run` output, which is not a
  * documented interface; pinning the version is what makes that safe, and
  * `shadcn.test.ts` fails the day an upgrade changes the format.
+ *
+ * Resolved as the package itself, not `shadcn/package.json`: shadcn's `exports` doesn't list
+ * `package.json`, and Node enforces that where Bun doesn't. Its `.` export is `dist/index.js`,
+ * the same file as its `bin`.
  */
-const SHADCN_BIN = path.join(
-  path.dirname(createRequire(import.meta.url).resolve("shadcn/package.json")),
-  "dist",
-  "index.js",
-);
+const SHADCN_BIN = createRequire(import.meta.url).resolve("shadcn");
 
 /** A dry run can take a while when shadcn resolves dependencies over the network. */
 const TIMEOUT_MS = 120_000;
@@ -73,9 +72,13 @@ function parseView(stdout: string): string | null {
   return seen ? body.join("\n") : null;
 }
 
-/** Where each file of an item would land in this project, and what `add` would do to it. */
-async function planAdd(cwd: string, item: string): Promise<PlannedFile[]> {
-  return parsePlan(await shadcn(cwd, ["add", item, "--dry-run"]));
+/**
+ * Where each file of the given items would land in this project, and what `add` would do to
+ * it. Several items go in one call — one dry run for a whole registry takes about as long as
+ * one for a single item — but the output doesn't say which item a file came from.
+ */
+async function planAdd(cwd: string, items: string | string[]): Promise<PlannedFile[]> {
+  return parsePlan(await shadcn(cwd, ["add", ...[items].flat(), "--dry-run"]));
 }
 
 /**
