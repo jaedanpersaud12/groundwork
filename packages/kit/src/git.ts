@@ -23,12 +23,31 @@ async function isRepo(cwd: string): Promise<boolean> {
   }
 }
 
-/** Paths with uncommitted changes, untracked files included. */
+/**
+ * Paths with uncommitted changes, untracked files included. `-z` NUL-delimits records so a
+ * path is never mangled by quoting; a rename or copy's record is followed by a second,
+ * unprefixed record holding the original path — both are returned, since callers that check
+ * for one exact path (`link`, guarding `components.json`) need to catch either side of a move.
+ */
 async function dirtyPaths(cwd: string): Promise<string[]> {
-  return (await git(cwd, ["status", "--porcelain"]))
-    .split("\n")
-    .filter(Boolean)
-    .map((line) => line.slice(3));
+  const records = (await git(cwd, ["status", "--porcelain", "-z"])).split("\0").filter(Boolean);
+  const paths: string[] = [];
+  for (let i = 0; i < records.length; i++) {
+    const record = records[i];
+    paths.push(record.slice(3));
+    if (/[RC]/.test(record.slice(0, 2))) paths.push(records[++i]);
+  }
+  return paths;
+}
+
+/**
+ * Where git itself keeps a file under `.git` — not `path.join(cwd, ".git", name)`, since that
+ * assumes `.git` is a directory directly under `cwd`. A linked worktree's `.git` is a file
+ * pointing elsewhere, and `--cwd` can point at a nested project; `rev-parse --git-path`
+ * resolves both correctly and this just makes the result absolute.
+ */
+async function gitPath(cwd: string, name: string): Promise<string> {
+  return path.resolve(cwd, (await git(cwd, ["rev-parse", "--git-path", name])).trim());
 }
 
 async function branchExists(cwd: string, branch: string): Promise<boolean> {
@@ -81,4 +100,4 @@ async function mergeFile(ours: string, base: string, theirs: string): Promise<Me
   }
 }
 
-export { branchExists, commitAll, createBranch, dirtyPaths, isRepo, mergeFile, type MergeResult };
+export { branchExists, commitAll, createBranch, dirtyPaths, gitPath, isRepo, mergeFile, type MergeResult };

@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { readFileSync, writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 
 import { viewFile } from "../shadcn";
@@ -82,5 +84,54 @@ describe("kit link", () => {
   test("defaults to the registry dev server on :3100", async () => {
     const result = await link(project.dir);
     expect(result.to).toBe("http://localhost:3100/r/{name}.json");
+  });
+
+  // Regression: `git status`/`git show HEAD:` resolve paths from the repo root, not from cwd.
+  // A project living in a subdirectory of a larger repo — which `--cwd` allows — needs its
+  // own dirty check and its own restore to address that subdirectory, not the repo root.
+  test("works when the project is a subdirectory of a larger repo, not the repo root", async () => {
+    const outer = mkdtempSync(path.join(tmpdir(), "kit-outer-"));
+    const sub = path.join(outer, "apps", "web");
+    const outerGit = (...args: string[]) => execFileSync("git", args, { cwd: outer, stdio: "ignore" });
+    try {
+      outerGit("init", "-q");
+      outerGit("config", "user.name", "fixture");
+      outerGit("config", "user.email", "fixture@example.com");
+      mkdirSync(sub, { recursive: true });
+      writeFileSync(path.join(outer, "README.md"), "outer repo, unrelated to the linked project\n");
+      const componentsJson = `${JSON.stringify({ registries: { "@ja3dan": `${published.url}/r/{name}.json` } }, null, 2)}\n`;
+      writeFileSync(path.join(sub, "components.json"), componentsJson);
+      outerGit("add", "-A");
+      outerGit("commit", "-qm", "init");
+
+      const result = await link(sub, { url: local.url });
+      expect(result).toEqual({ from: `${published.url}/r/{name}.json`, to: `${local.url}/r/{name}.json`, changed: true });
+
+      const off = await unlink(sub);
+      expect(off).toMatchObject({ to: `${published.url}/r/{name}.json`, changed: true });
+      expect(readFileSync(path.join(sub, "components.json"), "utf8")).toBe(componentsJson);
+    } finally {
+      rmSync(outer, { recursive: true, force: true });
+    }
+  });
+
+  test("refuses to link a subdirectory project over an uncommitted components.json", async () => {
+    const outer = mkdtempSync(path.join(tmpdir(), "kit-outer-"));
+    const sub = path.join(outer, "apps", "web");
+    const outerGit = (...args: string[]) => execFileSync("git", args, { cwd: outer, stdio: "ignore" });
+    try {
+      outerGit("init", "-q");
+      outerGit("config", "user.name", "fixture");
+      outerGit("config", "user.email", "fixture@example.com");
+      mkdirSync(sub, { recursive: true });
+      writeFileSync(path.join(sub, "components.json"), `${JSON.stringify({ registries: { "@ja3dan": `${published.url}/r/{name}.json` } })}\n`);
+      outerGit("add", "-A");
+      outerGit("commit", "-qm", "init");
+      writeFileSync(path.join(sub, "components.json"), `${JSON.stringify({ registries: { "@ja3dan": `${published.url}/r/{name}.json` }, rsc: false })}\n`);
+
+      await expect(link(sub, { url: local.url })).rejects.toThrow("components.json has uncommitted changes");
+    } finally {
+      rmSync(outer, { recursive: true, force: true });
+    }
   });
 });

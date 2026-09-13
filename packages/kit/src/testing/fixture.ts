@@ -36,6 +36,12 @@ type Registry = {
    * the way `apps/registry/scripts/version-registry.ts` builds them.
    */
   publish: (item: FixtureItem) => void;
+  /**
+   * Overwrites what `/r/v/<name>@<version>.json` serves, without touching `versions.json`'s
+   * recorded hash for it — a served file that doesn't match its own history entry, the way a
+   * CDN inconsistency or a tampered response would look. For testing kit's defenses against it.
+   */
+  tamperVersion: (item: FixtureItem) => void;
   close: () => Promise<void>;
 };
 
@@ -93,6 +99,9 @@ async function startRegistry(): Promise<Registry> {
       if (!published.has(item.name)) published.set(item.name, new Map());
       published.get(item.name)!.set(item.version, registryItem);
       rebuildIndexes();
+    },
+    tamperVersion(item) {
+      routes.set(`/r/v/${item.name}@${item.version}.json`, JSON.stringify(toRegistryItem(item), null, 2));
     },
     close: () => new Promise((resolve) => server.close(() => resolve())),
   };

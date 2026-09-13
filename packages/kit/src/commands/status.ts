@@ -92,6 +92,7 @@ async function status(cwd: string): Promise<StatusResult> {
       continue;
     }
     const versions = registry.versions[name];
+    if (!versions) throw new Error(`${registry.base}/r/versions.json has no history for ${name}. The registry needs rebuilding.`);
     const files = located.get(name)!;
     const bump = bumpBetween(entry.version, versions.version);
     items.push({

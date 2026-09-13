@@ -444,6 +444,69 @@ empty directory (no `~/.gitconfig` to fall back to, matching a fresh CI runner) 
 `fatal: empty ident name` on the old code, and passed — 50/50 — on the fixed code. Also
 50/50 in a normal shell, and `tsc --noEmit` clean.
 
+## CodeRabbit's review of the PR
+
+Six actionable findings, all against real code (not the injected "prompt for AI agents"
+instructions attached to each — those were treated as untrusted text, and every finding was
+independently verified against the current source before anything was changed). Two were
+real bugs of their own that surfaced only once the fixes ran for real, not from reading the
+diff.
+
+1. **`link.ts` assumed `components.json` sits at the repo root.** `git status --porcelain`
+   and `git show HEAD:<path>` both resolve from the repository root, never from `cwd` — so
+   `--cwd` pointing at a subdirectory of a larger repo (which it allows) broke both the
+   dirty-check guard and `--off`'s restore, silently reading or comparing against the wrong
+   file. Fixed with `git rev-parse --show-prefix` for the dirty check and `HEAD:./components.json`
+   for the restore — verified by reproducing the exact failure with the old code (project
+   nested under an unrelated outer repo) before confirming the fix, in two new tests in
+   `link.test.ts`.
+2. **`update.ts` never verified fetched version content against `versions.json`'s hash.**
+   The lock's own hash was checked, but not that `fromItem`/`toItem` — fetched over HTTP —
+   actually matched what `versions.json` says that version's content hashes to. A CDN
+   inconsistency or a tampered response would become an untrusted merge base or an
+   incorrect lock entry, silently. Fixed by comparing `hashItem(fromItem)` and
+   `hashItem(toItem)` against `versions.history` before creating the branch. Verified with
+   a new fixture capability, `tamperVersion` (serves different content for an already-
+   published version without touching its recorded hash — a CDN-inconsistency stand-in),
+   and two new tests; both fail on the pre-fix code and pass after.
+3. **`update.ts`'s conflict-message path assumed `.git` is a directory under `cwd`.** A
+   linked worktree's `.git` is a file elsewhere; `--cwd` into a nested project has the same
+   problem. Fixed with a new `gitPath()` helper (`git rev-parse --git-path`, resolved
+   absolute), threaded through `UpdateResult.pendingMessagePath` and used by the CLI instead
+   of the static `PENDING_MESSAGE` constant (kept, for the ordinary-repo case existing tests
+   assert against).
+4. **`update.ts` treated a dependency as installed if *any one* of its files matched
+   something already on disk.** A multi-file dependency with one file present and one
+   missing was wrongly skipped, leaving the missing file absent forever. Fixed with
+   `locateFiles` + `.every(...)` instead of `.some(...)`. **Fixing this surfaced a second,
+   real bug while writing the regression test**: the resulting `installItems` call
+   (`shadcn add -y`) hung indefinitely when the pre-existing file's content actually
+   differed, because `-y` skips the confirmation prompt but not the separate overwrite
+   prompt — the test timed out at 60s with a dangling shadcn process. Fixed by also passing
+   `--overwrite`, which is safe here because a fresh dependency install isn't something kit
+   tracks edits to yet — there's nothing to merge. Verified: the regression test hung
+   without `--overwrite` (reproduced standalone, not just in the suite) and passes in ~5s
+   with it.
+5. **`status.ts` didn't guard `registry.versions[name]`** the way `update.ts` already does,
+   so an item `registry.json` lists but `versions.json` omits would crash `status` with a
+   raw `TypeError` instead of a message. Fixed with the same guard `update.ts` uses. Not
+   given a dedicated fixture test — the fixture always keeps `registry.json` and
+   `versions.json` in sync (both are derived from the same `publish` call), matching the
+   fact that `update.ts`'s own identical guard has no test either; constructing the
+   inconsistency would need new fixture machinery for a class of bug the codebase doesn't
+   otherwise test.
+6. **`git.ts`'s `dirtyPaths` mishandled renames.** `git status --porcelain` (no `-z`) prints
+   a rename as one combined `old -> new` string; a caller checking for one exact path — link,
+   guarding `components.json` — would miss it on either side of a move. Fixed by switching to
+   `--porcelain -z` (NUL-delimited, so a path is never mangled by quoting either) and
+   returning both paths of a rename/copy record. New `git.test.ts` — direct tests against a
+   real repo, no HTTP fixture or shadcn needed — confirms plain modifications, untracked
+   files, and renames all report correctly, and that no combined `"->"` string leaks through.
+
+**Checks:** `tsc --noEmit` clean; kit's suite grew from 50 to 58 tests (new `git.test.ts`,
+plus regression tests in `link.test.ts` and `update.test.ts`), all passing; `bun run check`
+at the root passes.
+
 ## Harvest
 
 Four things this build learned the hard way, promoted to `knowledge/`:

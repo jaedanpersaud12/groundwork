@@ -37,6 +37,15 @@ function replaceTemplate(json: string, from: string, to: string): string {
 }
 
 /**
+ * `components.json`'s path relative to the repository root — `git status --porcelain` reports
+ * paths from there, never from `cwd`, so a bare `"components.json"` only matches when `cwd`
+ * happens to be the repo root. `--cwd` can point at a nested project.
+ */
+async function repoPath(cwd: string): Promise<string> {
+  return `${(await run("git", ["rev-parse", "--show-prefix"], { cwd })).stdout.trim()}components.json`;
+}
+
+/**
  * Points `@ja3dan` at a local registry so an unpublished component change can be tried in a
  * real app before it ships.
  *
@@ -49,7 +58,7 @@ function replaceTemplate(json: string, from: string, to: string): string {
 async function link(cwd: string, { url = DEFAULT_LOCAL }: { url?: string } = {}): Promise<LinkResult> {
   const file = path.join(cwd, "components.json");
   if (!(await isRepo(cwd))) throw new Error(`${cwd} isn't a git repository; kit link restores components.json from git.`);
-  if ((await dirtyPaths(cwd)).includes("components.json")) {
+  if ((await dirtyPaths(cwd)).includes(await repoPath(cwd))) {
     throw new Error("components.json has uncommitted changes. Commit or discard them first, so `kit link --off` has a clean copy to restore.");
   }
 
@@ -71,7 +80,7 @@ async function unlink(cwd: string): Promise<LinkResult> {
 
   let committed: string;
   try {
-    committed = (await run("git", ["show", "HEAD:components.json"], { cwd })).stdout;
+    committed = (await run("git", ["show", "HEAD:./components.json"], { cwd })).stdout;
   } catch {
     throw new Error("components.json isn't committed, so there's no linked-from URL to restore.");
   }

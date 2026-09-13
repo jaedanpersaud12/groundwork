@@ -78,6 +78,32 @@ describe("kit sync update — overwrite path", () => {
     expect(existsSync(path.join(project.dir, "ui", "badge.tsx"))).toBe(true);
     expect(readLock(project.dir)!.items["@ja3dan/badge"]).toMatchObject({ version: "1.0.0", track: "patch" });
   });
+
+  // Regression: a dependency was "present" if *any one* of its files matched something already
+  // on disk, so a multi-file dependency where only one file happened to exist never got the
+  // rest of itself installed. avatar.tsx pre-exists (unrelated to avatar ever being a
+  // dependency); avatar-fallback.tsx doesn't, so avatar must still be installed in full.
+  test("installs the rest of a multi-file dependency, even when one of its files already exists", async () => {
+    registry.publish({
+      name: "avatar",
+      version: "1.0.0",
+      track: "patch",
+      files: [
+        { path: "registry/groundwork/ui/avatar.tsx", content: "export const Avatar = 1;\n" },
+        { path: "registry/groundwork/ui/avatar-fallback.tsx", content: "export const AvatarFallback = 1;\n" },
+      ],
+    });
+    await installAndLock(chip("1.0.0"));
+    writeFileSync(path.join(project.dir, "ui", "avatar.tsx"), "// pre-existing, unrelated to avatar as a dependency\n");
+    commit(project, "pre-existing avatar.tsx");
+    registry.publish({ ...chip("1.1.0"), registryDependencies: ["@ja3dan/avatar"] });
+
+    const result = await update(project.dir, "chip");
+
+    expect(result.installedItems).toEqual(["avatar"]);
+    expect(existsSync(path.join(project.dir, "ui", "avatar-fallback.tsx"))).toBe(true);
+    expect(readLock(project.dir)!.items["@ja3dan/avatar"]).toMatchObject({ version: "1.0.0", track: "patch" });
+  });
 });
 
 describe("kit sync update — merge path", () => {
@@ -197,6 +223,27 @@ describe("kit sync update — refusals", () => {
     await lock(project.dir);
     commit(project, "install");
     await expect(update(project.dir, "badge")).rejects.toThrow("isn't in kit.lock.json");
+  });
+
+  // Regression: the lock's own hash was checked against versions.json, but the content
+  // actually fetched from a versioned URL never was — a CDN inconsistency or a tampered
+  // response would silently become the merge base or the new lock entry.
+  test("refuses when the fetched content of the target version doesn't match its recorded hash", async () => {
+    await installAndLock(chip("1.0.0"));
+    registry.publish(chip("1.1.0"));
+    registry.tamperVersion(chip("1.1.0", lines({ 9: "export const line9 = 'tampered';" })));
+
+    await expect(update(project.dir, "chip")).rejects.toThrow("doesn't match versions.json's recorded hash");
+    expect(git("branch", "--show-current")).not.toStartWith("kit/");
+  });
+
+  test("refuses when the fetched content of the installed version doesn't match its recorded hash", async () => {
+    await installAndLock(chip("1.0.0"));
+    registry.tamperVersion(chip("1.0.0", lines({ 2: "export const line2 = 'tampered';" })));
+    registry.publish(chip("1.1.0"));
+
+    await expect(update(project.dir, "chip")).rejects.toThrow("doesn't match");
+    expect(git("branch", "--show-current")).not.toStartWith("kit/");
   });
 });
 

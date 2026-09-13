@@ -6,7 +6,7 @@ import pkg from "../package.json" with { type: "json" };
 import { link, type LinkResult, unlink } from "./commands/link";
 import { lock, type LockedItem } from "./commands/lock";
 import { status, type ItemStatus } from "./commands/status";
-import { MajorUpdateNeedsReview, PENDING_MESSAGE, update } from "./commands/update";
+import { MajorUpdateNeedsReview, update } from "./commands/update";
 import { LOCK_FILE } from "./lockfile";
 
 const USAGE = `kit ${pkg.version} — keep installed @ja3dan registry items current
@@ -102,7 +102,7 @@ async function runUpdate(cwd: string, name: string | undefined, to: string | und
   }
   process.stdout.write(`On branch ${result.branch}.\n\n${result.description}\n`);
   if (result.conflicted) {
-    process.stdout.write(`Resolve the conflicts, then: git add -A && git commit -F ${PENDING_MESSAGE}\n`);
+    process.stdout.write(`Resolve the conflicts, then: git add -A && git commit -F ${result.pendingMessagePath}\n`);
     return 1;
   }
   process.stdout.write(`Committed. Push ${result.branch} and open a PR; the commit message is the description.\n`);

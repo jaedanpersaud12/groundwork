@@ -98,11 +98,15 @@ async function viewFile(cwd: string, item: string, file: string): Promise<string
 }
 
 /**
- * Installs items for real. Only used for items that aren't in the project yet, so every file it
- * writes is new — it never answers an overwrite prompt on the project's behalf.
+ * Installs items for real. Only used for a registry dependency kit decided isn't fully
+ * installed yet — which can mean some of its files already exist (a sibling item shares a
+ * dependency, or the dependency grew a file between the version on disk and the one being
+ * pulled in). `--overwrite` alongside `-y`, so that doesn't leave `add` waiting on a prompt
+ * nothing will ever answer: a fresh dependency isn't something kit tracks edits to yet, so
+ * there's nothing here worth a merge.
  */
 async function installItems(cwd: string, items: string[]): Promise<void> {
-  await shadcn(cwd, ["add", ...items, "-y"]);
+  await shadcn(cwd, ["add", ...items, "-y", "--overwrite"]);
 }
 
 export { installItems, parsePlan, parseView, planAdd, SHADCN_BIN, viewFile, type PlannedFile };

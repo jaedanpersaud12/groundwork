@@ -1,10 +1,10 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
-import { branchExists, commitAll, createBranch, dirtyPaths, isRepo, mergeFile } from "../git";
+import { branchExists, commitAll, createBranch, dirtyPaths, gitPath, isRepo, mergeFile } from "../git";
 import { LOCK_FILE, readLock, writeLock } from "../lockfile";
 import { locateFiles } from "../project";
-import { bySemver, itemRef, loadRegistry, NAMESPACE, versionUrl, type Registry, type RegistryItem } from "../registry";
+import { bySemver, hashItem, itemRef, loadRegistry, NAMESPACE, versionUrl, type Registry, type RegistryItem } from "../registry";
 import { installItems, planAdd, viewFile } from "../shadcn";
 import { bumpBetween, TAKES } from "./status";
 
@@ -39,6 +39,8 @@ type UpdateResult = {
   /** True when kit committed the update; false when conflicts are left for a person to resolve. */
   committed: boolean;
   description: string;
+  /** Where `description` waits for `git commit -F` when conflicted; null otherwise. */
+  pendingMessagePath: string | null;
 };
 
 type MigrationNote = { version: string; note: string };
@@ -75,7 +77,11 @@ function notesBetween(item: RegistryItem, from: string, to: string): MigrationNo
     .map(([version, note]) => ({ version, note }));
 }
 
-/** Where the description waits when conflicts stop kit from committing. */
+/**
+ * Where the description waits when conflicts stop kit from committing, in an ordinary repo.
+ * The actual path — `UpdateResult.pendingMessagePath`, resolved through `git rev-parse
+ * --git-path` — can differ in a linked worktree, whose `.git` is a file, not this directory.
+ */
 const PENDING_MESSAGE = path.join(".git", "KIT_UPDATE_MSG");
 
 /** The newest published version the item's track takes, or null when there isn't one. */
@@ -104,7 +110,7 @@ const RESULT_LABEL: Record<FileOutcome["result"], string> = {
  * The commit message, and the body of the PR it becomes. A reviewer should learn from it what
  * changed and whether a person still has to look, without opening the diff first.
  */
-function describe(result: Omit<UpdateResult, "description" | "committed">): string {
+function describe(result: Omit<UpdateResult, "description" | "committed" | "pendingMessagePath">): string {
   const conflictedFiles = result.files.filter((file) => file.result === "conflicted").map((file) => file.path);
   const lines = [
     `Update ${itemRef(result.name)} ${result.from} → ${result.to}`,
@@ -166,6 +172,12 @@ async function update(cwd: string, name: string, { to, acceptMajor = false }: { 
   if (bySemver(entry.version, target) >= 0) throw new Error(`${itemRef(name)} is at ${entry.version}; ${target} isn't newer.`);
 
   const [fromItem, toItem] = await Promise.all([fetchVersion(registry, name, entry.version), fetchVersion(registry, name, target)]);
+  if (hashItem(fromItem) !== versions.history[entry.version]) {
+    throw new Error(`${versionUrl(registry, name, entry.version)} doesn't match ${LOCK_FILE}'s recorded hash for ${entry.version}. Nothing was changed.`);
+  }
+  if (hashItem(toItem) !== versions.history[target]) {
+    throw new Error(`${versionUrl(registry, name, target)} doesn't match versions.json's recorded hash for ${target}. Nothing was changed.`);
+  }
   const major = bumpBetween(entry.version, target) === "major";
   const migrations = major ? notesBetween(toItem, entry.version, target) : [];
   if (major && !acceptMajor) throw new MajorUpdateNeedsReview(name, entry.version, target, migrations);
@@ -213,8 +225,9 @@ async function update(cwd: string, name: string, { to, acceptMajor = false }: { 
 
   const dropped = fromFiles.map((file) => file.path).filter((file) => !toFiles.some((candidate) => candidate.path === file));
 
-  // A registry dependency is missing when none of its files are in the project. Installing it
-  // only creates files, so it can't disturb anything the merge just wrote.
+  // A registry dependency needs installing unless every one of its files is already present —
+  // one matching file doesn't mean the whole item is there. Installing it touches only its own
+  // files (never the ones the merge above just wrote), so it can't disturb the merge.
   const newDependencies = (toItem.registryDependencies ?? [])
     .filter((ref) => ref.startsWith(`${NAMESPACE}/`))
     .map((ref) => ref.slice(NAMESPACE.length + 1));
@@ -222,9 +235,8 @@ async function update(cwd: string, name: string, { to, acceptMajor = false }: { 
   for (const dependency of newDependencies) {
     const dependencyItem = registry.items.find((item) => item.name === dependency);
     if (!dependencyItem) continue;
-    const present = dependencyItem.files.some((file) =>
-      toPlan.some((planned) => path.basename(planned.path) === path.basename(file.path) && planned.status !== "create"),
-    );
+    const dependencyFiles = locateFiles([dependencyItem], toPlan).get(dependency)!;
+    const present = dependencyFiles.every((planned) => planned.status !== "create");
     if (!present) installedItems.push(dependency);
   }
   if (installedItems.length) await installItems(cwd, installedItems.map(itemRef));
@@ -258,12 +270,14 @@ async function update(cwd: string, name: string, { to, acceptMajor = false }: { 
   const summary = { name, from: entry.version, to: target, branch, files, dropped, installedItems, missingPackages, migrations, conflicted };
   const description = describe(summary);
 
+  let pendingMessagePath: string | null = null;
   if (conflicted) {
-    writeFileSync(path.join(cwd, PENDING_MESSAGE), description);
+    pendingMessagePath = await gitPath(cwd, "KIT_UPDATE_MSG");
+    writeFileSync(pendingMessagePath, description);
   } else {
     await commitAll(cwd, description);
   }
-  return { ...summary, committed: !conflicted, description };
+  return { ...summary, committed: !conflicted, description, pendingMessagePath };
 }
 
 export { MajorUpdateNeedsReview, notesBetween, PENDING_MESSAGE, targetWithinTrack, update, type FileOutcome, type MigrationNote, type UpdateResult };
