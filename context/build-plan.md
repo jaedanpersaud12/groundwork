@@ -65,14 +65,16 @@ Marketing site. Design TBD.
 
 **Done when:** it explains what groundwork is to someone who has never seen it.
 
-## 08 — Registry site
+## 08 — Groundwork site
 
-The registry app stops being a single scrolling list and becomes a site: an illustrated
-landing page, and real docs — sidebar grouped by tier, one page per item, source and
-install on the page. Generated from `registry.json`, so adding an item adds a page.
+`apps/registry` becomes the site for the whole of groundwork, not just the registry: an
+illustrated landing page, then docs for **both halves** — the agent kit (the loop, the
+`context/` scaffold, the knowledge base) and the design system (the contract, and a page
+per component generated from `registry.json`).
 
-**Done when:** someone who has never seen groundwork can land on `/`, understand what it
-ships, and get from there to a working `shadcn add` for any item without being told how.
+**Done when:** someone who has never seen groundwork can land on `/` and tell that it
+bootstraps a repo's skills and architecture as well as its components — and get from there
+to a working `shadcn add` without being told how.
 
 ---
 
