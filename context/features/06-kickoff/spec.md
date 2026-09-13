@@ -72,13 +72,13 @@ the product. The registry is the easy half.
 ## Out of scope
 
 - **`kit init`** — the deterministic half (copy templates, install skills, run installs).
-  It needs `packages/kit` to exist, which is 04 and 05.
+  It is stage 09, and needs `packages/kit` from 04 plus a template from this feature.
 - **`imprint` and `ui-registry.md`.** A living UI registry needs a skill that maintains it;
   that is its own feature, and the build plan should gain a line for it.
 - **More than one preset.** `next16-insforge` comes from jobpilot. A second preset is only
   worth designing against a second real project.
 - **Taking a throwaway project all the way to feature 01 merged.** That was the build plan's
-  criterion for 06 and it assumes the CLI half exists. It moves with `kit init`, which has
-  no stage yet — see "Needs a stage" in `context/build-plan.md`.
+  criterion for 06 and it assumes the CLI half exists. It moves with `kit init`, which is
+  now stage 09 in `context/build-plan.md`.
 - **Generating `code-standards.md` or `ui-rules.md`.** They are copied and parameterised.
   Generating house style per project is how house style stops being house style.

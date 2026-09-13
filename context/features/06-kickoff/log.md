@@ -47,9 +47,9 @@ now live where the dependent work will find them:
   `sourceType: "github"`, `skillPath`, `computedHash`. Skills came from
   `JavaScript-Mastery-Pro/jsm-agent-skill` and `jakubkrehel/skills`. 04's plan gains a
   decision point before its lock schema is fixed.
-- **`kit init` has no stage.** This spec deferred it to "04 and 05", but neither includes
-  it. The build plan now lists it under "Needs a stage", carrying the throwaway-project
-  criterion.
+- **`kit init` had no stage.** This spec deferred it to "04 and 05", but neither includes
+  it. It is now **stage 09** in the build plan, after 04 and 06, carrying the
+  throwaway-project criterion.
 - **`imprint`** is under Later. It isn't lost: jobpilot installed it from
   `jsm-agent-skill`, the same source as `architect`, `recover` and `remember`.
 - **08 merged first**, and `plan.md` gains a section on what that changes for step 6.

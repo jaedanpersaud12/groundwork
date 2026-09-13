@@ -155,4 +155,5 @@ wrong (a stalled renderer that still reports "hidden"; `resize_window` for 400px
 
 As `spec.md`. The one worth restating: **`kit init` is not in this feature.** Everything
 here is copy-paste by hand, deliberately, because that is what makes it work for someone who
-has never installed the kit. Automating it needs `packages/kit`, and that is 04 and 05.
+has never installed the kit. Automating it is `kit init`, stage 09, which needs `packages/kit` from 04 and a template
+from this feature.
