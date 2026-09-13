@@ -43,7 +43,7 @@ describe("kit sync status", () => {
 
     expect(await status(project.dir)).toEqual({
       items: [
-        { name: "chip", installed: "1.0.0", latest: "1.0.0", track: "minor", bump: "none", withinTrack: false, edited: [], missing: [], baseChanged: false },
+        { name: "chip", installed: "1.0.0", latest: "1.0.0", track: "minor", bump: "none", withinTrack: false, edited: [], missing: [], baseChanged: false, migrationNote: false },
       ],
       removed: [],
       unlocked: [],
@@ -80,7 +80,16 @@ describe("kit sync status", () => {
     await lock(project.dir);
     registry.publish(chip("2.0.0", "export const Chip = 2;\nexport const More = true;"));
 
-    expect(await find("chip")).toMatchObject({ bump: "major", withinTrack: false, edited: [] });
+    expect(await find("chip")).toMatchObject({ bump: "major", withinTrack: false, edited: [], migrationNote: false });
+  });
+
+  test("says whether a major update publishes a migration note", async () => {
+    registry.publish(chip("1.0.0"));
+    await install(project, "@ja3dan/chip");
+    await lock(project.dir);
+    registry.publish({ ...chip("2.0.0"), migrations: { "2.0.0": "Chip is a named export now." } });
+
+    expect(await find("chip")).toMatchObject({ bump: "major", migrationNote: true });
   });
 
   test("the track decides what counts as available", async () => {

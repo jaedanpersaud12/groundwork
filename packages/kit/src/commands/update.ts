@@ -33,11 +33,47 @@ type UpdateResult = {
    * which package manager and which dependency field is the project's call.
    */
   missingPackages: string[];
+  /** The migration notes this update crossed; only ever non-empty for an accepted major. */
+  migrations: MigrationNote[];
   conflicted: boolean;
   /** True when kit committed the update; false when conflicts are left for a person to resolve. */
   committed: boolean;
   description: string;
 };
+
+type MigrationNote = { version: string; note: string };
+
+/**
+ * Thrown instead of merging a major update nobody has read the notes for. Nothing has changed
+ * when it's thrown — no branch, no files — so re-running with `acceptMajor` is safe.
+ */
+class MajorUpdateNeedsReview extends Error {
+  constructor(
+    readonly item: string,
+    readonly from: string,
+    readonly to: string,
+    readonly notes: MigrationNote[],
+  ) {
+    super(
+      notes.length
+        ? `${itemRef(item)} ${from} → ${to} is a major update. Read the migration note${notes.length === 1 ? "" : "s"}, then re-run with --accept-major.`
+        : `${itemRef(item)} ${from} → ${to} is a major update and the registry published no migration note for it. Check its changelog, then re-run with --accept-major.`,
+    );
+    this.name = "MajorUpdateNeedsReview";
+  }
+}
+
+/**
+ * The notes an update crosses: every `meta.migrations` entry after the installed version, up
+ * to and including the target. They're read from the target version's own item, which keeps
+ * earlier majors' notes, so 1.x → 3.0.0 shows 2.0.0's and 3.0.0's.
+ */
+function notesBetween(item: RegistryItem, from: string, to: string): MigrationNote[] {
+  return Object.entries(item.meta?.migrations ?? {})
+    .filter(([version]) => bySemver(from, version) < 0 && bySemver(version, to) <= 0)
+    .sort(([a], [b]) => bySemver(a, b))
+    .map(([version, note]) => ({ version, note }));
+}
 
 /** Where the description waits when conflicts stop kit from committing. */
 const PENDING_MESSAGE = path.join(".git", "KIT_UPDATE_MSG");
@@ -80,6 +116,9 @@ function describe(result: Omit<UpdateResult, "description" | "committed">): stri
     ...result.files.map((file) => `- ${file.path}: ${RESULT_LABEL[file.result]}`),
     ...result.dropped.map((file) => `- ${file}: no longer shipped by ${result.to}; left in place`),
     ...result.installedItems.map((item) => `- ${itemRef(item)}: installed, new dependency of ${result.to}`),
+    ...(result.migrations.length
+      ? ["", "Migration notes — this is a major update:", ...result.migrations.map((entry) => `- ${entry.version}: ${entry.note}`)]
+      : []),
     ...(result.missingPackages.length
       ? ["", `Needs npm packages this project doesn't list yet: ${result.missingPackages.join(", ")}. Install them before building.`]
       : []),
@@ -95,7 +134,7 @@ function describe(result: Omit<UpdateResult, "description" | "committed">): stri
  * never silently lost, never silently picked. Every side of the merge comes from shadcn, in
  * project dialect.
  */
-async function update(cwd: string, name: string, { to }: { to?: string } = {}): Promise<UpdateResult> {
+async function update(cwd: string, name: string, { to, acceptMajor = false }: { to?: string; acceptMajor?: boolean } = {}): Promise<UpdateResult> {
   const lock = readLock(cwd);
   if (!lock) throw new Error(`No ${LOCK_FILE} in ${cwd}. Run \`kit lock\` first.`);
   const entry = lock.items[itemRef(name)];
@@ -125,14 +164,14 @@ async function update(cwd: string, name: string, { to }: { to?: string } = {}): 
   }
   if (!versions.history[target]) throw new Error(`${name}@${target} was never published.`);
   if (bySemver(entry.version, target) >= 0) throw new Error(`${itemRef(name)} is at ${entry.version}; ${target} isn't newer.`);
-  if (bumpBetween(entry.version, target) === "major") {
-    throw new Error(`${itemRef(name)} ${entry.version} → ${target} is a major update. Major updates surface their migration note first, which isn't built yet.`);
-  }
+
+  const [fromItem, toItem] = await Promise.all([fetchVersion(registry, name, entry.version), fetchVersion(registry, name, target)]);
+  const major = bumpBetween(entry.version, target) === "major";
+  const migrations = major ? notesBetween(toItem, entry.version, target) : [];
+  if (major && !acceptMajor) throw new MajorUpdateNeedsReview(name, entry.version, target, migrations);
 
   const branch = `kit/${name}-${target}`;
   if (await branchExists(cwd, branch)) throw new Error(`Branch ${branch} already exists. Delete it, or finish the update that's on it.`);
-
-  const [fromItem, toItem] = await Promise.all([fetchVersion(registry, name, entry.version), fetchVersion(registry, name, target)]);
   const fromUrl = versionUrl(registry, name, entry.version);
   const toUrl = versionUrl(registry, name, target);
 
@@ -216,7 +255,7 @@ async function update(cwd: string, name: string, { to }: { to?: string } = {}): 
   writeLock(cwd, lock);
 
   const conflicted = files.some((file) => file.result === "conflicted");
-  const summary = { name, from: entry.version, to: target, branch, files, dropped, installedItems, missingPackages, conflicted };
+  const summary = { name, from: entry.version, to: target, branch, files, dropped, installedItems, missingPackages, migrations, conflicted };
   const description = describe(summary);
 
   if (conflicted) {
@@ -227,4 +266,4 @@ async function update(cwd: string, name: string, { to }: { to?: string } = {}): 
   return { ...summary, committed: !conflicted, description };
 }
 
-export { PENDING_MESSAGE, targetWithinTrack, update, type FileOutcome, type UpdateResult };
+export { MajorUpdateNeedsReview, notesBetween, PENDING_MESSAGE, targetWithinTrack, update, type FileOutcome, type MigrationNote, type UpdateResult };

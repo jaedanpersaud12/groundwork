@@ -26,6 +26,8 @@ type ItemStatus = {
    * worked around.
    */
   baseChanged: boolean;
+  /** For a major bump: whether the latest version publishes a migration note for it. */
+  migrationNote: boolean;
 };
 
 type StatusResult = {
@@ -102,6 +104,9 @@ async function status(cwd: string): Promise<StatusResult> {
       edited: await editedFiles(cwd, registry, item, entry.version, files),
       missing: files.filter((file) => file.status === "create").map((file) => file.path),
       baseChanged: versions.history[entry.version] !== entry.computedHash,
+      migrationNote:
+        bump === "major" &&
+        Object.keys(item.meta?.migrations ?? {}).some((version) => bySemver(entry.version, version) < 0 && bySemver(version, versions.version) <= 0),
     });
   }
 

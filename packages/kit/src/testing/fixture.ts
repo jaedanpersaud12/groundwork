@@ -25,6 +25,7 @@ type FixtureItem = {
   files: FixtureFile[];
   registryDependencies?: string[];
   dependencies?: string[];
+  migrations?: Record<string, string>;
 };
 
 type Registry = {
@@ -46,7 +47,12 @@ function toRegistryItem(item: FixtureItem): RegistryItem {
     ...(item.dependencies ? { dependencies: item.dependencies } : {}),
     ...(item.registryDependencies ? { registryDependencies: item.registryDependencies } : {}),
     files: item.files.map((file) => ({ type: "registry:ui", ...file })),
-    meta: { version: item.version, tier: "primitive", track: item.track ?? "minor" },
+    meta: {
+      version: item.version,
+      tier: "primitive",
+      track: item.track ?? "minor",
+      ...(item.migrations ? { migrations: item.migrations } : {}),
+    },
   };
 }
 

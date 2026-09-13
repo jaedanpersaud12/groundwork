@@ -5,7 +5,7 @@ import path from "node:path";
 import { readLock } from "../lockfile";
 import { commit, createProject, install, startRegistry, type FixtureItem, type Project, type Registry } from "../testing/fixture";
 import { lock } from "./lock";
-import { PENDING_MESSAGE, update } from "./update";
+import { MajorUpdateNeedsReview, notesBetween, PENDING_MESSAGE, update } from "./update";
 
 /**
  * Chip's body is ten numbered lines, so a test can change line 2 on one side and line 9 on
@@ -197,5 +197,57 @@ describe("kit sync update — refusals", () => {
     await lock(project.dir);
     commit(project, "install");
     await expect(update(project.dir, "badge")).rejects.toThrow("isn't in kit.lock.json");
+  });
+});
+
+describe("kit sync update — major versions", () => {
+  const NOTE = "Chip's line5 export is renamed to five; update imports before building.";
+
+  // Spec criterion 5: a major surfaces its migration note instead of merging silently.
+  test("a major update stops at its migration note and changes nothing", async () => {
+    await installAndLock(chip("1.0.0"));
+    const head = git("rev-parse", "HEAD");
+    const before = chipOnDisk();
+    registry.publish({ ...chip("2.0.0", lines({ 5: "export const five = 5;" })), migrations: { "2.0.0": NOTE } });
+
+    const attempt = update(project.dir, "chip", { to: "2.0.0" });
+    await expect(attempt).rejects.toBeInstanceOf(MajorUpdateNeedsReview);
+    const error = (await attempt.catch((caught) => caught)) as MajorUpdateNeedsReview;
+
+    expect(error.notes).toEqual([{ version: "2.0.0", note: NOTE }]);
+    expect(error.message).toContain("re-run with --accept-major");
+    expect(git("rev-parse", "HEAD")).toBe(head);
+    expect(git("branch", "--show-current")).not.toStartWith("kit/");
+    expect(git("status", "--porcelain")).toBe("");
+    expect(chipOnDisk()).toBe(before);
+  });
+
+  test("with --accept-major it merges, and the notes go into the description", async () => {
+    await installAndLock(chip("1.0.0"));
+    registry.publish({ ...chip("2.0.0", lines({ 5: "export const five = 5;" })), migrations: { "2.0.0": NOTE } });
+
+    const result = await update(project.dir, "chip", { to: "2.0.0", acceptMajor: true });
+
+    expect(result.files).toEqual([{ path: "ui/chip.tsx", result: "overwritten" }]);
+    expect(result.migrations).toEqual([{ version: "2.0.0", note: NOTE }]);
+    expect(result.description).toContain("Migration notes — this is a major update:");
+    expect(result.description).toContain(`- 2.0.0: ${NOTE}`);
+    expect(git("log", "-1", "--format=%B")).toContain(NOTE);
+    expect(readLock(project.dir)!.items["@ja3dan/chip"].version).toBe("2.0.0");
+  });
+
+  test("a major with no published note still stops, and says there's no note", async () => {
+    await installAndLock(chip("1.0.0"));
+    registry.publish(chip("2.0.0"));
+    await expect(update(project.dir, "chip", { to: "2.0.0" })).rejects.toThrow("published no migration note");
+  });
+
+  test("notesBetween takes every note after the installed version up to the target", () => {
+    const item = { name: "chip", type: "registry:ui", files: [], meta: { migrations: { "2.0.0": "two", "3.0.0": "three", "4.0.0": "four" } } };
+    expect(notesBetween(item, "1.4.0", "3.0.0")).toEqual([
+      { version: "2.0.0", note: "two" },
+      { version: "3.0.0", note: "three" },
+    ]);
+    expect(notesBetween(item, "2.0.0", "2.1.0")).toEqual([]);
   });
 });

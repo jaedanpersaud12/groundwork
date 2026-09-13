@@ -13,7 +13,7 @@ type RegistryItem = {
   title?: string;
   files: RegistryFile[];
   registryDependencies?: string[];
-  meta?: { version?: string; track?: Track; [key: string]: unknown };
+  meta?: { version?: string; track?: Track; migrations?: Record<string, string>; [key: string]: unknown };
   [key: string]: unknown;
 };
 

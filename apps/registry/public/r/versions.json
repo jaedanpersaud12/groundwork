@@ -120,10 +120,11 @@
     }
   },
   "empty-state": {
-    "version": "1.0.0",
-    "hash": "598fe3170384403d266484328f1bce4dfde8fa374faec6c2cc5466e18d28db8e",
+    "version": "1.0.1",
+    "hash": "ad3947347e5aa599baf5c4f12737cc4ceadbb64cd2ddfa8e33c2f8241996e7a4",
     "history": {
-      "1.0.0": "598fe3170384403d266484328f1bce4dfde8fa374faec6c2cc5466e18d28db8e"
+      "1.0.0": "598fe3170384403d266484328f1bce4dfde8fa374faec6c2cc5466e18d28db8e",
+      "1.0.1": "ad3947347e5aa599baf5c4f12737cc4ceadbb64cd2ddfa8e33c2f8241996e7a4"
     }
   },
   "calendar": {
