@@ -23,9 +23,12 @@ rewrites a component; it drives `shadcn` to produce every version it needs and u
 
 - **The base is derived on demand, not cached.** `public/r/v/<name>@<version>.json` is a
   complete, self-contained, `$schema`-valid item with inline content, served as a static
-  asset. So `shadcn add <registry>/r/v/button@1.2.0.json --path <tmp>` reconstitutes the
-  locked version in project dialect whenever it's needed. Nothing is added to the consumer
-  project, there is no cache to invalidate, and **edit detection comes free**: the diff
+  asset. So `shadcn add <registry>/r/v/button@1.2.0.json --dry-run --view <file>` prints
+  the locked version in project dialect whenever it's needed. *(Revised after step 1: the
+  plan said `--path <tmp>`, which turned out to edit the project's `package.json` when a
+  dependency is missing. `--dry-run --view` writes nothing and was verified byte-identical
+  to a real install; kit pins its shadcn version and tests the output format — see
+  `log.md`.)* Nothing is added to the consumer project, there is no cache to invalidate, and **edit detection comes free**: the diff
   between the file on disk and the derived base *is* the local edit. That also fixes a
   case a recorded hash gets wrong — a project already edited before `kit lock` ever ran
   would otherwise have its edits recorded as pristine.
@@ -72,7 +75,7 @@ anything is built on top — if one fails, the design changes, not the schedule.
   registry schema change — so it goes through the `registry-item` skill and
   `registry-review`, not a quiet edit.
 
-## Open decision — one lock or two
+## Decided — two locks, one shape
 
 Found by 06's architecture pass, recorded in `context/build-plan.md` under 03 and 04, and
 not considered when this plan was written: **jobpilot already has a lock file of the same
@@ -107,6 +110,29 @@ whatever this feature decides. So before step 4 fixes the schema, decide:
 Not a reason to widen 04: sync for skills is still out of scope. It is only about not
 choosing a lock format that has to be migrated the first time both files meet.
 
+**Decided with the developer after step 1: two locks, one shape.** `skills-lock.json` is
+written by another tool, so kit doesn't take it over. `kit.lock.json` mirrors its
+conventions so the day they merge is mechanical:
+
+```json
+{
+  "version": 1,
+  "registries": { "@ja3dan": "https://gw.jaedan.me/r/{name}.json" },
+  "items": {
+    "@ja3dan/button": {
+      "source": "@ja3dan",
+      "sourceType": "registry",
+      "version": "1.0.0",
+      "track": "minor",
+      "computedHash": "…"
+    }
+  }
+}
+```
+
+`computedHash` is the same value `public/r/versions.json` records for that version, which is
+what the spec's first criterion calls `hash`.
+
 ## How to build it
 
 1. **Settle the assumptions.** Serve the registry locally, point a scratch project at a
@@ -118,9 +144,10 @@ choosing a lock format that has to be migrated the first time both files meet.
 3. **Fixture harness** — a script that creates a minimal consumer project and a small
    fabricated registry beside it, with items at known versions. Everything after this step
    is testable without the network or the real registry.
-4. **`kit lock`** — *after the open decision above is settled.* Read `components.json` +
-   installed files, resolve each to a registry item, write `kit.lock.json` (`registries`, then `items` keyed `@ja3dan/<name>` with
-   `version`, `hash`, `track` defaulted from the item's `meta.track`).
+4. **`kit lock`** — in the two-locks-one-shape format above. Read `components.json` +
+   installed files, resolve each to a registry item, write `kit.lock.json` (`version`, `registries`, then `items` keyed `@ja3dan/<name>` with
+   `source`, `sourceType`, `version`, `track` defaulted from the item's `meta.track`, and
+   `computedHash`).
 5. **`kit sync status`** — compare the lock against the registry's `versions.json`; derive
    each base and diff against disk to mark edited copies. Read-only; prints the table.
 6. **`kit sync update`, overwrite path** — unedited file, new version replaces it, lock
