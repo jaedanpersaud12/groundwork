@@ -20,7 +20,8 @@ version of it that grew to 450 lines is the reason the feature folders exist.
       `context/features/03-jobpilot-consumer/log.md`*
 - [x] **04** `packages/kit`: sync engine
 - [x] **05** `packages/kit`: check and doctor
-- [ ] **06** `templates/`, `presets/`, `/kickoff`
+- [ ] **06** `/kickoff` prompts, and `templates/` — *spec and plan on `feat/06-kickoff`;
+      first step is the stage-2 length test*
 - [ ] **07** `apps/site` — *on hold; 08 may have absorbed it, see build-plan*
 - [x] **08** Groundwork site
 - [ ] **09** `packages/kit`: `kit init` — *after 04 and 06*
