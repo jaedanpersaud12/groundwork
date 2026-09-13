@@ -40,6 +40,13 @@ the registry's own components, so it is also the first place a bad change shows 
   its published copy in `public/r/v/` and fails on a silent change — those copies are the
   merge bases `kit sync` needs, so a changed version is a corrupted base for everyone who
   already installed it.
+- **A new major version carries its own migration note** in `meta.migrations`
+  (`{ "2.0.0": "what a project has to change" }`), and every version published after it —
+  major or not — must keep carrying that note forward. `registry:build` fails a new major
+  with no note of its own, and fails **any** new version that drops a note an earlier
+  published version had: `kit sync update` reads notes off whichever version a project
+  updates *to*, not off every version in between, so a dropped note reaches a project as
+  silence.
 - **Commit `public/r/v/*`.** Uncommitted, the merge bases exist on one machine only.
 - **Every item with markup needs an example** keyed by its registry `name` under
   `app/examples/`, reachable from `index.tsx`. Libs and hooks are exempt and correctly show

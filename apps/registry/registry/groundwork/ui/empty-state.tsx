@@ -20,7 +20,7 @@ function EmptyState({ icon, title, description, action, className }: EmptyStateP
       </span>
       <div className="flex flex-col gap-1">
         <p className="text-sm font-medium text-foreground">{title}</p>
-        <p className="mx-auto max-w-sm text-xs text-muted-foreground">{description}</p>
+        <p className="mx-auto max-w-md text-xs text-muted-foreground">{description}</p>
       </div>
       {action}
     </div>

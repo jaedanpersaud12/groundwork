@@ -53,7 +53,22 @@ fails if the content moved without the version moving. Those files are the merge
 `kit sync` uses for a 3-way merge into a project that edited its copy — so a silently
 changed 1.0.0 corrupts the merge base for everyone who already has it.
 
-Patch for a fix that changes nothing about the API. Minor for anything additive.
+Patch for a fix that changes nothing about the API. Minor for anything additive. **Major**
+for anything that makes a project change its code — and a major needs a note:
+
+```json
+"meta": {
+  "version": "2.0.0",
+  "migrations": { "2.0.0": "EmptyState takes an `action` prop instead of children." }
+}
+```
+
+Keep earlier majors' notes when publishing the next one — every version, major or not —
+since `kit sync update` reads notes off whichever version a project updates *to*, not off
+every version in between. `registry:build` fails a new major whose own note is missing or
+empty, and fails any version, later than that, that drops a note an earlier published
+version carried. The note is content, so it can't be added to a published version
+afterwards — write it when you cut the major, and copy it forward every time after.
 
 **4. Add an example.** `apps/registry/app/examples/` — `primitives.tsx` for a single
 static node, `pills.tsx` / `table.tsx` / `dates.tsx` for anything stateful, keyed by the

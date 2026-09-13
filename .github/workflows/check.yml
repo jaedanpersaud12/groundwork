@@ -40,5 +40,7 @@ jobs:
       # .next/types, which a fresh checkout doesn't have, so bare `tsc` fails in CI.
       - run: bun run --filter registry typecheck
 
+      - run: bun run --filter @ja3dan/kit typecheck
+
       - run: bunx next build
         working-directory: apps/registry
