@@ -72,6 +72,41 @@ anything is built on top — if one fails, the design changes, not the schedule.
   registry schema change — so it goes through the `registry-item` skill and
   `registry-review`, not a quiet edit.
 
+## Open decision — one lock or two
+
+Found by 06's architecture pass, recorded in `context/build-plan.md` under 03 and 04, and
+not considered when this plan was written: **jobpilot already has a lock file of the same
+shape for skills.** Its `skills-lock.json`, as committed:
+
+```json
+{
+  "version": 1,
+  "skills": {
+    "architect": {
+      "source": "JavaScript-Mastery-Pro/jsm-agent-skill",
+      "sourceType": "github",
+      "skillPath": "skills/architect/SKILL.md",
+      "computedHash": "62908472…"
+    }
+  }
+}
+```
+
+Both record a source, an identity and a content hash for something copied into a project
+that may later drift from upstream. Whatever `kit.lock.json` becomes, 03 has to live with it
+beside that file, and whichever stage takes `kit init` (it has none yet — see the build
+plan) installs skills. So before step 4 fixes the schema, decide:
+
+- **One lock** — `kit.lock.json` gains a `skills` section, and kit eventually owns skill
+  installs too. Fewer files; kit takes on a job the external skills CLI already does.
+- **Two locks, one shape** — `kit.lock.json` mirrors `skills-lock.json`'s conventions
+  (`version`, `source`, `sourceType`, a computed hash) so a later merge is mechanical.
+- **Two locks, unrelated** — what this plan assumed by default. Cheapest now, and the one
+  that makes a later merge a migration.
+
+Not a reason to widen 04: sync for skills is still out of scope. It is only about not
+choosing a lock format that has to be migrated the first time both files meet.
+
 ## How to build it
 
 1. **Settle the assumptions.** Serve the registry locally, point a scratch project at a
@@ -83,8 +118,8 @@ anything is built on top — if one fails, the design changes, not the schedule.
 3. **Fixture harness** — a script that creates a minimal consumer project and a small
    fabricated registry beside it, with items at known versions. Everything after this step
    is testable without the network or the real registry.
-4. **`kit lock`** — read `components.json` + installed files, resolve each to a registry
-   item, write `kit.lock.json` (`registries`, then `items` keyed `@ja3dan/<name>` with
+4. **`kit lock`** — *after the open decision above is settled.* Read `components.json` +
+   installed files, resolve each to a registry item, write `kit.lock.json` (`registries`, then `items` keyed `@ja3dan/<name>` with
    `version`, `hash`, `track` defaulted from the item's `meta.track`).
 5. **`kit sync status`** — compare the lock against the registry's `versions.json`; derive
    each base and diff against disk to mark edited copies. Read-only; prints the table.
