@@ -133,8 +133,12 @@ function createProject(registryUrl: string): Project {
   );
   const git = (...args: string[]) => execFileSync("git", args, { cwd: dir, stdio: "ignore" });
   git("init", "-q");
+  // Local, not global: a CI runner has no git identity configured, and kit's own commitAll
+  // (used by `update`/`link`, unlike the `commit` test helper below) doesn't pass -c overrides.
+  git("config", "user.name", "fixture");
+  git("config", "user.email", "fixture@example.com");
   git("add", "-A");
-  git("-c", "user.name=fixture", "-c", "user.email=fixture@example.com", "commit", "-qm", "fixture");
+  git("commit", "-qm", "fixture");
   return { dir, remove: () => rmSync(dir, { recursive: true, force: true }) };
 }
 
@@ -151,7 +155,7 @@ async function install(project: Project, ...items: string[]): Promise<void> {
 function commit(project: Project, message: string): void {
   const git = (...args: string[]) => execFileSync("git", args, { cwd: project.dir, stdio: "ignore" });
   git("add", "-A");
-  git("-c", "user.name=fixture", "-c", "user.email=fixture@example.com", "commit", "-qm", message, "--allow-empty");
+  git("commit", "-qm", message, "--allow-empty");
 }
 
 export { commit, createProject, install, startRegistry, toRegistryItem, type FixtureFile, type FixtureItem, type Project, type Registry };

@@ -423,6 +423,27 @@ passes.
 both harmless given current control flow, left as the reviewer suggested (developer's
 call, not blocking).
 
+## CI failure after opening the PR
+
+`bun run check` failed in CI, not locally: 7 of the update-path tests died on `git commit`
+with `fatal: empty ident name`. `createProject` (`testing/fixture.ts`) ran `git init` and
+committed with a per-invocation `-c user.name=… -c user.email=…` override, but that only
+covers the *test helper's* own commits — kit's real `commitAll` (`src/git.ts`, what
+`update` and `link` actually call) has no such override and depends on git having an
+identity from somewhere. Locally that "somewhere" was my machine's global `~/.gitconfig`;
+the GitHub Actions runner has none, so any commit made through the code under test — as
+opposed to the test's own setup/teardown commits — failed there and nowhere else.
+
+**Fix:** `createProject` now sets `user.name`/`user.email` in the fixture repo's local git
+config, right after `git init`, so every commit inside it — the test harness's and kit's
+own — has an identity independent of the environment. The `commit()` helper's now-redundant
+`-c` overrides were dropped.
+
+**Verified the failure mode and the fix**, not just re-running green: `HOME` pointed at an
+empty directory (no `~/.gitconfig` to fall back to, matching a fresh CI runner) reproduced
+`fatal: empty ident name` on the old code, and passed — 50/50 — on the fixed code. Also
+50/50 in a normal shell, and `tsc --noEmit` clean.
+
 ## Harvest
 
 Four things this build learned the hard way, promoted to `knowledge/`:
