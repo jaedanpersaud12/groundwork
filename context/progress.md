@@ -1,9 +1,9 @@
 # Progress
 
-**Stage:** 05 — kit check and doctor
+**Stage:** 03 — jobpilot becomes the first consumer
 **Last completed:** 04 — kit sync engine
-**Active feature:** none
-**Next:** 05 (`packages/kit`: check and doctor), or 03 — jobpilot becomes the first consumer
+**Active feature:** 03 — jobpilot becomes the first consumer (`feat/03-jobpilot-consumer`)
+**Next:** 05 (`packages/kit`: check and doctor)
 **Blocker:** none
 
 Keep this short. Detail belongs in the feature's own folder — `spec.md`, `plan.md`,
