@@ -354,3 +354,33 @@ header moved into the flow so the hero needs no 176px top padding, and the scrol
 became a 4rem rise through a 12px blur over 800ms on cubic-bezier(0.32,0.72,0,1). The five
 reveal states re-verified with the blur (all end visible and sharp). Stress suite clean at
 all nine widths, RTL and pseudo-localised, after fixing two more implicit grid tracks.
+
+## Applying the landing-page-design skill (supplied by the developer)
+
+Taken, where the token contract allows:
+- **Geist and Geist Mono** replace Archivo and IBM Plex Mono site-wide (root layout), weights
+  capped at semibold. `type-display` lost its width axis and custom line height; it now
+  takes the type-scale step's line height and tracks tight.
+- **Hero heading**: capped at 680px, broken after "last", with a left-to-right text gradient
+  built from contract tokens (`from-foreground to-muted-foreground`), which lands on the
+  skill's greys in both themes without a raw colour.
+- **Tagline reveal**: "Every project you finish / makes the next one / cheaper to start.",
+  each word lighting from 30% to full as it crosses a line 60% down the viewport, staggered
+  within a batch. Verified: all 11 words muted before arrival, `11110000000` as the first
+  line crosses, all lit after; full colour throughout under `reduce` and with JS off; with
+  the bundle blocked it starts muted and the inline failsafe restores it.
+- **Island nav**: floating glass pill 24px from the top; on narrow screens the menu button's
+  two lines rotate into an X and open a full-screen glass dialog with links rising in
+  sequence. Verified: focus moves to the first link, body scroll locks, Escape closes and
+  returns focus to the button. The page had no navigation on phones before this.
+- **One motion curve**: `ease-fluid` (cubic-bezier(0.32,0.72,0,1)) as a theme token, used by
+  every landing transition; the reveal is 800ms.
+- Spacing and type scales (previous entry).
+
+Not taken, because they conflict with a repo invariant or need decisions the developer owns:
+- Dark-mode background hexes and hex heading gradients: raw colours fail `no-raw-colors`;
+  theme values belong to the token contract (`/token-change`).
+- Phosphor icons: the shipped registry components use lucide, so swapping the page's icons
+  would put two icon families on one page.
+- FAQ, proof strip, risk reversal, legal links, branded 404, og:image: content and pages
+  that need real answers from the developer, not invented copy.

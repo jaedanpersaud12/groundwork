@@ -1,24 +1,22 @@
 import type { Metadata } from "next";
-import { Archivo, IBM_Plex_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 
 import { FOCUS_RING } from "./_site/styles";
 import "./globals.css";
 
 /**
- * Archivo carries both display and body. The width axis is loaded because the headline
- * voice is a width, not a weight — see `type-display` in globals.css.
+ * One typeface: Geist for display and body, Geist Mono only where a monospace does a job
+ * (commands, file names, code). Weights stop at semibold.
  */
-const archivo = Archivo({
-  variable: "--font-archivo",
+const geist = Geist({
+  variable: "--font-geist",
   subsets: ["latin"],
-  axes: ["wdth"],
   display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
-  weight: ["400", "500"],
   display: "swap",
 });
 
@@ -55,7 +53,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${archivo.variable} ${plexMono.variable} h-full antialiased`}
+      className={`${geist.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
@@ -66,7 +64,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           * observer never runs, so hand the content back unconditionally.
           */}
         <noscript>
-          <style>{`.reveal{opacity:1 !important;transform:none !important;filter:none !important}`}</style>
+          <style>{`.reveal{opacity:1 !important;transform:none !important;filter:none !important}.tagline [data-word]{color:inherit !important}`}</style>
         </noscript>
       </head>
       <body className="min-h-full">

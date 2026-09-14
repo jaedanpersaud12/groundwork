@@ -6,8 +6,10 @@
 @import "@ja3dan/tokens/themes/jobpilot.css";
 
 @theme {
-  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  /* The one curve for motion on this site: mass and a soft landing, never a default ease. */
+  --ease-fluid: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 /*
@@ -16,7 +18,7 @@
  * project, which is the whole point of this app.
  */
 :root {
-  --typeface-heading: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --typeface-heading: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
@@ -26,26 +28,21 @@
 }
 
 /*
- * The headline voice: Archivo pushed toward its expanded width, set the way a survey
- * plate or a trailhead sign is set. The width axis does the work — Tailwind's named
- * `font-stretch` steps land either side of where this wants to sit, and the weight falls
- * between semibold and bold, which only the variable axis can reach.
+ * The headline voice: Geist at semibold, tracked tight as it grows. Line height comes from
+ * the type-scale step each heading uses, so it is not set here.
  */
 @utility type-display {
   @apply font-heading;
-  font-stretch: 112%;
-  font-weight: 620;
-  line-height: 0.96;
+  font-weight: 600;
+  letter-spacing: -0.025em;
   text-wrap: balance;
 }
 
-/*
- * Section headings share the display face at normal width, so the page has one voice
- * without the hero's shout repeating down the page.
- */
+/* Section and panel headings: the same face and weight, normal tracking. */
 @utility type-section {
   @apply font-heading;
-  font-weight: 560;
+  font-weight: 600;
+  text-wrap: balance;
 }
 
 /*
@@ -140,6 +137,32 @@
       opacity: 1;
       transform: none;
       filter: none;
+    }
+  }
+}
+
+/*
+ * The tagline: each word starts at 30% of the text colour and comes up to full as it crosses
+ * the trigger line. Same guard shape as `.reveal`: the muted state exists only under
+ * `no-preference`, the failsafe attribute and <noscript> hand the colour back, and print
+ * shows it whole.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .tagline [data-word] {
+    transition: color 700ms var(--ease-fluid);
+  }
+
+  .tagline [data-word]:not([data-lit]) {
+    color: color-mix(in oklab, var(--foreground) 30%, transparent);
+  }
+
+  :root[data-reveal-failsafe="on"] .tagline [data-word] {
+    color: inherit;
+  }
+
+  @media print {
+    .tagline [data-word] {
+      color: inherit;
     }
   }
 }

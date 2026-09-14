@@ -13,6 +13,7 @@ import { SiteHeader } from "./_site/header";
 import { EVIDENCE, KICKOFF, KIT_INIT, LOOP, STATS } from "./_site/kit";
 import { FeatureTable } from "./_site/landing/feature-table";
 import { FilterChipDemo, ViewToggleDemo } from "./_site/landing/specimen";
+import { Tagline } from "./_site/landing/tagline";
 import { groups, items, setupCommand } from "./_site/registry";
 import { Reveal } from "./_site/reveal";
 import { FOCUS_RING, TEXT_LINK } from "./_site/styles";
@@ -84,11 +85,17 @@ export default function Home() {
       <main id="content">
         {/* Hero */}
         <section className="mx-auto w-full max-w-6xl px-4 pt-16 pb-12 sm:px-6 lg:pt-24 lg:pb-16">
-          <h1 className="animate-in type-display text-5xl sm:text-6xl lg:text-7xl text-foreground duration-700 ease-out fade-in slide-in-from-bottom-3">
-            Start where the last project finished.
+          {/*
+            * Capped at 680px and broken after "last", where the thought turns. The gradient is
+            * the contract's own foreground into muted-foreground, left to right, so it follows
+            * the theme; `pb-2` keeps the descenders inside the clipped background.
+            */}
+          <h1 className="max-w-[680px] animate-in bg-linear-to-r from-foreground to-muted-foreground bg-clip-text pb-2 type-display text-5xl text-transparent duration-700 ease-fluid fade-in slide-in-from-bottom-3 sm:text-6xl">
+            Start where the last <br className="hidden sm:block" />
+            project finished.
           </h1>
-          <div className="mt-12 grid animate-in grid-cols-1 gap-6 delay-100 duration-700 ease-out fade-in lg:grid-cols-2 lg:items-end lg:gap-4">
-            <p className="max-w-md text-lg text-pretty text-muted-foreground">
+          <div className="mt-12 grid animate-in grid-cols-1 gap-6 delay-100 duration-700 ease-fluid fade-in lg:grid-cols-2 lg:items-end lg:gap-4">
+            <p className="max-w-[680px] text-lg text-pretty text-muted-foreground lg:max-w-md">
               Agent skills, project context and a token contract, in your repo before the first line of code.
             </p>
             <div className="grid min-w-0 grid-cols-1 gap-2">
@@ -101,7 +108,7 @@ export default function Home() {
           </div>
         </section>
 
-        <div className="relative h-[clamp(16rem,40vw,34rem)] w-full animate-in overflow-hidden delay-200 duration-1000 ease-out fade-in">
+        <div className="relative h-[clamp(16rem,40vw,34rem)] w-full animate-in overflow-hidden delay-200 duration-1000 ease-fluid fade-in">
           <Image
             src={background}
             alt="An illustrated valley below snow-capped mountains, a golden tree beside a river"
@@ -174,6 +181,11 @@ export default function Home() {
             </div>
           </section>
         </Reveal>
+
+        {/* The statement, on its own: why the whole thing exists. */}
+        <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:py-24">
+          <Tagline lines={["Every project you finish", "makes the next one", "cheaper to start."]} />
+        </section>
 
         {/* How a project starts: the kit installs, then kickoff writes the project's own context. */}
         <Reveal>
@@ -412,7 +424,7 @@ function Block({ name, tier, wide = false, children }: { name: string; tier: str
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-border px-6 py-4">
         <Link
           href={`/docs/components/${name}`}
-          className={`min-w-0 rounded-sm font-mono text-sm text-card-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-current ${FOCUS_RING}`}
+          className={`min-w-0 rounded-sm font-mono text-sm text-card-foreground underline decoration-border underline-offset-4 transition-colors duration-300 ease-fluid hover:decoration-current ${FOCUS_RING}`}
         >
           {name}
         </Link>
@@ -453,7 +465,7 @@ function IndexList({ names, columns = false }: { names: string[]; columns?: bool
         <li key={name}>
           <Link
             href={`/docs/components/${name}`}
-            className={`rounded-sm font-mono text-xs text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground hover:decoration-current ${FOCUS_RING}`}
+            className={`rounded-sm font-mono text-xs text-muted-foreground underline decoration-border underline-offset-4 transition-colors duration-300 ease-fluid hover:text-foreground hover:decoration-current ${FOCUS_RING}`}
           >
             {name}
           </Link>
