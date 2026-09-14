@@ -20,7 +20,7 @@ type CheckResult = { tokenProblems: TokenProblem[]; forbiddenClasses: ForbiddenC
 const IMPORT = /^@import\s+(?:url\()?["']([^"']+)["']\)?[^;]*;\s*$/gm;
 
 /**
- * `tailwind.css` doesn't redeclare `--background` etc. itself in a project like jobpilot —
+ * `tailwind.css` doesn't redeclare `--background` etc. itself in a consuming project —
  * those live in `@ja3dan/tokens/themes/<name>.css`, pulled in by `@import`. Resolving one
  * level of that chain (recursively, since a theme file could itself import another) is what
  * makes the token check see what the browser actually sees.

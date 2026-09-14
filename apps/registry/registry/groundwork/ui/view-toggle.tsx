@@ -5,7 +5,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Segmented control for swapping one view of the same data for another. Source: flvs.
+ * Segmented control for swapping one view of the same data for another.
  *
  * The track's padding plus its border is the inset on every side, and each segment's
  * radius is the track's less that inset, so the selected fill's corners run concentric

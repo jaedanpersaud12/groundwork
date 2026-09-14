@@ -22,7 +22,7 @@ nothing yet using them.
 
 ## Decisions taken before the spec
 
-- **Tested against a fixture, not jobpilot.** 03 isn't done, and 04 shouldn't wait on it.
+- **Tested against a fixture, not a real app.** 03 isn't done, and 04 shouldn't wait on it.
   The feature creates a throwaway Next app, installs items into it, and proves every
   criterion there. Real-project testing stays in 03.
 - **Published to npm as `@ja3dan/kit`**, consistent with `@ja3dan/tokens` and
@@ -55,7 +55,7 @@ nothing yet using them.
 
 - `kit check` and `kit doctor` — feature 05
 - `templates/`, `presets/`, `/kickoff` — feature 06
-- Moving jobpilot onto the registry — feature 03
+- Moving an existing app onto the registry — feature 03
 - Actually publishing to npm, and any GitHub Action that opens update PRs automatically
 - Updating more than one project in one invocation — the plan's multi-project table is
   worth having, but it needs more than one real consumer to be worth designing

@@ -1,6 +1,6 @@
 "use client";
 
-// Source: flvs admin filters. Every list screen narrows the same way — pick a value,
+// Every list screen narrows the same way — pick a value,
 // see it named on the control, click × to drop it. These are that one gesture.
 // Options open in a Base UI menu.
 

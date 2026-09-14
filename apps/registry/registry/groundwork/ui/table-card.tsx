@@ -3,7 +3,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * The table-card look, in one place. Source: flvs admin data-table.
+ * The table-card look, in one place.
  *
  * Every list screen renders the same card: a titled header with its own controls,
  * a tinted column band, then fixed-height rows separated by hairlines. The parts are

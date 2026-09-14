@@ -1,6 +1,5 @@
 // Shared motion vocabulary. Anything that slides a thumb or rolls content in from
 // the direction of travel uses these, so tuning one tunes all of them.
-// Source: flvs → jobpilot components/interior/motion.ts.
 
 /** A thumb or highlight sliding between slots. Firm, barely any overshoot. */
 export const CELL = { type: "spring", stiffness: 520, damping: 34, mass: 0.45 } as const;

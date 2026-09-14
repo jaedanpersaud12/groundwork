@@ -13,8 +13,7 @@
   "meta": {
     "version": "1.0.0",
     "tier": "primitive",
-    "track": "minor",
-    "source": "jobpilot"
+    "track": "minor"
   },
   "type": "registry:ui"
 }

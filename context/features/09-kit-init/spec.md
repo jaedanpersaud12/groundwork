@@ -41,9 +41,9 @@ for this feature:
    means a skill edit needs a `kit` version bump to reach anyone, and `kit` grows a second,
    unrelated reason to publish.
 2. **Fetch from GitHub at `init` time, recording what was fetched.** `kit.lock.json`'s shape
-   was deliberately built to mirror jobpilot's real `skills-lock.json` — `sourceType:
-   "github"`, a path, a `computedHash` — for exactly this day. Matches how jobpilot actually
-   got its skills. Means `kit init` needs network access and a GitHub-reading path `kit`
+   was deliberately built to mirror a real `skills-lock.json` — `sourceType:
+   "github"`, a path, a `computedHash` — for exactly this day. Matches how vendored skills
+   actually get installed. Means `kit init` needs network access and a GitHub-reading path `kit`
    doesn't have today (everything else it reads comes from the `@ja3dan` registry's own
    HTTP endpoints, not raw GitHub).
 
@@ -53,29 +53,29 @@ Neither is obviously wrong; this is `/architect`'s first question.
 
 - [x] `kit init next16-insforge` run against an empty directory copies every file from
       `templates/next16-insforge/` into it, unmodified except where a placeholder is
-      documented to be filled in — *see `log.md`; verified against a real, fresh
+      documented to be filled in — *verified against a real, fresh
       `create-next-app` scaffold, three times over the course of the build*
 - [x] The 6 lifecycle skills land in the new project's `.claude/skills/`, each readable and
       invocable as a skill (not just files on disk — verified by actually running one, e.g.
-      `/feature start 01`, in the new project) — *see `log.md`. Verified harder than asked:
+      `/feature start 01`, in the new project) — *Verified harder than asked:
       a genuinely separate `claude -p` session rooted at the throwaway project correctly
       loaded the installed `feature` skill and followed its exact refusal logic*
 - [x] `shadcn init <registry>/r/setup.json` runs as part of `kit init` and produces a
       `components.json` with a real `@ja3dan` registry entry and the contract's CSS
-      imports — the same end state 03 reached by hand in jobpilot — *see `log.md`. Also
+      imports — the same end state 03 reached by hand — *Also
       found and fixed two rough edges this criterion's own "unmodified" clause above
       didn't anticipate: leftover `create-next-app` CSS overriding the theme, and
       `@ja3dan/eslint-plugin` installed but never wired into `eslint.config.mjs`*
 - [x] `kit init` finishes by writing `kit.lock.json` (via the existing `lock()` in
       `commands/lock.ts`), even when it locks zero items, matching `kit lock`'s own
-      documented behavior for an empty install — *see `log.md`*
+      documented behavior for an empty install
 - [x] `kit doctor`'s `"kickoff"` bucket (real but empty since 05) gains real entries for
       what `kit init` just installed, and passes when run immediately after `kit init` on
-      a fresh project — *see `log.md`; 13/13 checks pass against the throwaway project*
+      a fresh project — *13/13 checks pass against the throwaway project*
 - [x] A throwaway project taken from an empty folder through `kit init` plus the 06 prompts
       reaches feature 01 merged, using only the kit and the prompts — carried over from 06's
       spec, which deferred it here. Every rough edge hit along the way is fed back into a
-      change in this feature, not left as a note. — *done in full, see `log.md`: real
+      change in this feature, not left as a note. — *done in full: real
       `create-next-app` scaffold → `kit init` → the three 06 prompts against a genuinely
       small fake product ("Ledger") → feature 01 (Homepage UI) built for real, with a real
       `@ja3dan/button`, passing a clean `bun run check` and `bun run build`, merged into

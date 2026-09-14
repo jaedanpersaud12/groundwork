@@ -38,7 +38,7 @@ Two rules the build can't catch for you:
   "dependencies": ["lucide-react"],
   "registryDependencies": ["@ja3dan/button"],
   "files": [{ "path": "registry/groundwork/ui/status-pill.tsx", "type": "registry:ui" }],
-  "meta": { "version": "1.0.0", "tier": "primitive", "track": "minor", "source": "flvs" }
+  "meta": { "version": "1.0.0", "tier": "primitive", "track": "minor" }
 }
 ```
 

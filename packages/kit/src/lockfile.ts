@@ -20,7 +20,7 @@ type LockEntry = {
 /**
  * `kit init`'s half of the shape the comment above promised. `sourceType: "kit"` means
  * "bundled in the installing kit's own package" — groundwork's `skills/` has no external
- * repo to point at the way jobpilot's real `skills-lock.json` did (`sourceType: "github"`).
+ * repo to point at the way a vendored skill's `skills-lock.json` entry does (`sourceType: "github"`).
  * A future GitHub-sourced skill is a new `sourceType` value, not a schema change.
  */
 type SkillEntry = {

@@ -1,11 +1,8 @@
 /*
- * JobPilot theme. Light values are taken from jobpilot's globals.css so that
- * migrating it onto the registry changes nothing visually. jobpilot never had a
- * real dark mode; the .dark values here are new.
+ * Violet theme. Cool grey surfaces with a violet primary, light and dark.
  *
- * Departures from jobpilot's globals.css (status colours must read as small text on
- * a 10% tint of themselves, for status pills):
- * - destructive #ef4444 → #b91c1c (jobpilot's error-dark), warning #ff8904 → #a44a07. Both ≥ 5:1 on their tint.
+ * Status colours must read as small text on a 10% tint of themselves, for status pills:
+ * destructive is #b91c1c and warning #a44a07. Both ≥ 5:1 on their tint.
  */
 
 :root {

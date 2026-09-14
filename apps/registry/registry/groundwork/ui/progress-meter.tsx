@@ -3,7 +3,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * How far along something is, as filled segments rather than a bar. Source: flvs.
+ * How far along something is, as filled segments rather than a bar.
  *
  * A continuous bar invites reading a percentage off its length, which is false
  * precision for something that moves in steps. Segments say what is true: four

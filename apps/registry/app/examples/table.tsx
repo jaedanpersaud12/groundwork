@@ -165,6 +165,13 @@ export const tableExamples: ExampleSet = {
   "input-group": [
     { title: "Search with clear", render: () => <SearchField /> },
     {
+      title: "Small",
+      description: "`size=\"sm\"` for a 32px field beside chips and toggles: tighter padding, 14px icon, 12px text.",
+      render: () => (
+        <InputGroup type="search" size="sm" aria-label="Filter" placeholder="Filter by company, role…" icon={<SearchIcon aria-hidden />} className="w-full max-w-xs rounded-lg" />
+      ),
+    },
+    {
       title: "Trailing unit",
       render: () => (
         <InputGroup aria-label="Salary" inputMode="numeric" defaultValue="150000" className="w-48" trailing={<span className="text-xs text-subtle-foreground">USD</span>} />

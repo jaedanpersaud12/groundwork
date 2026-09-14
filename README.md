@@ -100,7 +100,7 @@ style is [`context/standards.md`](context/standards.md).
 | --- | --- |
 | ✅ | **01** Design registry, minimal version |
 | ✅ | **02** Agent kit scaffold |
-| ✅ | **03** jobpilot becomes the first consumer |
+| ✅ | **03** A first consuming project |
 | ✅ | **04** `packages/kit`: sync engine |
 | ✅ | **05** `packages/kit`: check and doctor |
 | ✅ | **06** `/kickoff` prompts, and `templates/` |
