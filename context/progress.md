@@ -1,10 +1,14 @@
 # Progress
 
 **Stage:** 05 — kit check and doctor
-**Last completed:** 03 — jobpilot becomes the first consumer
-**Active feature:** none
-**Next:** 05 (`packages/kit`: check and doctor)
+**Last completed:** 04 — kit sync engine
+**Active feature:** 05 — kit check and doctor (`feat/05-kit-check-doctor`)
+**Next:** 06 or 09, once 05 lands
 **Blocker:** none
+
+_03 (jobpilot becomes the first consumer) is built and open as
+[groundwork#7](https://github.com/jaedanpersaud12/groundwork/pull/7); this branch was cut
+from `main` before that merged, so its checkbox below will catch up once #7 lands._
 
 Keep this short. Detail belongs in the feature's own folder — `spec.md`, `plan.md`,
 `log.md`, `review.md`. This file is the status block and the checklist, nothing else. The
