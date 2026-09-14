@@ -75,18 +75,19 @@ locked behind installing the kit. First preset: `next16-insforge`, from jobpilot
 would, produces context that survives a line-by-line diff against jobpilot's real files on
 the checks in `context/features/06-kickoff/spec.md`.
 
-*Spec, plan and log are on `feat/06-kickoff`, not merged.* The measurement they rest on:
-jobpilot's `context/` is 3,774 lines, of which about 1,300 can be generated at kickoff —
-the rest is copied, replaced by the token contract, written during the build, or read out
-of installed packages. The first step is a test, not a build: does stage 2 hold its schema
-section at ~580 lines? If not, three stages become four.
+The measurement this rests on: jobpilot's `context/` is 3,774 lines, of which about 1,300
+can be generated at kickoff — the rest is copied, replaced by the token contract, written
+during the build, or read out of installed packages. Settled first, before anything else
+was written: does stage 2 hold its schema section at ~580 lines? It did — see
+`context/features/06-kickoff/log.md`.
 
-## 07 — `apps/site`
+## 07 — retired
 
-**On hold — re-scope before starting.** 08 put the explainer on `apps/registry`'s landing
-page, which meets this stage's original "done when" (explain groundwork to someone who has
-never seen it). A separate `apps/site` is only worth building if it has a job that page
-doesn't do; write that job down here first, or drop the stage.
+Was `apps/site`, a separate marketing site. Put on hold when 08 shipped an illustrated
+landing page on `apps/registry` that already met this stage's original "done when." No
+distinct job ever turned up for a second site, so the stage is retired rather than kept as
+a permanent placeholder — numbers aren't reused, so this one stays empty. If a real need
+for a separate site shows up later, it gets a fresh number.
 
 ## 08 — Groundwork site
 
