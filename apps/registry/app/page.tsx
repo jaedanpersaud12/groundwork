@@ -12,10 +12,12 @@ import { Command } from "./_site/code";
 import { SiteHeader } from "./_site/header";
 import { EVIDENCE, KICKOFF, KIT_INIT, LOOP, PROJECT_STEPS, PROJECT_TREE, STATS } from "./_site/kit";
 import { highlight } from "./_site/highlight";
+import { CountUp } from "./_site/landing/count-up";
 import { FeatureTable } from "./_site/landing/feature-table";
 import { ProjectSteps } from "./_site/landing/project-steps";
 import { FilterChipDemo, ViewToggleDemo } from "./_site/landing/specimen";
 import { Tagline } from "./_site/landing/tagline";
+import { TiltCard } from "./_site/landing/tilt-card";
 import { groups, items, setupCommand } from "./_site/registry";
 import { Reveal } from "./_site/reveal";
 import { FOCUS_RING, TEXT_LINK } from "./_site/styles";
@@ -44,7 +46,7 @@ const [KIT, DESIGN] = EVIDENCE;
 
 
 
-function SectionHead({ title, lead }: { title: string; lead: string }) {
+function SectionHead({ title, lead }: { title: React.ReactNode; lead: string }) {
   return (
     <div className="grid max-w-2xl gap-3">
       <h2 className="type-display text-3xl lg:text-4xl text-foreground">{title}</h2>
@@ -82,11 +84,11 @@ export default async function Home() {
             * the contract's own foreground into muted-foreground, left to right, so it follows
             * the theme; `pb-2` keeps the descenders inside the clipped background.
             */}
-          <h1 className="max-w-[680px] animate-in bg-linear-to-r from-foreground to-muted-foreground bg-clip-text pb-2 type-display text-5xl text-transparent duration-700 ease-fluid fade-in slide-in-from-bottom-3 sm:text-6xl">
+          <h1 className="max-w-[680px] animate-in bg-linear-to-r from-foreground to-muted-foreground bg-clip-text pb-2 type-display text-5xl text-transparent duration-700 ease-fluid fade-in fill-mode-both slide-in-from-bottom-3 sm:text-6xl">
             Start where the last <br className="hidden sm:block" />
             project finished.
           </h1>
-          <div className="mt-12 grid animate-in grid-cols-1 gap-6 delay-100 duration-700 ease-fluid fade-in lg:grid-cols-2 lg:items-end lg:gap-4">
+          <div className="mt-12 grid animate-in grid-cols-1 gap-6 delay-100 duration-700 ease-fluid fade-in fill-mode-both lg:grid-cols-2 lg:items-end lg:gap-4">
             <p className="max-w-[680px] text-lg text-pretty text-muted-foreground lg:max-w-md">
               Agent skills, project context and a token contract, in your repo before the first line of code.
             </p>
@@ -100,7 +102,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <div className="relative h-[clamp(16rem,40vw,34rem)] w-full animate-in overflow-hidden delay-200 duration-1000 ease-fluid fade-in">
+        <div className="relative h-[clamp(16rem,40vw,34rem)] w-full animate-in overflow-hidden delay-200 duration-1000 ease-fluid fade-in fill-mode-both">
           <Image
             src={background}
             alt="An illustrated valley below snow-capped mountains, a golden tree beside a river"
@@ -126,7 +128,8 @@ export default async function Home() {
             <div className={`${PANEL} relative mt-12 grid grid-cols-1 overflow-hidden lg:grid-cols-2 lg:grid-rows-[auto_1fr]`}>
               <article className="grid min-w-0 grid-rows-[auto_1fr] gap-8 bg-card pt-8 sm:pt-10 lg:row-span-2 lg:grid-rows-subgrid">
                 <HalfHead title={KIT.title} href={KIT.href} link={KIT.linkLabel}>
-                  {STATS.skills} skills your agents run, and the context they read before they touch code.
+                  <CountUp value={STATS.skills} /> skills your agents run, and the context they read before they touch
+                  code.
                 </HalfHead>
                 <Window path={KIT.artefact.kind === "source" ? KIT.artefact.path : ""}>
                   <span data-line-numbers="" className="syntax block whitespace-pre" dangerouslySetInnerHTML={{ __html: kitHtml }} />
@@ -135,7 +138,8 @@ export default async function Home() {
 
               <article className="grid min-w-0 grid-rows-[auto_1fr] gap-8 border-t border-border bg-card pt-8 sm:pt-10 lg:row-span-2 lg:grid-rows-subgrid lg:border-t-0 lg:border-s">
                 <HalfHead title={DESIGN.title} href={DESIGN.href} link={DESIGN.linkLabel}>
-                  {STATS.tokens} tokens in one contract, and a lint rule that fails anything outside it.
+                  <CountUp value={STATS.tokens} /> tokens in one contract, and a lint rule that fails anything outside
+                  it.
                 </HalfHead>
                 {lint ? (
                   <Window path={lint.path}>
@@ -225,7 +229,11 @@ export default async function Home() {
         <Reveal>
           <section id="registry" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-12 sm:px-6 lg:py-16">
             <SectionHead
-              title={`${items.length} components, yours to edit`}
+              title={
+                <>
+                  <CountUp value={items.length} /> components, yours to edit
+                </>
+              }
               lead="Copied in by shadcn and versioned, so a later update can merge with your edits."
             />
 
@@ -358,10 +366,15 @@ function Plate({ src, alt, focus }: { src: StaticImageData; alt: string; focus: 
  * One component, on its own stage. The stage is the same height in every block of a row, the
  * component sits in its middle, and the caption row underneath names it. That is the whole
  * anatomy; nothing else goes in a block.
+ *
+ * A block narrow enough to read as one card leans toward the pointer and catches a spotlight
+ * (`TiltCard`, from Spell UI); the wide data-table block sits still; a grid of numbers tilting
+ * in 3D reads as broken, not alive.
  */
 function Block({ name, tier, wide = false, children }: { name: string; tier: string; wide?: boolean; children: React.ReactNode }) {
-  return (
-    <li className={`${PANEL} grid min-w-0 grid-rows-[1fr_auto] overflow-hidden ${wide ? "sm:col-span-2" : ""}`}>
+  const face = `${PANEL} grid min-w-0 grid-rows-[1fr_auto] overflow-hidden`;
+  const body = (
+    <>
       <div className="grid min-h-64 place-items-center bg-muted p-6 sm:p-8">{children}</div>
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-border px-6 py-4">
         <Link
@@ -372,6 +385,18 @@ function Block({ name, tier, wide = false, children }: { name: string; tier: str
         </Link>
         <span className="text-xs text-subtle-foreground">{tier}</span>
       </div>
+    </>
+  );
+
+  return (
+    <li className={wide ? "sm:col-span-2" : ""}>
+      {wide ? (
+        <div className={face}>{body}</div>
+      ) : (
+        <TiltCard className={face} tiltLimit={8} scale={1.015}>
+          {body}
+        </TiltCard>
+      )}
     </li>
   );
 }
