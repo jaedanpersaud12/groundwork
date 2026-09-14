@@ -3,6 +3,9 @@ import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
 
 import background from "@/public/backgrounds/background.webp";
+import nightBeach from "@/public/HR0LFOMbEAAIpyI.jpeg";
+import nightCliff from "@/public/HR0LNgXbgAAa7sy.jpeg";
+import nightCove from "@/public/HR0LQMRW8A4qAWP.jpeg";
 import { Button } from "@/registry/groundwork/ui/button";
 import { StatusPill } from "@/registry/groundwork/ui/status-pill";
 
@@ -35,6 +38,28 @@ const PANEL = "rounded-2xl bg-card text-card-foreground shadow-border";
 
 const [KIT, DESIGN] = EVIDENCE;
 
+/**
+ * Each painting's figure sits somewhere different, so each crop is placed to keep it in:
+ * low on the beach, at the foot of the cliff, high on the cove.
+ */
+const NIGHTS = [
+  {
+    src: nightBeach,
+    focus: "object-[center_82%]",
+    alt: "Tall palms lit gold against a dark forested hill, a lone figure on the beach below a starry sky",
+  },
+  {
+    src: nightCliff,
+    focus: "object-bottom",
+    alt: "Palms leaning out from a dark cliff over deep blue water scattered with light, a figure at the shore",
+  },
+  {
+    src: nightCove,
+    focus: "object-[center_34%]",
+    alt: "A figure walking a moonlit cove, palms silhouetted in blue with gold edges",
+  },
+];
+
 function SectionHead({ title, lead }: { title: string; lead: string }) {
   return (
     <div className="grid max-w-2xl gap-3">
@@ -48,7 +73,7 @@ function More({ href, children }: { href: string; children: string }) {
   return (
     <Link href={href} className={`inline-flex shrink-0 items-center gap-1.5 text-sm ${TEXT_LINK}`}>
       {children}
-      <ArrowRightIcon aria-hidden className="size-3.5" />
+      <ArrowRightIcon aria-hidden className="size-3.5 rtl:-scale-x-100" />
     </Link>
   );
 }
@@ -89,7 +114,7 @@ export default function Home() {
               <Command value={setupCommand} />
               <a href="#registry" className={`inline-flex items-center gap-1.5 justify-self-start text-sm ${TEXT_LINK}`}>
                 Browse components
-                <ArrowRightIcon aria-hidden className="size-3.5" />
+                <ArrowRightIcon aria-hidden className="size-3.5 rtl:-scale-x-100" />
               </a>
             </div>
           </div>
@@ -208,7 +233,7 @@ export default function Home() {
                 <FeatureTable rows={3} className="w-full" />
               </Block>
               <Block name="status-pill" tier="Primitive">
-                <div className="flex max-w-56 flex-wrap justify-center gap-2">
+                <div className="flex flex-wrap justify-center gap-2">
                   <StatusPill tone="success">Merged</StatusPill>
                   <StatusPill tone="warning">In review</StatusPill>
                   <StatusPill tone="danger">Failing</StatusPill>
@@ -219,7 +244,7 @@ export default function Home() {
                 <FilterChipDemo />
               </Block>
               <Block name="button" tier="Primitive">
-                <div className="flex flex-wrap justify-center gap-2">
+                <div className="flex flex-wrap justify-center gap-3">
                   <Button>Save</Button>
                   <Button variant="outline">Cancel</Button>
                 </div>
@@ -284,9 +309,30 @@ export default function Home() {
           </section>
         </Reveal>
 
-        <div className="relative h-[clamp(8rem,18vw,15rem)] w-full overflow-hidden">
-          <Image src={background} alt="" fill sizes="100vw" placeholder="blur" className="object-cover object-bottom" />
-        </div>
+        {/*
+          * The close in pictures. The page opens on a valley in daylight and ends on three
+          * shorelines at night, each with one figure at the water's edge: where the last
+          * project finished. On a phone the row becomes a scroller, and the next painting
+          * peeks past the edge so the other two are known to be there.
+          */}
+        <Reveal>
+          <section aria-label="Three night shorelines" className="mx-auto w-full max-w-6xl pb-24 lg:pb-32">
+            <ul className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 [scroll-padding-inline:1rem] sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-6">
+              {NIGHTS.map((night) => (
+                <li key={night.alt} className="relative aspect-[4/5] w-[calc(100%-2rem)] shrink-0 snap-start overflow-hidden rounded-2xl sm:aspect-[2/3] sm:w-auto">
+                  <Image
+                    src={night.src}
+                    alt={night.alt}
+                    fill
+                    sizes="(min-width: 1152px) 368px, (min-width: 640px) 33vw, 100vw"
+                    placeholder="blur"
+                    className={`object-cover ${night.focus}`}
+                  />
+                </li>
+              ))}
+            </ul>
+          </section>
+        </Reveal>
       </main>
 
       <footer>
@@ -313,10 +359,10 @@ function Block({ name, tier, wide = false, children }: { name: string; tier: str
   return (
     <li className={`${PANEL} grid min-w-0 grid-rows-[1fr_auto] overflow-hidden ${wide ? "sm:col-span-2" : ""}`}>
       <div className="grid min-h-64 place-items-center bg-muted p-6 sm:p-8">{children}</div>
-      <div className="flex items-center justify-between gap-4 border-t border-border px-5 py-4">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-border px-5 py-4">
         <Link
           href={`/docs/components/${name}`}
-          className={`rounded-sm font-mono text-sm text-card-foreground hover:underline underline-offset-4 ${FOCUS_RING}`}
+          className={`min-w-0 rounded-sm font-mono text-sm text-card-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-current ${FOCUS_RING}`}
         >
           {name}
         </Link>
@@ -337,12 +383,12 @@ function IndexHeading({ title, count }: { title: string; count: number }) {
 
 function IndexList({ names, columns = false }: { names: string[]; columns?: boolean }) {
   return (
-    <ul className={columns ? "gap-x-4 sm:columns-2 [&>li]:mb-2" : "grid gap-2"}>
+    <ul className={columns ? "gap-x-4 sm:columns-2 [&>li]:mb-3" : "grid gap-3"}>
       {names.map((name) => (
         <li key={name}>
           <Link
             href={`/docs/components/${name}`}
-            className={`rounded-sm font-mono text-[13px] text-muted-foreground transition-colors hover:text-foreground ${FOCUS_RING}`}
+            className={`rounded-sm font-mono text-[13px] text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground hover:decoration-current ${FOCUS_RING}`}
           >
             {name}
           </Link>

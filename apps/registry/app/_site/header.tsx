@@ -41,7 +41,7 @@ function SiteHeader({ variant }: { variant: "plate" | "solid" }) {
               </Link>
             ))}
           </nav>
-          <div className="ms-auto flex shrink-0 items-center gap-5">
+          <div className="ms-auto flex shrink-0 items-center gap-6">
             <ThemeToggle />
             <Link
               href="/docs"

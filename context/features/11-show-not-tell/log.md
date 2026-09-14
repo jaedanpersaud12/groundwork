@@ -287,3 +287,27 @@ is read). Found by the redesigned landing page, which put Pagination in its spec
 It is a shipped component, so the fix needs a `meta.version` bump and a `registry-review`
 pass; the landing page dropped Pagination from the specimen instead of carrying the
 mismatch. The same example on `/docs/components/pagination` should show it too.
+
+## /better-layout review of the redesign
+
+Stress-tested in headless Chromium: widths 320, 400, 720 (200% zoom of 1440), 768, 900,
+1024, 1280, 1440, 1920; `dir="rtl"` at 400 and 1440; pseudo-localised copy (+40%, accented)
+at 400, 1024, 1440. Every run: no page overflow, no child escaping its parent, header on
+one line, and at 1440 the subgrid rows hold (both halves' file panels and links share a
+top; the loop's titles and footers share a top; block captions share a top per row), with
+pseudo-localised copy too.
+
+Fixed: links in the index and block captions now carry a resting underline (they read as
+static text before); arrows mirror under RTL (`scale: -1 1`, checked); 12px between the
+Save/Cancel buttons and 24px between the header's toggle and link; block captions wrap;
+the status-pill group no longer has an English-width cap. Not fixed, LOW: the shared
+`Command` field clips long commands with no fade on narrow screens (a docs-wide component);
+no `env(safe-area-inset-*)` on the landing header.
+
+## The night triptych
+
+Three portrait paintings (added to `apps/registry/public/` by the developer) close the page
+as a triptych under the two commands: the page opens on a valley in daylight and ends on
+three shorelines at night. Each crop is positioned to keep its figure in frame; on phones
+the row becomes a scroll-snap scroller with a 32px peek (measured: items at 16, 368, 720 in
+a 400px viewport).
