@@ -46,3 +46,36 @@ setup guide with both paths. Branched from `feat/11-show-not-tell` (not yet merg
 
 `@ja3dan/kit` is still not on npm, so the `bunx @ja3dan/kit` commands will not run for a
 reader until it is published.
+
+## One code-surface spec, interior.dev's tree view, syntax highlighting
+
+Developer feedback: the command box (1px border, 6px radius) and the file tree (shadow,
+16px radius) looked like two systems. Now every code surface uses `code.tsx`'s constants: the
+contract's raised surface (`bg-card shadow-border`, no border), `rounded-lg` frames with
+`rounded-md` inner rows 4px in (the nested-radius formula), a 40px header, 12px mono on a 24px
+line, and the copy button at the trailing end of the first row. Applied to `Command`,
+`CodeBlock`, `SourceBlock` (component and kickoff pages), the docs `FileTree` and
+`CommandList`, `DataPlate`, and the landing page's project tree and file windows.
+
+- **Tree view**: adapted from interior.dev's (`/r/tree-view.json`, fetched and read). Kept:
+  the keyboard model (arrows, Home/End, type-ahead), spring caret, open/close height
+  animation, reduced-motion handling, ARIA tree roles. Changed: every stone/hex colour to a
+  contract token (they would fail `no-raw-colors`), frame and rows to the site spec, an
+  optional header, a `tone` for lit/quiet rows (used by the landing page's step hover). The
+  node builder lives in `tree-nodes.ts`, not the client module: a server page calling it from
+  the `"use client"` file 500'd `/docs` in the first attempt.
+- **Copy button**: interior.dev's concept (three icons crossfading on a spring, the check
+  drawing itself, a live-region status) on contract tokens.
+- **Syntax highlighting**: Shiki 4.4.3, server-side at build time (no highlighter in the
+  client bundle), css-variables theme. `.syntax` in globals.css points each token variable at
+  a status token, because the contract promises those read as small text on the page ground
+  in both themes; the chart tokens are too faint at 12px in light. Line numbers are a CSS
+  counter, so selecting code doesn't select them.
+- **Wrapped commands** break between words, never inside a flag (`--yes` was splitting at its
+  hyphen); a single token wider than the column (a URL at 320px) breaks inside itself rather
+  than being clipped.
+
+Evidence: all docs routes at their widths with no overflow and no console errors; landing
+stress clean at the page level (the `span.line` entries flagged inside the halves' file
+window are that window's deliberate crop, clipped by its `code` element); 34/34 anchors;
+reveal states; `bun run check` and `build` exit 0.

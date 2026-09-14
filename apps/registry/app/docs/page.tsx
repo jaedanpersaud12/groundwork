@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { Command } from "../_site/code";
-import { Code, CodeBlock, CommandList, FileTree, LinkCards, Note, Prose, Step, Steps } from "../_site/docs-ui";
+import { CodeBlock } from "../_site/code-block";
+import { Code, CommandList, FileTree, LinkCards, Note, Prose, Step, Steps } from "../_site/docs-ui";
 import { KICKOFF, KIT_DOCS, KIT_INIT, PROJECT_TREE } from "../_site/kit";
 import { DocPage, Section } from "../_site/prose";
 import { items, setup, setupCommand } from "../_site/registry";
@@ -83,7 +84,7 @@ export default function SetupPage() {
               script, and locks what it installed.
             </Prose>
             <Command value={`cd your-app && ${KIT_INIT.command}`} wrap />
-            <FileTree root="your-app/" lines={INIT_TREE} />
+            <FileTree root="your-app/" label="Files kit init writes" lines={INIT_TREE} />
           </Step>
 
           <Step number={3} title="Write the context">
@@ -92,8 +93,12 @@ export default function SetupPage() {
               Each answer is the next prompt&apos;s input.
             </Prose>
             <FileTree
-              root="prompts/ into context/"
-              lines={KICKOFF.map((entry) => ({ name: `${entry.prompt}  →  ${entry.output}`, depth: 0, note: entry.holds }))}
+              root="your-app/"
+              label="Files the kickoff prompts write"
+              lines={[
+                { name: "context/", depth: 0 },
+                ...KICKOFF.map((entry) => ({ name: entry.output, depth: 1, note: `from ${entry.prompt}` })),
+              ]}
             />
             <Link href="/docs/kickoff" className={`justify-self-start text-sm ${TEXT_LINK}`}>
               Read the prompts
@@ -147,7 +152,7 @@ export default function SetupPage() {
               media query copy and a <Code>body</Code> rule after the imports, and they override the theme. Keep the
               imports below and any <Code>--font-*</Code> lines; delete the rest.
             </Prose>
-            <CodeBlock file="app/globals.css" code={SETUP_IMPORTS} />
+            <CodeBlock title="app/globals.css" code={SETUP_IMPORTS} />
           </Step>
 
           <Step number={3} title="Wire the lint rule">
@@ -156,7 +161,8 @@ export default function SetupPage() {
               <Code>eslint.config.mjs</Code>.
             </Prose>
             <CodeBlock
-              file="eslint.config.mjs"
+              title="eslint.config.mjs"
+              wrap
               code={`${KIT_DOCS.eslint.importLine};\n\n// inside the config array:\n${KIT_DOCS.eslint.entry}`}
             />
           </Step>

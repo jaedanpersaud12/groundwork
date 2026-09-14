@@ -92,6 +92,43 @@
 }
 
 /*
+ * Syntax colours. Shiki writes `var(--shiki-token-*)`; these point each at a contract token.
+ * The status tokens carry the contract's promise that they read as small text on the page's
+ * own ground in both themes, which is exactly what 12px code needs; the chart tokens don't.
+ */
+.syntax {
+  --shiki-foreground: var(--card-foreground);
+  --shiki-background: transparent;
+  --shiki-token-keyword: var(--primary);
+  --shiki-token-string: var(--success);
+  --shiki-token-string-expression: var(--success);
+  --shiki-token-constant: var(--warning);
+  --shiki-token-function: var(--info);
+  --shiki-token-parameter: var(--card-foreground);
+  --shiki-token-punctuation: var(--muted-foreground);
+  --shiki-token-comment: var(--subtle-foreground);
+  --shiki-token-link: var(--primary);
+  --shiki-token-inserted: var(--success);
+  --shiki-token-deleted: var(--destructive);
+}
+
+/* Line numbers, drawn by a counter so selecting the code never selects them. */
+.syntax[data-line-numbers] {
+  counter-reset: line;
+}
+
+.syntax[data-line-numbers] .line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 2rem;
+  margin-inline-end: 1rem;
+  text-align: end;
+  color: var(--subtle-foreground);
+  user-select: none;
+}
+
+/*
  * Sections arriving on scroll. The hidden state is deliberately scoped to
  * `no-preference`: the reduced-motion block below zeroes every transition, so a hidden
  * starting state that survived it would strand anyone whose observer never fired on a

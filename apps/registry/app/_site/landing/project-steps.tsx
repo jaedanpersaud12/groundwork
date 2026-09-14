@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 
 import { Command } from "../code";
 import { FOCUS_RING } from "../styles";
+import { nodesFromLines } from "../tree-nodes";
+import { TreeView } from "../tree-view";
 
 type Step = { step: 1 | 2 | 3; title: string; body: string; command?: string };
 type Line = { name: string; depth: number; step?: 1 | 2 | 3; note?: string };
@@ -70,34 +72,19 @@ function ProjectSteps({ steps, tree, prompts }: { steps: Step[]; tree: Line[]; p
         })}
       </ol>
 
-      <figure className="min-w-0 self-start overflow-hidden rounded-2xl bg-card shadow-border">
-        <figcaption className="flex items-center justify-between gap-4 border-b border-border px-6 py-4">
-          <span className="font-mono text-xs text-foreground">your-project/</span>
-          <span className="text-xs text-subtle-foreground">after all three steps</span>
-        </figcaption>
-        <ul className="grid py-2 font-mono text-xs">
-          {tree.map((line, index) => {
-            const own = line.step !== undefined && line.step === active;
-            const quiet = active !== null && !own;
-            return (
-              <li
-                key={`${index}-${line.name}`}
-                className={cn(
-                  "grid grid-cols-[1.5rem_minmax(0,1fr)_auto] items-baseline gap-x-4 px-6 py-2 transition-[background-color,opacity,color] duration-300 ease-fluid",
-                  own ? "bg-primary/10 text-foreground" : "text-muted-foreground",
-                  quiet && "opacity-40",
-                )}
-              >
-                <span className="text-subtle-foreground tabular-nums">{line.step ?? ""}</span>
-                <span className="truncate" style={{ paddingInlineStart: `${line.depth * 1.25}rem` }}>
-                  {line.name}
-                </span>
-                <span className="hidden truncate font-sans text-subtle-foreground sm:block">{line.note ?? ""}</span>
-              </li>
-            );
-          })}
-        </ul>
-      </figure>
+      <TreeView
+        title="your-project/"
+        label="The project after all three steps"
+        className="self-start"
+        nodes={nodesFromLines(
+          tree.map((line) => ({
+            name: line.name,
+            depth: line.depth,
+            note: line.note,
+            tone: active === null ? "default" : line.step === active ? "lit" : "quiet",
+          })),
+        )}
+      />
     </div>
   );
 }

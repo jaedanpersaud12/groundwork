@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { SourceBlock } from "../../_site/code";
+import { SourceBlock } from "../../_site/code-block";
 import { PROMPT_FILES, PROMPT_NOTES, TEMPLATE_TREE } from "../../_site/kit";
 import { DocPage, Section, Tree } from "../../_site/prose";
 import { TEXT_LINK } from "../../_site/styles";

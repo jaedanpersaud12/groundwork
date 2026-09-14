@@ -11,6 +11,7 @@ import { StatusPill } from "@/registry/groundwork/ui/status-pill";
 import { Command } from "./_site/code";
 import { SiteHeader } from "./_site/header";
 import { EVIDENCE, KICKOFF, KIT_INIT, LOOP, PROJECT_STEPS, PROJECT_TREE, STATS } from "./_site/kit";
+import { highlight } from "./_site/highlight";
 import { FeatureTable } from "./_site/landing/feature-table";
 import { ProjectSteps } from "./_site/landing/project-steps";
 import { FilterChipDemo, ViewToggleDemo } from "./_site/landing/specimen";
@@ -61,7 +62,8 @@ function More({ href, children }: { href: string; children: string }) {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const kitHtml = await highlight(KIT.artefact.kind === "source" ? KIT.artefact.excerpt : "", "markdown");
   const lint = DESIGN.artefact.kind === "lint" ? DESIGN.artefact : null;
   const [before, after] = lint ? lint.violation.split(lint.offending) : ["", ""];
   const tier = (name: string) => groups.find((group) => group.tier === name);
@@ -127,14 +129,7 @@ export default function Home() {
                   {STATS.skills} skills your agents run, and the context they read before they touch code.
                 </HalfHead>
                 <Window path={KIT.artefact.kind === "source" ? KIT.artefact.path : ""}>
-                  {(KIT.artefact.kind === "source" ? KIT.artefact.excerpt : "").split("\n").map((line, index) => (
-                    <span key={index} className="grid grid-cols-[2rem_minmax(0,1fr)]">
-                      <span aria-hidden className="text-subtle-foreground tabular-nums select-none">
-                        {index + 1}
-                      </span>
-                      <span className="whitespace-pre text-foreground">{line || " "}</span>
-                    </span>
-                  ))}
+                  <span data-line-numbers="" className="syntax block whitespace-pre" dangerouslySetInnerHTML={{ __html: kitHtml }} />
                 </Window>
               </article>
 
@@ -401,10 +396,10 @@ function HalfHead({ title, href, link, children }: { title: string; href: string
 function Window({ path, children }: { path: string; children: React.ReactNode }) {
   return (
     <figure
-      className="ms-6 grid h-72 min-w-0 grid-rows-[auto_1fr] overflow-hidden rounded-ss-xl bg-muted shadow-border sm:ms-10 lg:h-80"
+      className="ms-6 grid h-72 min-w-0 grid-rows-[auto_1fr] overflow-hidden rounded-ss-lg bg-card text-card-foreground shadow-border sm:ms-10 lg:h-80"
     >
-      <figcaption className="border-b border-border px-4 py-3 font-mono text-xs text-muted-foreground">{path}</figcaption>
-      <code className="block overflow-hidden p-4 font-mono text-xs leading-6">{children}</code>
+      <figcaption className="flex h-10 items-center border-b border-border ps-4 font-mono text-xs text-muted-foreground">{path}</figcaption>
+      <code className="block overflow-hidden px-4 py-3 font-mono text-xs leading-6">{children}</code>
     </figure>
   );
 }

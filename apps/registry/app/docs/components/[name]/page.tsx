@@ -5,7 +5,8 @@ import { notFound } from "next/navigation";
 import { Examples } from "@/app/examples";
 import { cn } from "@/lib/utils";
 
-import { Command, DataPlate, SourceBlock } from "../../../_site/code";
+import { Command, DataPlate } from "../../../_site/code";
+import { SourceBlock } from "../../../_site/code-block";
 import { DocPage, Section } from "../../../_site/prose";
 import {
   dependents,
