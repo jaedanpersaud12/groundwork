@@ -43,10 +43,12 @@ function Reveal({ children }: { children: React.ReactNode }) {
     if (!node) return;
 
     // Nothing to observe with: CSS has already left it visible under `reduce`, and there is
-    // no reason to keep it hidden under `no-preference` either.
+    // no reason to keep it hidden under `no-preference` either. Deferred by a tick rather
+    // than set here, because setState in an effect body is a cascading render
+    // (react-hooks/set-state-in-effect) — the frame it costs is not worth an exception.
     if (typeof IntersectionObserver === "undefined") {
-      setShown(true);
-      return;
+      const now = setTimeout(() => setShown(true), 0);
+      return () => clearTimeout(now);
     }
 
     const failsafe = setTimeout(() => setShown(true), FAILSAFE_MS);

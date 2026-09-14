@@ -22,31 +22,39 @@ colour or a palette class" is a claim; the actual error text is proof.
 
 ## Done when
 
-- [ ] The "Two halves" section on `/` shows repo artefacts rather than prose bullets. The
+- [x] The "Two halves" section on `/` shows repo artefacts rather than prose bullets. The
       agent-kit half renders frontmatter read from a real `skills/*/SKILL.md`; the
       design-system half renders the `no-raw-colors` message read from the plugin's own
       `meta.messages`, not a copy of it. Checked by changing each source, rebuilding, and
-      recording that the page changed with it.
-- [ ] Rendered visible copy on `/` is shorter than before. Word count of the served HTML
-      before (930) and after, by the same script, recorded in `log.md`.
-- [ ] Sections below the fold on `/` fade in once on scroll entry, driven by
+      recording that the page changed with it. — *see `log.md`: both halves demonstrated —
+      the deletion half originally, the reword half (`REWORDED PROBE`) added responding to
+      review Layer 1*
+- [x] Rendered visible copy on `/` is shorter than before. Word count of the served HTML
+      before (930) and after, by the same script, recorded in `log.md`. — *930 → 879 → 878
+      after the review-response fixes; `scratchpad/rendered-words.mjs`*
+- [x] Sections below the fold on `/` fade in once on scroll entry, driven by
       `IntersectionObserver`. Under `prefers-reduced-motion: reduce` they are fully visible
       with no residual transform, and with JavaScript disabled they are fully visible.
       Checked by reading computed styles under emulation, not screenshots
-      (see `knowledge/browser-verification.md`).
-- [ ] Version numbers in the registry list use tabular figures, so the column aligns.
-      Checked by reading computed `font-variant-numeric`.
-- [ ] `bun run check` passes, and `bun run --filter registry typecheck` and the production
-      build both pass.
-- [ ] `/` has no horizontal overflow at 400px in both themes, measured as
-      `documentElement.scrollWidth <= 400` in a 400px iframe, not by screenshot.
-- [ ] The diff touches no file under `packages/tokens/`, introduces no new font, icon
+      (see `knowledge/browser-verification.md`). — *see `log.md`: five states verified in
+      headless Chromium, including the JS-bundle-blocked failure mode the review's Finding 2
+      named, after adding the inline-script failsafe*
+- [x] Version numbers in the registry list use tabular figures, so the column aligns.
+      Checked by reading computed `font-variant-numeric`. — *`tabular-nums` confirmed, see
+      `log.md`*
+- [x] `bun run check` passes, and `bun run --filter registry typecheck` and the production
+      build both pass. — *exit 0 on all three after the review-response fixes, see `log.md`*
+- [x] `/` has no horizontal overflow at 400px in both themes, measured as
+      `documentElement.scrollWidth <= 400` in a 400px iframe, not by screenshot. — *400 ===
+      400 in both `colorScheme`s, see `log.md`*
+- [x] The diff touches no file under `packages/tokens/`, introduces no new font, icon
       library or colour, and adds no *third-party* dependency. **Amended after review:** the
       original wording said "no runtime dependency", which the implementation does not meet
       — `@ja3dan/eslint-plugin` moves from `devDependencies` to `dependencies` in
       `apps/registry` because the site now imports it at build time. That is a workspace
       package already in the tree, and `apps/registry` is private so nothing is published,
-      but the first wording was wrong and is corrected here rather than argued around.
+      but the first wording was wrong and is corrected here rather than argued around. —
+      *criterion wording itself corrected per review's Bookkeeping finding, see `log.md`*
 
 ## Out of scope
 

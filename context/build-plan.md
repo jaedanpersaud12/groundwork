@@ -141,7 +141,7 @@ real run of `/imprint` against a genuinely composed (non-registry-primitive) pie
 the throwaway project produces an entry that would actually help the next session build a
 matching one — not a restatement of a contract token.
 
-## 11 — Show, don't tell: the landing page and the setup docs
+## 11 — Show, don't tell: the landing page
 
 Not a redesign. The site's engineering is sound — an audit at 400px across eight routes in
 both themes found no overflow and no theme fault — and the brand is deliberate: dark-first,

@@ -249,3 +249,28 @@ states the criterion as written and records that the original wording was not me
 `bun run check` exit 0 · `typecheck` exit 0 · `build` exit 0 · no overflow at 400px in
 either theme (400 === 400) · `tabular-nums` still on the version column · rendered `/` at
 878 words.
+
+### One more, caught by lint after the review fixes
+
+Moving `Reveal` to `useState` put a synchronous `setShown(true)` in the effect body for the
+no-`IntersectionObserver` branch, which `react-hooks/set-state-in-effect` rejects. A
+`bun run check` run earlier in this round reported exit 0 even though this code was already
+in place; a later run failed on it. Re-running confirmed `check` does propagate a registry
+lint failure (root `lint` exit 1, `check` exit 1), so the gate itself works — the earlier
+green run is not trusted as evidence, and only the final run below is. Fixed by deferring
+that one `setShown` a tick with a cleared `setTimeout`.
+
+### Final state
+
+`bun run check` exit 0 · `typecheck` exit 0 · `build` exit 0. Five reveal states re-run
+after the last `reveal.tsx` change, same results as the table above; no overflow at 400px
+in either theme; `tabular-nums` intact. (Verified against an already-running dev server on
+:3002 rather than :3100 — a second `next dev` in the same directory refuses to start.)
+
+## Harvested
+
+Two entries added to `knowledge/browser-verification.md`: the Browser pane delivers no
+`IntersectionObserver` callbacks in the same state it delivers no `requestAnimationFrame`,
+so scroll-reveal cannot be verified there at all; and blocking `_next/static/chunks/**` to
+simulate a failed bundle also blocks Next's stylesheet, which makes any
+"is the content still visible" check pass for the wrong reason.
