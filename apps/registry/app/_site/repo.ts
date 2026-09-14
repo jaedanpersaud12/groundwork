@@ -206,6 +206,11 @@ function lintMessage(id: string, values: Record<string, string>): string {
   });
 }
 
+/** The opening lines of a skill's SKILL.md, verbatim, for a view that crops the rest. */
+function skillExcerpt(name: string, lines: number): string {
+  return read("skills", name, "SKILL.md").split("\n").slice(0, lines).join("\n");
+}
+
 /** A skill's frontmatter block, verbatim — the `---` fences included. */
 function skillFrontmatter(name: string): string {
   const { raw } = frontmatter(read("skills", name, "SKILL.md"));
@@ -222,6 +227,7 @@ export {
   lintMessage,
   promptFiles,
   readSkill,
+  skillExcerpt,
   skillFrontmatter,
   skillNames,
   skillSection,

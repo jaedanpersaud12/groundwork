@@ -71,7 +71,6 @@ function FilePanel({ path, children }: { path: string; children: React.ReactNode
 }
 
 export default function Home() {
-  const frontmatter = KIT.artefact.kind === "source" ? KIT.artefact.content.split("\n") : [];
   const lint = DESIGN.artefact.kind === "lint" ? DESIGN.artefact : null;
   const [before, after] = lint ? lint.violation.split(lint.offending) : ["", ""];
   const tier = (name: string) => groups.find((group) => group.tier === name);
@@ -125,58 +124,56 @@ export default function Home() {
           <section className="mx-auto w-full max-w-6xl px-4 pt-20 pb-12 sm:px-6 lg:pt-24 lg:pb-16">
             <SectionHead title="Two halves" lead="Take either one on its own. Most projects take both." />
 
-            <div className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:grid-rows-[auto_1fr_auto]">
-              <article className={`${PANEL} grid min-w-0 grid-cols-1 gap-6 p-6 sm:p-8 lg:row-span-3 lg:grid-rows-subgrid`}>
-                <div className="grid content-start gap-2">
-                  <h3 className="type-section text-lg">The agent kit</h3>
-                  <p className="text-muted-foreground">Skills your agents run, and the context they read before they touch code.</p>
-                </div>
-                <FilePanel path={KIT.artefact.kind === "source" ? KIT.artefact.path : ""}>
-                  <ol>
-                    {frontmatter.map((line, index) => (
-                      <li key={index} className="grid grid-cols-[1.5rem_minmax(0,1fr)]">
-                        <span aria-hidden className="text-subtle-foreground tabular-nums select-none">
-                          {index + 1}
-                        </span>
-                        <span className="whitespace-pre-wrap text-foreground">{line}</span>
-                      </li>
-                    ))}
-                  </ol>
-                </FilePanel>
-                <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
-                  <p className="font-mono text-xs text-subtle-foreground">{STATS.skills} skills, installed by kit init</p>
-                  <More href="/docs/loop">Read the loop</More>
-                </div>
+            {/*
+              * One object, split at a seam, not two cards: the halves share one frame and one
+              * surface, divided by a single line. Each half opens a window onto a real file that
+              * runs off the half's bottom and trailing edges, so it reads as a view into the file
+              * rather than a boxed quotation of it.
+              */}
+            <div className={`${PANEL} relative mt-12 grid grid-cols-1 overflow-hidden lg:grid-cols-2 lg:grid-rows-[auto_1fr]`}>
+              <article className="grid min-w-0 grid-rows-[auto_1fr] gap-8 bg-card pt-8 sm:pt-10 lg:row-span-2 lg:grid-rows-subgrid">
+                <HalfHead title={KIT.title} href={KIT.href} link={KIT.linkLabel}>
+                  {STATS.skills} skills your agents run, and the context they read before they touch code.
+                </HalfHead>
+                <Window path={KIT.artefact.kind === "source" ? KIT.artefact.path : ""}>
+                  {(KIT.artefact.kind === "source" ? KIT.artefact.excerpt : "").split("\n").map((line, index) => (
+                    <span key={index} className="grid grid-cols-[2rem_minmax(0,1fr)]">
+                      <span aria-hidden className="text-subtle-foreground tabular-nums select-none">
+                        {index + 1}
+                      </span>
+                      <span className="whitespace-pre text-foreground">{line || " "}</span>
+                    </span>
+                  ))}
+                </Window>
               </article>
 
-              <article className={`${PANEL} grid min-w-0 grid-cols-1 gap-6 p-6 sm:p-8 lg:row-span-3 lg:grid-rows-subgrid`}>
-                <div className="grid content-start gap-2">
-                  <h3 className="type-section text-lg">The design system</h3>
-                  <p className="text-muted-foreground">One contract every component obeys, and a lint rule that enforces it.</p>
-                </div>
+              <article className="grid min-w-0 grid-rows-[auto_1fr] gap-8 border-t border-border bg-card pt-8 sm:pt-10 lg:row-span-2 lg:grid-rows-subgrid lg:border-t-0 lg:border-s">
+                <HalfHead title={DESIGN.title} href={DESIGN.href} link={DESIGN.linkLabel}>
+                  {STATS.tokens} tokens in one contract, and a lint rule that fails anything outside it.
+                </HalfHead>
                 {lint ? (
-                  <FilePanel path={lint.path}>
-                    <p className="whitespace-pre text-muted-foreground">
+                  <Window path={lint.path}>
+                    <span className="block whitespace-pre text-muted-foreground">
                       <span className="sr-only">Fails: </span>
                       {before}
                       <span className="text-foreground underline decoration-destructive decoration-wavy decoration-1 underline-offset-4">
                         {lint.offending}
                       </span>
                       {after}
-                    </p>
-                    <p className="whitespace-pre text-success">
+                    </span>
+                    <span className="mt-2 block whitespace-pre-wrap text-destructive">
+                      <span aria-hidden>✕ </span>
+                      {lint.message}
+                    </span>
+                    <span className="mt-6 block whitespace-pre text-success">
                       <span className="sr-only">Passes: </span>
                       {lint.fix}
-                    </p>
-                    <p className="mt-4 border-t border-border pt-4 text-destructive">{lint.message}</p>
-                  </FilePanel>
+                    </span>
+                    <span className="mt-2 block text-subtle-foreground">
+                      <span aria-hidden>✓ </span>no problems
+                    </span>
+                  </Window>
                 ) : null}
-                <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
-                  <p className="font-mono text-xs text-subtle-foreground">
-                    {STATS.tokens} tokens, {STATS.themes} themes
-                  </p>
-                  <More href="/docs/tokens">Read the contract</More>
-                </div>
               </article>
             </div>
           </section>
@@ -431,6 +428,34 @@ function Block({ name, tier, wide = false, children }: { name: string; tier: str
         <span className="text-xs text-subtle-foreground">{tier}</span>
       </div>
     </li>
+  );
+}
+
+/** A half's heading row: the title with its link on the same line, then one sentence. */
+function HalfHead({ title, href, link, children }: { title: string; href: string; link: string; children: React.ReactNode }) {
+  return (
+    <div className="grid content-start gap-3 px-6 sm:px-10">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+        <h3 className="type-display text-2xl text-foreground sm:text-3xl">{title}</h3>
+        <More href={href}>{link}</More>
+      </div>
+      <p className="max-w-md text-pretty text-muted-foreground">{children}</p>
+    </div>
+  );
+}
+
+/**
+ * A window onto a file. It starts inset from the leading edge and runs off the bottom and
+ * trailing edges of its half, which crops it, so only its top leading corner is rounded.
+ */
+function Window({ path, children }: { path: string; children: React.ReactNode }) {
+  return (
+    <figure
+      className="ms-6 grid h-72 min-w-0 grid-rows-[auto_1fr] overflow-hidden rounded-ss-xl bg-muted shadow-border sm:ms-10 lg:h-80"
+    >
+      <figcaption className="border-b border-border px-4 py-3 font-mono text-xs text-muted-foreground">{path}</figcaption>
+      <code className="block overflow-hidden p-4 font-mono text-xs leading-6">{children}</code>
+    </figure>
   );
 }
 

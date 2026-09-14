@@ -384,3 +384,16 @@ Not taken, because they conflict with a repo invariant or need decisions the dev
   would put two icon families on one page.
 - FAQ, proof strip, risk reversal, legal links, branded 404, og:image: content and pages
   that need real answers from the developer, not invented copy.
+
+## Two halves, redesigned
+
+Developer feedback: the two identical cards read as generated. The section is now one panel
+split at a seam: both halves on the same surface, a larger heading with its link on the same
+line, one sentence, then a window onto a real file that runs off the half's bottom and
+trailing edges (only its top leading corner rounded), so it reads as a view into the file.
+The kit's window shows the first 18 lines of `skills/feature/SKILL.md`; the design system's
+shows the violation, the rule's message, the fix and a clean result. Rows are shared through
+subgrid, so both windows start on one line.
+
+Two iterations dropped on feedback: a round "+" join mark on the seam (read as decoration),
+and alternating tones between the halves (read as two different things, not two halves).
