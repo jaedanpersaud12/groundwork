@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState, type PointerEvent, type ReactNode } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/registry/groundwork/ui/button";
 
 import { NAV } from "../nav";
 import { Mark } from "../mark";
@@ -32,7 +33,9 @@ function IslandHeader() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 flex justify-center">
+    // At the top of the page the bar floats over the hero's night sky, which is dark in both
+    // themes, so it takes the dark tokens there and the reader's theme once it becomes a card.
+    <header className={cn("sticky top-0 z-40 flex justify-center", !scrolled && "dark")}>
       <div
         data-scrolled={scrolled || undefined}
         className={cn(
@@ -65,50 +68,12 @@ function IslandHeader() {
             ))}
           </nav>
           <ThemeToggle className="rounded-lg" />
-          <GlowLink href="/docs">Read the docs</GlowLink>
+          <Button nativeButton={false} render={<Link href="/docs" />}>
+            Read the docs
+          </Button>
         </div>
       </div>
     </header>
-  );
-}
-
-/**
- * The header's one button. Its 1px edge is lit from wherever the pointer is, so the light
- * gathers on the side you approach from. With no pointer over it the light rests on the top
- * edge, as if lit from above. It writes two custom properties rather than state, so moving
- * across it never re-renders.
- */
-function GlowLink({ href, children }: { href: string; children: ReactNode }) {
-  const edge = useRef<HTMLSpanElement>(null);
-
-  function follow(event: PointerEvent<HTMLAnchorElement>) {
-    const box = event.currentTarget.getBoundingClientRect();
-    edge.current?.style.setProperty("--glow-x", `${((event.clientX - box.left) / box.width) * 100}%`);
-    edge.current?.style.setProperty("--glow-y", `${((event.clientY - box.top) / box.height) * 100}%`);
-  }
-
-  function rest() {
-    edge.current?.style.removeProperty("--glow-x");
-    edge.current?.style.removeProperty("--glow-y");
-  }
-
-  return (
-    <span
-      ref={edge}
-      className="shrink-0 rounded-lg bg-[radial-gradient(circle_at_var(--glow-x,50%)_var(--glow-y,0%),var(--primary-foreground)_0%,color-mix(in_oklab,var(--primary)_60%,transparent)_40%,transparent_80%)] p-px"
-    >
-      <Link
-        href={href}
-        onPointerMove={follow}
-        onPointerLeave={rest}
-        className={cn(
-          "flex h-[calc(2rem-2px)] items-center rounded-[7px] bg-primary px-3 text-sm font-semibold text-primary-foreground transition-[background-color,scale] duration-300 ease-fluid hover:bg-primary/90 active:scale-[0.98]",
-          FOCUS_RING,
-        )}
-      >
-        {children}
-      </Link>
-    </span>
   );
 }
 

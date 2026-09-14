@@ -3,7 +3,7 @@
 @import "tw-animate-css";
 @import "@ja3dan/tokens/theme.css";
 @import "@ja3dan/tokens/base.css";
-@import "@ja3dan/tokens/themes/violet.css";
+@import "@ja3dan/tokens/themes/blue.css";
 
 @theme {
   --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
@@ -29,11 +29,14 @@
 
 /*
  * The headline voice: Geist at semibold, tracked tight as it grows. Line height comes from
- * the type-scale step each heading uses, so it is not set here.
+ * the type-scale step each heading uses, so it is not set here. Tracking goes through
+ * `--tw-tracking` because each `text-*` step reads that before its own scaled value, so
+ * the display voice stays -0.025em whichever step it sits on.
  */
 @utility type-display {
   @apply font-heading;
   font-weight: 600;
+  --tw-tracking: -0.025em;
   letter-spacing: -0.025em;
   text-wrap: balance;
 }
