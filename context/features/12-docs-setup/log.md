@@ -115,3 +115,22 @@ no console errors; every TOC entry has its heading; 33/33 anchors; `bun run chec
 `build` exit 0. Token spans flagged inside code blocks were checked individually: they
 overflow their line inside a block that scrolls (by design) or are a trailing space at a wrap
 point, so the probe now skips content inside `pre`.
+
+## @ja3dan/kit published, and a docs claim it corrected
+
+Published `@ja3dan/kit@0.1.0` on the developer's instruction ("push kit"). Before publishing:
+npm auth live; local `@ja3dan/tokens` and `@ja3dan/eslint-plugin` byte-identical to their
+published 0.1.0 (compared file by file against the npm tarballs); `gw.jaedan.me/r/setup.json`
+200; no kit, skills or templates changes on this branch versus `main`. `bun pm pack` showed
+`workspace:*` rewritten to `0.1.0` and all 7 skills and the preset bundled beside `dist/kit.js`.
+
+End to end from the packed tarball, outside the monorepo: `create-next-app@latest` with the
+docs' flags, the tarball installed in a separate folder, then `kit init next16-insforge`:
+6 context files, 7 skills, `globals.css` cleaned to exactly the five imports plus the font
+block, the lint rule wired, the check script added; `kit doctor` exit 0 (15 checks),
+`kit check` exit 0. Published with `bun publish`; npm's metadata shows `latest` 0.1.0 with the
+same shasum as the tested tarball (`cfa14306…`).
+
+The run proved the setup guide wrong in one place: it said all three checks pass before the
+first feature, but `bun run check` fails on create-next-app's default page (20 raw palette
+colour errors), exactly as feature 09 recorded. Step 4 now says so.

@@ -106,7 +106,11 @@ export default function SetupPage() {
           </Step>
 
           <Step number={4} title="Check the project">
-            <Prose>All three should pass before the first feature.</Prose>
+            <Prose>
+              <Code>kit doctor</Code> and <Code>kit check</Code> pass straight away. <Code>bun run check</Code> fails
+              on create-next-app&apos;s own home page, which uses raw palette colours: that is the lint rule working, and
+              it passes once the first feature replaces the page.
+            </Prose>
             <CommandList
               items={[
                 { command: kit("doctor"), note: KIT_DOCS.usage.doctor },
