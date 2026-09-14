@@ -68,3 +68,36 @@ Committed in jobpilot as `391ca98` on `feat/03-groundwork-consumer`, scoped to e
 files this feature touched — the pre-existing `feat/09-find-jobs-ui` WIP (dropdown.tsx,
 context/*, lib/utils.ts, memory.md, types/index.ts, the new find-jobs app/components/lib
 files) was left uncommitted and untouched, as decided.
+
+## 2026-09-13 — `accent` collision broke ~20 files outside the 8 components
+
+The developer caught this live: after the swap, the "Complete" checkmark badge and the
+resume-upload icon/border looked wrong. Root cause — the contract's `accent` is a quiet
+neutral hover fill (shadcn convention), but jobpilot's *own* code, outside the 8 registry
+components, uses bare `bg-accent`/`text-accent`/`border-accent` directly (not through the
+shared `Button`) to mean the brand purple, in ~20 files: `ResumeUpload.tsx`,
+`DateRangePicker.tsx`, `JobRow.tsx`, `Testimonial.tsx`, `NavLinks.tsx`, `Footer.tsx`, and
+more. Swapping the base tokens repointed `accent` to near-white (`#f9fafb`), so
+`text-accent`/`border-accent` on a white/light surface (the resume-upload icon and its
+container border) went effectively invisible.
+
+Audited every contract token name's usage across jobpilot's whole codebase (not just the 8
+components) to check for the same collision elsewhere:
+`background`/`primary`/`secondary`/`border`/`muted` are also used in dozens of files, but
+the homepage (which exercises all of them) rendered pixel-identical before/after, so those
+are safe — jobpilot's own values and the contract's already matched (`theme.css`'s header
+already says the port was faithful). `success`/`warning`/`info` are used in ~6 files
+(`MatchScoreBar.tsx`, `AgentLogPreview.tsx`, `JobsTablePreview.tsx`, `SearchControls.tsx`,
+`ReviewStep.tsx`, `WizardComplete.tsx`) but only shift shade (darker green/orange/blue,
+matching the theme's own contrast-driven departures) rather than break — left as the
+contract's values. Confirmed none of the 8 registry components reference bare
+`success`/`warning`/`info` at all, so nothing there depends on the old shades either way.
+
+**Fix:** override `--accent`/`--accent-foreground` back to jobpilot's original
+`#7c5cfc`/`#ffffff` in both `:root` and `.dark`, immediately after the three `@import`s —
+keeps all ~20 files working exactly as before. Cost: the 8 registry components' own
+`hover:bg-accent` states (button outline/ghost, calendar day hover) now tint purple instead
+of neutral gray on hover — transient, cosmetic, and confirmed by rescreenshotting all 8
+components together that nothing else regressed. Re-verified the two originally-broken
+spots (badge, upload icon/border) render correctly; re-ran `bun run lint` and
+`bunx tsc --noEmit`, both still clean.
