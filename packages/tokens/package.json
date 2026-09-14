@@ -1,6 +1,6 @@
 {
   "name": "@ja3dan/tokens",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Semantic design token contract, Tailwind v4 theme mapping and themes.",
   "license": "MIT",
   "type": "module",
