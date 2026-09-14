@@ -117,6 +117,25 @@
       opacity 600ms cubic-bezier(0.23, 1, 0.32, 1),
       transform 600ms cubic-bezier(0.23, 1, 0.32, 1);
   }
+
+  /*
+   * Set by the inline failsafe in layout.tsx when the page's own JavaScript never mounted
+   * Reveal. Not `!important` games — it just needs to beat `.reveal[data-shown="false"]`,
+   * which the extra attribute on :root does on specificity alone.
+   */
+  :root[data-reveal-failsafe="on"] .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Print never scrolls, so the observer never fires and every section would print blank. */
+  @media print {
+    .reveal,
+    .reveal[data-shown="false"] {
+      opacity: 1;
+      transform: none;
+    }
+  }
 }
 
 /*

@@ -157,13 +157,19 @@ build on a hex, an arbitrary colour or a palette class" is a claim where the act
 Also fixes a live factual error: `/docs` still tells the reader that the automated half
 (`kit init`) does not exist. It has since 09.
 
+**Narrowed during the build to the landing page only.** `/docs` is a second pass, so the two
+findings that belong to it are held in `context/features/11-show-not-tell/spec.md`'s
+out-of-scope section: `/docs` still states that `kit init` does not exist (false since 09),
+and it renders the same `HALVES` data the landing page has now stopped using.
+
 **Done when:** the "Two halves" section on `/` renders real artefacts read off disk at build
 time — frontmatter from a real `skills/*/SKILL.md`, the verbatim message string from
-`packages/eslint-plugin/index.js` — so that changing either source changes the site and
-deleting it fails the build; rendered word counts for `/` and `/docs` are lower than the
-pre-change numbers recorded in the feature log; the `kit init` sentence is corrected;
-below-the-fold sections fade in once on scroll entry and sit fully visible under
-`prefers-reduced-motion`; and the diff touches no token, font, icon library or colour.
+`packages/eslint-plugin`'s own rule metadata — so that changing either source changes the
+site and deleting it fails the build; the rendered word count for `/` is lower than the
+pre-change number recorded in the feature log; below-the-fold sections fade in once on
+scroll entry and sit fully visible under `prefers-reduced-motion`, with JavaScript off, and
+when the page's own JavaScript fails to run; and the diff touches no token, font, icon
+library or colour.
 
 ---
 

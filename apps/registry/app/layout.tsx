@@ -34,6 +34,22 @@ export const metadata: Metadata = {
  */
 const THEME_SCRIPT = `try{var t=localStorage.getItem("gw-theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme:dark)").matches)){document.documentElement.classList.add("dark")}}catch(e){}`;
 
+/**
+ * The last of the scroll-reveal guards, and the only one that survives the page's own
+ * JavaScript failing.
+ *
+ * `<noscript>` covers scripting being *off*. A failsafe inside the Reveal component covers
+ * its observer never reporting. Neither covers the case between them: scripting enabled,
+ * but the client bundle never arrives — a chunk 404 from stale HTML after a deploy, a CSP
+ * or extension blocking it, an error during hydration. In that state the component's own
+ * timer never runs either, so the guard has to live here, inline in the document, where it
+ * cannot be a victim of the same failure.
+ *
+ * `Reveal` sets `__gwReveal` when it mounts, so when hydration did work this does nothing
+ * and the fade is left alone.
+ */
+const REVEAL_FAILSAFE = `setTimeout(function(){try{if(!window.__gwReveal){document.documentElement.setAttribute("data-reveal-failsafe","on")}}catch(e){}},2500)`;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -43,6 +59,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: REVEAL_FAILSAFE }} />
         {/*
           * Scroll-reveal sections start hidden only under `prefers-reduced-motion:
           * no-preference`, and are shown by a client observer. With JavaScript off that

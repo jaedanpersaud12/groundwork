@@ -127,3 +127,125 @@ spare space *below* them, so `mt-auto` had nothing to push against. Changed to
 the whole project to be traced into the server output. It is pre-existing — `d06e3a9`'s
 `repo.ts` has the same nine `path.join` calls — and unrelated to this feature, but it means
 the deployed function carries the repo. Worth its own look.
+
+## Wrapping sections in `<div class="reveal">` — what it did not break
+
+The sections were direct children of `<main>`; they are now each inside a wrapper div. That
+is the kind of change that quietly breaks anchors, so it was checked rather than assumed
+(headless Chromium, 1440×900):
+
+- Clicking the hero's "See the components": `scrollY 2195`, `#registry` top at `80px` —
+  which is `scroll-mt-20` doing its job through the new wrapper.
+- Loading `/#registry` directly: same `scrollY 2195` and same `80px` offset, and the
+  section's own reveal is already `data-shown="true"` / `opacity: 1`, so a deep link never
+  lands on invisible content.
+- Under `no-preference`, deep-linking to `#registry` leaves the two sections *above* the
+  viewport still hidden. They reveal normally when scrolled up to, because
+  `IntersectionObserver` fires on intersection regardless of scroll direction.
+- Back-navigation (`/` → `/docs` → back) restores the same state.
+
+---
+
+## Responding to the review
+
+`review.md` has the full findings. What changed, and what was checked afterwards.
+
+### Critical 1 — the hardcoded theme count. Fixed.
+
+The reviewer was right, and right about why it mattered: `THEME_COUNT = 2` sat inside the
+one section built to prove the page cannot drift from the repo, and the log's claim that
+"every number computed from disk" enumerated the two numbers that were and omitted the one
+that wasn't. `repo.ts` gains `themeNames()`, reading `packages/tokens/themes/*.css` the same
+way `skillNames()` and `contextFiles()` read theirs.
+
+Demonstrated rather than argued this time — dropping a third theme file into `themes/` and
+reloading:
+
+```
+43 tokens · 2 themes · fails in the editor and in CI     ← before
+43 tokens · 3 themes · fails in the editor and in CI     ← with themes/__probe.css present
+43 tokens · 2 themes · fails in the editor and in CI     ← probe removed, server restarted
+```
+
+(The count does not fall back on its own without a restart: `repo.ts` reads once per module
+load and `next dev` does not watch outside `apps/registry`, which its own comment says.)
+
+### Layer 1's evidence gap — the reword half. Now shown.
+
+The criterion asked for "changing each source" and the log had only recorded the deletion
+half. Rewording the message in `packages/eslint-plugin/index.js` to
+`… is a raw Tailwind palette colour (REWORDED PROBE).` and reloading put `REWORDED PROBE` on
+the landing page. Plugin restored; `git status packages/` clean.
+
+### Important 2 — the fail-closed reveal. Fixed, and the suggested fix was not enough.
+
+The reviewer proposed a failsafe inside the existing effect. That closes "observer never
+reports" but not the state it actually named: if the client bundle never arrives, the effect
+never runs, so a timer inside it never runs either. The guard has to live somewhere that
+does not depend on the bundle, so it is an inline `<script>` in `layout.tsx` — the same
+pattern `THEME_SCRIPT` already uses — which sets `data-reveal-failsafe="on"` on `:root`
+after 2.5s unless `Reveal` has set `window.__gwReveal` on mount. The in-effect timer stays
+as well, for the observer-never-reports case.
+
+Five states, computed styles, headless Chromium:
+
+| state | on load | settled |
+| --- | --- | --- |
+| `no-preference`, scrolls | hidden, shifted | visible, no transform |
+| `reduce` | visible | visible |
+| JavaScript off | visible | visible |
+| **JS on, JS bundle blocked** | **hidden** | **visible** (inline failsafe; `data-shown` never leaves `"false"`) |
+| `no-preference`, never scrolls | hidden | visible (in-effect failsafe) |
+
+The fourth row is the one that matters, and it is genuinely the hazard state — it starts
+hidden, exactly as a real chunk-404 would, and recovers. A first attempt at this test blocked
+`_next/static/chunks/**`, which took the *stylesheet* with it and so proved nothing; blocking
+only `**/_next/static/**/*.js` reproduces the real failure.
+
+### Important 3 — the specimen's accidental safety. Fixed.
+
+`OFFENDING_CLASS` is now assembled (`["bg","blue","500"].join("-")`) and `VIOLATION` built
+from it, so no literal in the file contains the class and the file no longer depends on the
+rule's whitespace tokeniser to pass. This also removes Minor 8 — the positional regex is
+gone, and the class in the message is the class in the line by construction.
+
+### Important 4 — build-plan vs spec. Fixed.
+
+`context/build-plan.md` stage 11 now records the mid-flight narrowing and its "Done when"
+matches `spec.md`'s. It also now requires the JS-failure state, which the original did not.
+
+### Important 5 — `LintFailure` accessibility. Fixed.
+
+Each line carries an `sr-only` "Fails: " / "Passes: " alongside the `aria-hidden` glyph, so
+the distinction no longer rests on colour, which AT does not expose.
+
+### Bookkeeping — "adds no runtime dependency". Amended.
+
+The reviewer was right that this was argued around rather than corrected. `spec.md` now
+states the criterion as written and records that the original wording was not met.
+
+### Also taken
+
+- **Minor 7** — `SPECIMEN` is validated against `skillNames()` with a real message. Note the
+  underlying ordering problem is *not* fixed: `readSkill("feature")` still runs earlier in
+  `kit.ts` for the LOOP, so a deleted `skills/feature/` still throws `ENOENT` first. That is
+  pre-existing and belongs to `kit.ts` as a whole, not this feature.
+- **Minor 9** — `@media print` now resets `.reveal`, so printing `/` no longer yields four
+  blank sections.
+- **Minor 10** — `Reveal` holds `useState` instead of calling `setAttribute` on a node React
+  owns.
+- **Minor 11** — `lintMessages` is no longer exported; it has no consumer outside `repo.ts`.
+- **Minor 12** — `LintFailure` gains a `CopyButton`, copying the fixed line, so it matches
+  the `SourceBlock` beside it.
+
+### Left for the `/docs` pass
+
+- **Minor 6** — `EVIDENCE` and `HALVES` are now two independent descriptions of the same two
+  halves with nothing tying them. Deliberate while `/docs` is deferred, but the divergence
+  starts here. Recorded in `spec.md`'s out-of-scope list so the docs pass inherits it.
+
+### After the fixes
+
+`bun run check` exit 0 · `typecheck` exit 0 · `build` exit 0 · no overflow at 400px in
+either theme (400 === 400) · `tabular-nums` still on the version column · rendered `/` at
+878 words.

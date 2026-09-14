@@ -10,6 +10,7 @@ import {
   skillNames,
   skillSection,
   templateFiles,
+  themeNames,
 } from "./repo";
 
 /**
@@ -207,20 +208,28 @@ const TEMPLATE_TREE: TreeNode[] = [
 /** The specimen skill: first in the loop, and the one whose description has the teeth. */
 const SPECIMEN = "feature";
 
+{
+  // Same discipline as every other cross-check here: a renamed specimen fails the build
+  // with a sentence, rather than an ENOENT from five routes that never render it.
+  if (!skillNames().includes(SPECIMEN)) {
+    throw new Error(`app/_site/kit.ts names "${SPECIMEN}" as its specimen skill, but skills/${SPECIMEN}/ is gone.`);
+  }
+}
+
 /*
- * The offending class is shown inside a whole line of JSX, which is how it appears in real
- * code — and is also why `no-raw-colors` does not fire on this file. The rule splits on
- * whitespace, and `className="bg-blue-500">` is not a colour utility; a bare "bg-blue-500"
- * would be, correctly. The class in the message is sliced out of the line rather than
- * written twice, so the two can never disagree.
+ * The class the rule rejects, assembled rather than written.
+ *
+ * Not cleverness: `no-raw-colors` lints this file, and a bare "bg-blue-500" literal here
+ * would be a real violation — correctly, since the rule cannot tell a specimen from a
+ * mistake. Writing it inside a longer JSX string would *also* pass today, but only because
+ * the rule splits on whitespace and `className="bg-blue-500` fails its leading anchor —
+ * an accident of the tokeniser that any sensible improvement to the rule would take away,
+ * turning `bun run check` red on the one file that demonstrates the rule. Assembling the
+ * class from parts depends on nothing and says what it means.
  */
-const VIOLATION = '<div className="bg-blue-500 p-4">';
+const OFFENDING_CLASS = ["bg", "blue", "500"].join("-");
+const VIOLATION = `<div className="${OFFENDING_CLASS} p-4">`;
 const FIX = '<div className="bg-primary p-4">';
-
-const OFFENDING_CLASS = /"([\w-]+)/.exec(VIOLATION)?.[1];
-if (!OFFENDING_CLASS) throw new Error("The no-raw-colors specimen no longer has a class to quote.");
-
-const THEME_COUNT = 2; // themes/*.css — jobpilot and neutral
 
 const EVIDENCE = [
   {
@@ -245,7 +254,7 @@ const EVIDENCE = [
       fix: FIX,
       message: lintMessage("palette", { className: OFFENDING_CLASS }),
     },
-    facts: `${Object.keys(contract.tokens).length} tokens · ${THEME_COUNT} themes · fails in the editor and in CI`,
+    facts: `${Object.keys(contract.tokens).length} tokens · ${themeNames().length} themes · fails in the editor and in CI`,
     href: "/docs/tokens",
     linkLabel: "Read the contract",
   },

@@ -75,16 +75,25 @@ function LintFailure({
 }) {
   return (
     <figure className="overflow-hidden rounded-md border border-border bg-card">
-      <figcaption className="border-b border-border px-3 py-1.5">
-        <span className="font-mono text-xs text-muted-foreground">{path}</span>
+      <figcaption className="flex items-center gap-2 border-b border-border ps-3 pe-1.5 py-1.5">
+        <span className="min-w-0 flex-1 truncate font-mono text-xs text-muted-foreground">{path}</span>
+        <CopyButton value={fix} label={`the fixed line from ${path}`} />
       </figcaption>
       <pre className="scroll-slim overflow-x-auto p-4 font-mono text-xs leading-relaxed">
         <code>
+          {/*
+            * The -/+ glyphs are decorative, so each line also carries its verdict as
+            * sr-only text. Without it the only thing separating the wrong line from the
+            * right one is colour, which assistive tech does not expose — and the message
+            * below never says which line it is about.
+            */}
           <span className="block text-destructive">
+            <span className="sr-only">Fails: </span>
             <span aria-hidden="true">- </span>
             {violation}
           </span>
           <span className="block text-success">
+            <span className="sr-only">Passes: </span>
             <span aria-hidden="true">+ </span>
             {fix}
           </span>

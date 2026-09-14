@@ -74,6 +74,14 @@ function featureFolder(): FeatureFile[] {
     .map((match) => ({ name: match[1], note: match[2], by: match[3] }));
 }
 
+/** The themes the contract ships, read off disk — never counted by hand. */
+function themeNames(): string[] {
+  return readdirSync(path.join(ROOT, "packages", "tokens", "themes"))
+    .filter((entry) => entry.endsWith(".css"))
+    .map((entry) => entry.replace(/\.css$/, ""))
+    .sort();
+}
+
 function contextFiles(): string[] {
   return readdirSync(path.join(ROOT, "context"))
     .filter((entry) => entry.endsWith(".md"))
@@ -175,13 +183,13 @@ export {
   featureFolder,
   knowledgeFiles,
   lintMessage,
-  lintMessages,
   promptFiles,
   readSkill,
   skillFrontmatter,
   skillNames,
   skillSection,
   templateFiles,
+  themeNames,
   type FeatureFile,
   type KnowledgeFile,
   type PromptFile,
