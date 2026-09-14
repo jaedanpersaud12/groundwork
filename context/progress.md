@@ -1,8 +1,8 @@
 # Progress
 
-**Stage:** 03 — jobpilot becomes the first consumer
-**Last completed:** 04 — kit sync engine
-**Active feature:** 03 — jobpilot becomes the first consumer (`feat/03-jobpilot-consumer`)
+**Stage:** 05 — kit check and doctor
+**Last completed:** 03 — jobpilot becomes the first consumer
+**Active feature:** none
 **Next:** 05 (`packages/kit`: check and doctor)
 **Blocker:** none
 
@@ -15,7 +15,9 @@ version of it that grew to 450 lines is the reason the feature folders exist.
 - [x] **01** Design registry, minimal version
 - [x] **02** Agent kit scaffold — *08 was the first feature run through the loop end to
       end; `/feature finish` refused it once, on a criterion the branch really did fail*
-- [ ] **03** jobpilot becomes the first consumer
+- [x] **03** jobpilot becomes the first consumer — *profile and find-jobs screenshots not
+      verified against the real auth'd pages (no login available this session); see
+      `context/features/03-jobpilot-consumer/log.md`*
 - [x] **04** `packages/kit`: sync engine
 - [ ] **05** `packages/kit`: check and doctor
 - [ ] **06** `templates/`, `presets/`, `/kickoff`
