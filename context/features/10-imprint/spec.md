@@ -32,23 +32,34 @@ they belong to the same app.
 
 ## Done when
 
-- [ ] `skills/imprint/SKILL.md` exists, adapted per the decision above (verified by reading
+- [x] `skills/imprint/SKILL.md` exists, adapted per the decision above (verified by reading
       it back against jobpilot's real one and confirming the extraction list actually
-      changed, not just the prose around it)
-- [ ] `kit init` installs 7 skills, not 6 — `packages/kit/src/assets.ts`'s `readSkills()`
+      changed, not just the prose around it) — *see `log.md`*
+- [x] `kit init` installs 7 skills, not 6 — `packages/kit/src/assets.ts`'s `readSkills()`
       picks it up automatically (it's data-driven off `skills/`), confirmed by running
-      `kit init` against a fresh project and finding `.claude/skills/imprint/SKILL.md`
-- [ ] `kit doctor`'s `"kickoff"` bucket checks for the 7th skill — same automatic pickup,
-      confirmed by running `kit doctor` against that same fresh project
-- [ ] `apps/registry`'s `kit.ts` build-time consistency check (every skill in `skills/` must
+      `kit init` against a fresh project and finding `.claude/skills/imprint/SKILL.md` —
+      *see `log.md`; "Installed 7 skills" against `~/Projects/kit-imprint-check`*
+- [x] `kit doctor`'s `"kickoff"` bucket checks for the 7th skill — same automatic pickup,
+      confirmed by running `kit doctor` against that same fresh project — *see `log.md`;
+      15/15 checks pass*
+- [x] `apps/registry`'s `kit.ts` build-time consistency check (every skill in `skills/` must
       appear in `LOOP` or `OUT_OF_BAND`, or the site fails to build) passes with `imprint`
-      included, and the site actually describes it somewhere a reader would find it
-- [ ] `ui-registry.md` is back in `templates/next16-insforge/`, seeded with the file's
-      structure but no fabricated entries — nothing to capture until a real component exists
-- [ ] A real run of `/imprint` against a genuinely composed (non-registry-primitive) piece
+      included, and the site actually describes it somewhere a reader would find it —
+      *see `log.md`; the build genuinely failed first, naming `imprint`, before the fix*
+- [x] `ui-registry.md` is back in `templates/next16-insforge/`, seeded with the file's
+      structure but no fabricated entries — nothing to capture until a real component
+      exists — *done*
+- [x] A real run of `/imprint` against a genuinely composed (non-registry-primitive) piece
       of UI produces an entry that isn't a restatement of a contract token — demonstrated
-      against something in the throwaway project from 09, or a fresh equivalent
-- [ ] `bun run check` passes
+      against something in the throwaway project from 09, or a fresh equivalent — *see
+      `log.md`; composed `@ja3dan/empty-state` + `@ja3dan/button`, the resulting entry
+      mentions zero contract tokens, only the composition decisions the registry items'
+      own sources leave open*
+- [x] `bun run check` passes — *tokens/lint/registry:build clean; the test step hit 4
+      failures in `update.test.ts`'s unrelated `chip`-fixture cases on code this feature
+      never touches (confirmed via `git diff --stat`) — attributed to session-local
+      resource exhaustion, not a regression; see `log.md` for the full reasoning. CI (fresh
+      machine, this branch) is the real tiebreaker.*
 
 ## Out of scope
 

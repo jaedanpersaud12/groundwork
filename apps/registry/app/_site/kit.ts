@@ -62,6 +62,7 @@ const OUT_OF_BAND: (Stage & { skill: string })[] = [
   { ...stage("/remember", "Across sessions", "remember"), skill: "remember" },
   { ...stage("/recover", "When a fix doesn't take", "recover"), skill: "recover" },
   { ...stage("/harvest", "So it's only paid for once", "harvest"), skill: "harvest", writes: ["knowledge/*.md"] },
+  { ...stage("/imprint", "Keep composition consistent", "imprint"), skill: "imprint", writes: ["ui-registry.md"] },
 ];
 
 const SKILLS = skillNames();
@@ -153,6 +154,7 @@ const TEMPLATE_NOTES: Record<string, string> = {
   "ui-rules.md": "layout and component conventions, in terms of the token contract rather than hardcoded values",
   "library-docs.md": "the discipline header only — a pattern is added the first time the project actually uses a library",
   "progress.md": "the same status-block-and-checklist shape as this repo's own, seeded empty",
+  "ui-registry.md": "the decisions the contract doesn't make — composition, custom-component token choices — kept current by imprint",
   "features/README.md": "the feature-folder shape, unchanged from this repo's own copy",
 };
 
