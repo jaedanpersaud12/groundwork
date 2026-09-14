@@ -311,3 +311,19 @@ as a triptych under the two commands: the page opens on a valley in daylight and
 three shorelines at night. Each crop is positioned to keep its figure in frame; on phones
 the row becomes a scroll-snap scroller with a 32px peek (measured: items at 16, 368, 720 in
 a 400px viewport).
+
+## Tighter rhythm; paintings set into sections instead of a triptych
+
+Developer feedback: sections too far apart, and the triptych read as images dropped onto
+the page. Sections went from 96-128px padding each side (192-256px between) to 56-64px
+(112-128px between), still 2x the 56px from a section's opening to its content. The
+triptych is gone. Two paintings are now set into sections through one `Plate` treatment:
+same radius as the panels, height taken from the panels beside it, landscape crop above
+the content on narrow screens. The loop became a vertical list beside the cove painting (a
+figure on a curving shoreline); the two commands stack beside the cliff painting (a figure
+at the shore facing a path of light). The third painting (`HR0LFOMbEAAIpyI.jpeg`) is not
+used.
+
+A stress re-run caught a regression before commit: the rebuilt command panels had lost
+`grid-cols-1`, and the implicit track grew to the command's width (490px in a 400px
+viewport). Fixed; all nine widths, RTL and pseudo-localised runs are clean again.

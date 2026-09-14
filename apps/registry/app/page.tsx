@@ -1,9 +1,8 @@
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
 
 import background from "@/public/backgrounds/background.webp";
-import nightBeach from "@/public/HR0LFOMbEAAIpyI.jpeg";
 import nightCliff from "@/public/HR0LNgXbgAAa7sy.jpeg";
 import nightCove from "@/public/HR0LQMRW8A4qAWP.jpeg";
 import { Button } from "@/registry/groundwork/ui/button";
@@ -31,34 +30,14 @@ import { FOCUS_RING, TEXT_LINK } from "./_site/styles";
  * Rows. Panels side by side share their rows through `grid-rows-subgrid`, so titles,
  *   artefacts and links line up across the pair however long either one's copy runs.
  * Spacing. 8px inside a group, 24px between groups in a panel, 16px between panels,
- *   56px from a section's opening to its content. Space groups; lines are not used for it.
+ *   56px from a section's opening to its content, 112-128px between sections (2x that).
  */
 
 const PANEL = "rounded-2xl bg-card text-card-foreground shadow-border";
 
 const [KIT, DESIGN] = EVIDENCE;
 
-/**
- * Each painting's figure sits somewhere different, so each crop is placed to keep it in:
- * low on the beach, at the foot of the cliff, high on the cove.
- */
-const NIGHTS = [
-  {
-    src: nightBeach,
-    focus: "object-[center_82%]",
-    alt: "Tall palms lit gold against a dark forested hill, a lone figure on the beach below a starry sky",
-  },
-  {
-    src: nightCliff,
-    focus: "object-bottom",
-    alt: "Palms leaning out from a dark cliff over deep blue water scattered with light, a figure at the shore",
-  },
-  {
-    src: nightCove,
-    focus: "object-[center_34%]",
-    alt: "A figure walking a moonlit cove, palms silhouetted in blue with gold edges",
-  },
-];
+
 
 function SectionHead({ title, lead }: { title: string; lead: string }) {
   return (
@@ -102,7 +81,7 @@ export default function Home() {
       <SiteHeader variant="plate" />
       <main id="content">
         {/* Hero */}
-        <section className="mx-auto w-full max-w-6xl px-4 pt-36 pb-16 sm:px-6 lg:pt-44 lg:pb-20">
+        <section className="mx-auto w-full max-w-6xl px-4 pt-36 pb-14 sm:px-6 lg:pt-44 lg:pb-16">
           <h1 className="animate-in type-display text-[clamp(2.75rem,6.2vw,5.5rem)] text-foreground duration-700 ease-out fade-in slide-in-from-bottom-3">
             Start where the last project finished.
           </h1>
@@ -134,7 +113,7 @@ export default function Home() {
 
         {/* The two halves: one panel each, identical anatomy, rows shared. */}
         <Reveal>
-          <section className="mx-auto w-full max-w-6xl px-4 py-24 sm:px-6 lg:py-32">
+          <section className="mx-auto w-full max-w-6xl px-4 pt-20 pb-14 sm:px-6 lg:pt-28 lg:pb-16">
             <SectionHead title="Two halves" lead="Take either one on its own. Most projects take both." />
 
             <div className="mt-14 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:grid-rows-[auto_1fr_auto]">
@@ -196,23 +175,30 @@ export default function Home() {
 
         {/* The loop: one panel, five columns, the same three rows in each. */}
         <Reveal>
-          <section className="mx-auto w-full max-w-6xl px-4 py-24 sm:px-6 lg:py-32">
+          <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 lg:py-16">
             <SectionHead
               title="Every feature takes the same path"
               lead="Most steps leave a file in the feature's folder. The last one will not close while a criterion lacks evidence."
             />
 
-            <ol className={`${PANEL} mt-14 grid divide-y divide-border overflow-hidden lg:grid-cols-5 lg:grid-rows-[auto_auto_1fr] lg:divide-x lg:divide-y-0`}>
-              {LOOP.map((stage) => (
-                <li key={stage.title} className="grid gap-2 p-6 lg:row-span-3 lg:grid-rows-subgrid">
-                  <code className="font-mono text-xs text-primary">{stage.command || "the work"}</code>
-                  <h3 className="type-section text-lg text-foreground">{stage.title}</h3>
-                  <p className="self-end pt-4 font-mono text-xs text-subtle-foreground">
-                    {stage.writes.length ? stage.writes.join(", ") : "opens the PR"}
-                  </p>
-                </li>
-              ))}
-            </ol>
+            <div className="mt-14 grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <Plate
+                src={nightCove}
+                alt="A figure walking a moonlit cove, palms silhouetted in blue with gold edges"
+                focus="object-[center_30%]"
+              />
+              <ol className={`${PANEL} grid min-w-0 divide-y divide-border`}>
+                {LOOP.map((stage) => (
+                  <li key={stage.title} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-6 gap-y-1 px-6 py-5 sm:px-8">
+                    <h3 className="type-section text-lg text-foreground">{stage.title}</h3>
+                    <p className="row-span-2 self-center font-mono text-xs text-subtle-foreground">
+                      {stage.writes.length ? stage.writes.join(", ") : "opens the PR"}
+                    </p>
+                    <code className="font-mono text-xs text-primary">{stage.command || "the work"}</code>
+                  </li>
+                ))}
+              </ol>
+            </div>
 
             <div className="mt-6">
               <More href="/docs/loop">Read the loop</More>
@@ -222,7 +208,7 @@ export default function Home() {
 
         {/* The registry: two working panels, then the full index in one panel. */}
         <Reveal>
-          <section id="registry" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-24 sm:px-6 lg:py-32">
+          <section id="registry" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-14 sm:px-6 lg:py-16">
             <SectionHead
               title={`${items.length} components, yours to edit`}
               lead="Copied in by shadcn and versioned, so a later update can merge with your edits."
@@ -283,25 +269,32 @@ export default function Home() {
 
         {/* Close: the two commands, as a pair of panels on the same rows. */}
         <Reveal>
-          <section id="start" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-24 sm:px-6 lg:py-32">
+          <section id="start" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-14 sm:px-6 lg:py-16">
             <SectionHead title="Two commands to start" lead="Initialise a project on the contract, then add what you need." />
 
-            <ol className="mt-14 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:grid-rows-[auto_auto]">
-              <li className={`${PANEL} grid min-w-0 grid-cols-1 gap-6 p-6 sm:p-8 lg:row-span-2 lg:grid-rows-subgrid`}>
-                <div className="grid content-start gap-2">
-                  <h3 className="type-section text-lg">Initialise on the contract</h3>
-                  <p className="text-muted-foreground">Sets up the tokens, the theme and the lint rule.</p>
-                </div>
-                <Command value={setupCommand} className="self-end" />
-              </li>
-              <li className={`${PANEL} grid min-w-0 grid-cols-1 gap-6 p-6 sm:p-8 lg:row-span-2 lg:grid-rows-subgrid`}>
-                <div className="grid content-start gap-2">
-                  <h3 className="type-section text-lg">Add a component</h3>
-                  <p className="text-muted-foreground">Copied into your project, and yours to edit from then on.</p>
-                </div>
-                <Command value="bunx shadcn@latest add @ja3dan/button --overwrite" className="self-end" />
-              </li>
-            </ol>
+            <div className="mt-14 grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <ol className="grid min-w-0 grid-cols-1 gap-4">
+                <li className={`${PANEL} grid min-w-0 grid-cols-1 content-between gap-6 p-6 sm:p-8`}>
+                  <div className="grid content-start gap-2">
+                    <h3 className="type-section text-lg">Initialise on the contract</h3>
+                    <p className="text-muted-foreground">Sets up the tokens, the theme and the lint rule.</p>
+                  </div>
+                  <Command value={setupCommand} />
+                </li>
+                <li className={`${PANEL} grid min-w-0 grid-cols-1 content-between gap-6 p-6 sm:p-8`}>
+                  <div className="grid content-start gap-2">
+                    <h3 className="type-section text-lg">Add a component</h3>
+                    <p className="text-muted-foreground">Copied into your project, and yours to edit from then on.</p>
+                  </div>
+                  <Command value="bunx shadcn@latest add @ja3dan/button --overwrite" />
+                </li>
+              </ol>
+              <Plate
+                src={nightCliff}
+                alt="Palms leaning out from a dark cliff over deep blue water scattered with light, a figure at the shore"
+                focus="object-[center_93%]"
+              />
+            </div>
 
             <div className="mt-6">
               <More href="/docs">Read the setup guide</More>
@@ -309,30 +302,6 @@ export default function Home() {
           </section>
         </Reveal>
 
-        {/*
-          * The close in pictures. The page opens on a valley in daylight and ends on three
-          * shorelines at night, each with one figure at the water's edge: where the last
-          * project finished. On a phone the row becomes a scroller, and the next painting
-          * peeks past the edge so the other two are known to be there.
-          */}
-        <Reveal>
-          <section aria-label="Three night shorelines" className="mx-auto w-full max-w-6xl pb-24 lg:pb-32">
-            <ul className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 [scroll-padding-inline:1rem] sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-6">
-              {NIGHTS.map((night) => (
-                <li key={night.alt} className="relative aspect-[4/5] w-[calc(100%-2rem)] shrink-0 snap-start overflow-hidden rounded-2xl sm:aspect-[2/3] sm:w-auto">
-                  <Image
-                    src={night.src}
-                    alt={night.alt}
-                    fill
-                    sizes="(min-width: 1152px) 368px, (min-width: 640px) 33vw, 100vw"
-                    placeholder="blur"
-                    className={`object-cover ${night.focus}`}
-                  />
-                </li>
-              ))}
-            </ul>
-          </section>
-        </Reveal>
       </main>
 
       <footer>
@@ -347,6 +316,26 @@ export default function Home() {
         </div>
       </footer>
     </>
+  );
+}
+
+/**
+ * A painting set into the layout. It takes the height of the panels beside it (the grid row
+ * stretches it), shares their radius, and on narrow screens becomes a landscape crop above
+ * them. `focus` keeps the painting's figure inside whichever crop is showing.
+ */
+function Plate({ src, alt, focus }: { src: StaticImageData; alt: string; focus: string }) {
+  return (
+    <figure className="relative aspect-[4/3] min-h-full overflow-hidden rounded-2xl ring-1 ring-foreground/5 ring-inset lg:aspect-auto">
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes="(min-width: 1152px) 544px, (min-width: 1024px) 48vw, 100vw"
+        placeholder="blur"
+        className={`object-cover ${focus}`}
+      />
+    </figure>
   );
 }
 
