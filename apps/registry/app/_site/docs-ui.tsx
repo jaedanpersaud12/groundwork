@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 
 import { CODE_FRAME } from "./code";
 import { CopyButton } from "./copy-button";
+import { FilePeek } from "./file-peek";
+import { peekFile, treePeeks } from "./peek";
 import { FOCUS_RING } from "./styles";
 import { nodesFromLines, nodesFromNested, type NestedLike } from "./tree-nodes";
 import { TreeView } from "./tree-view";
@@ -54,14 +56,19 @@ function Prose({ children }: { children: ReactNode }) {
 
 type TreeLine = { name: string; depth: number; note?: string };
 
-/** What a command leaves behind, as an explorable tree: every folder open, every row keyboard reachable. */
-function FileTree({ root, lines, label }: { root: string; lines: TreeLine[]; label: string }) {
-  return <TreeView title={root} label={label} nodes={nodesFromLines(lines)} />;
+/**
+ * What a command leaves behind, as an explorable tree: every folder open, every row keyboard
+ * reachable, and every row with a real file behind it previewing that file.
+ */
+async function FileTree({ root, lines, label }: { root: string; lines: TreeLine[]; label: string }) {
+  const nodes = nodesFromLines(lines);
+  return <TreeView title={root} label={label} nodes={nodes} peeks={await treePeeks(root, nodes)} />;
 }
 
 /** A tree from an already nested shape, framed like every other code surface. */
-function NestedTree({ root, label, nodes }: { root: string; label: string; nodes: NestedLike[] }) {
-  return <TreeView title={root} label={label} nodes={nodesFromNested(nodes)} />;
+async function NestedTree({ root, label, nodes }: { root: string; label: string; nodes: NestedLike[] }) {
+  const tree = nodesFromNested(nodes);
+  return <TreeView title={root} label={label} nodes={tree} peeks={await treePeeks(root, tree)} />;
 }
 
 /** A short aside that matters: something a step leaves undone, or a thing to know first. */
@@ -74,9 +81,32 @@ function Note({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-/** Inline code in running copy. */
-function Code({ children }: { children: ReactNode }) {
-  return <code className="rounded-md bg-muted px-1 py-0.5 font-mono text-sm text-foreground">{children}</code>;
+const INLINE_CODE = "rounded-md bg-muted px-1 py-0.5 font-mono text-sm text-foreground";
+
+/**
+ * Inline code in running copy. `file` names the repo file the text stands for, as a tree
+ * would draw it (`context/progress.md`, `your-project/context/ui-rules.md`); hovering or
+ * focusing the name then previews it. A `file` with nothing behind it fails the build.
+ */
+async function Code({ children, file }: { children: ReactNode; file?: string }) {
+  if (!file) return <code className={INLINE_CODE}>{children}</code>;
+  return (
+    <FilePeek
+      peek={await peekFile(file)}
+      render={
+        <code
+          className={cn(
+            INLINE_CODE,
+            "cursor-default underline decoration-subtle-foreground decoration-dotted underline-offset-4 transition-colors duration-300 ease-fluid",
+            "hover:bg-primary/10 data-popup-open:bg-primary/10",
+            FOCUS_RING,
+          )}
+        />
+      }
+    >
+      {children}
+    </FilePeek>
+  );
 }
 
 /** Choices or destinations, each a whole clickable surface. */

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 import { Command } from "../code";
+import type { Peek } from "../file-peek";
 import { FOCUS_RING } from "../styles";
 import { nodesFromLines } from "../tree-nodes";
 import { TreeView } from "../tree-view";
@@ -18,7 +19,18 @@ type Line = { name: string; depth: number; step?: 1 | 2 | 3; note?: string };
  * the files that step wrote and quiets the rest; pressing it again, or pointing away, lets
  * the tree go back to whole.
  */
-function ProjectSteps({ steps, tree, prompts }: { steps: Step[]; tree: Line[]; prompts: string[] }) {
+function ProjectSteps({
+  steps,
+  tree,
+  prompts,
+  peeks,
+}: {
+  steps: Step[];
+  tree: Line[];
+  prompts: string[];
+  /** File previews for the tree's rows, from `treePeeks`. */
+  peeks?: Record<string, Peek>;
+}) {
   const [pinned, setPinned] = useState<Step["step"] | null>(null);
   const [hovered, setHovered] = useState<Step["step"] | null>(null);
   const active = hovered ?? pinned;
@@ -76,6 +88,7 @@ function ProjectSteps({ steps, tree, prompts }: { steps: Step[]; tree: Line[]; p
         title="your-project/"
         label="The project after all three steps"
         className="self-start"
+        peeks={peeks}
         nodes={nodesFromLines(
           tree.map((line) => ({
             name: line.name,

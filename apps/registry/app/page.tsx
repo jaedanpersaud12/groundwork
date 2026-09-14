@@ -12,6 +12,8 @@ import { Command } from "./_site/code";
 import { SiteHeader } from "./_site/header";
 import { EVIDENCE, KICKOFF, KIT_INIT, LOOP, PROJECT_STEPS, PROJECT_TREE, STATS } from "./_site/kit";
 import { highlight } from "./_site/highlight";
+import { treePeeks } from "./_site/peek";
+import { nodesFromLines } from "./_site/tree-nodes";
 import { CountUp } from "./_site/landing/count-up";
 import { FeatureTable } from "./_site/landing/feature-table";
 import { ProjectSteps } from "./_site/landing/project-steps";
@@ -186,6 +188,7 @@ export default async function Home() {
               <ProjectSteps
                 steps={PROJECT_STEPS}
                 tree={PROJECT_TREE}
+                peeks={await treePeeks("your-project/", nodesFromLines(PROJECT_TREE))}
                 prompts={KICKOFF.map((entry) => entry.prompt)}
               />
             </div>

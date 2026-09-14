@@ -1,10 +1,12 @@
 "use client";
 
-import { useCallback, useId, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState, type ComponentProps } from "react";
+import { PreviewCard } from "@base-ui/react/preview-card";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 import { cn } from "@/lib/utils";
 
+import { CLOSE_DELAY, createPeekHandle, OPEN_DELAY, PeekGroup, type Peek } from "./file-peek";
 import type { TreeNode } from "./tree-nodes";
 
 /*
@@ -12,8 +14,9 @@ import type { TreeNode } from "./tree-nodes";
  * keyboard model, its spring caret and its open/close height animation are kept as they
  * are. What changed: every colour is a contract token instead of a stone palette or hex
  * value, the frame and rows follow the site's code-surface spec (see code.tsx), rows can
- * carry an accent (`tone`) so a page can mark the files it is talking about, and the
- * container can take a header.
+ * carry an accent (`tone`) so a page can mark the files it is talking about, the
+ * container can take a header, and a row with a real file behind it opens that file's
+ * opening lines on hover or focus (`peeks`, built on the server by peek.ts).
  */
 
 const EASE = [0.23, 1, 0.32, 1] as const;
@@ -148,6 +151,7 @@ function TreeView({
   label,
   title,
   defaultExpanded,
+  peeks,
   className,
 }: {
   nodes: TreeNode[];
@@ -156,11 +160,15 @@ function TreeView({
   title?: string;
   /** Branch ids open at first. Omit to start with every branch open. */
   defaultExpanded?: string[];
+  /** File previews keyed by row id, from `treePeeks`. A row without one opens nothing. */
+  peeks?: Record<string, Peek>;
   className?: string;
 }) {
   const tree = useTreeView({ nodes, defaultExpanded: defaultExpanded ?? allBranchIds(nodes) });
   const reduced = useReducedMotion();
   const hintId = useId();
+  const [peekHandle] = useState(createPeekHandle);
+  const labels = useRef(new Map<string, HTMLElement>());
 
   const renderNodes = (list: TreeNode[], level: number) =>
     list.map((node, index) => {
@@ -168,44 +176,77 @@ function TreeView({
       if (!row) return null;
       const selected = tree.selectedId === node.id;
       const tone = node.tone ?? "default";
+      const peek = peeks?.[node.id];
+
+      const rowProps = {
+        role: "treeitem",
+        ref: (el: HTMLElement | null) => tree.register(node.id, el),
+        "aria-level": level,
+        "aria-posinset": index + 1,
+        "aria-setsize": list.length,
+        "aria-expanded": row.branch ? row.open : undefined,
+        "aria-selected": selected,
+        "aria-describedby": hintId,
+        tabIndex: tree.tabStop === node.id ? 0 : -1,
+        onFocus: () => tree.setFocusId(node.id),
+        onKeyDown: (event: React.KeyboardEvent) => tree.handleKey(event, row),
+        onClick: () => {
+          tree.setSelectedId(node.id);
+          tree.focusRow(node.id);
+          if (row.branch) tree.toggle(node.id);
+        },
+        className: cn(
+          "flex h-7 cursor-default items-center gap-1 rounded-md px-2 outline-none select-none",
+          "transition-[background-color,color,opacity] duration-300 ease-fluid",
+          "focus-visible:bg-primary/10 focus-visible:shadow-[inset_0_0_0_1px_var(--ring)]",
+          selected
+            ? "bg-muted text-foreground"
+            : tone === "lit"
+              ? "bg-primary/10 text-foreground"
+              : "text-card-foreground hover:bg-muted data-popup-open:bg-muted",
+          tone === "quiet" && !selected && "opacity-40",
+        ),
+      } satisfies ComponentProps<"div">;
+
+      const content = (
+        <>
+          {row.branch ? <Caret open={row.open} /> : <span className="size-4 shrink-0" />}
+          <span
+            ref={(el) => {
+              if (el) labels.current.set(node.id, el);
+              else labels.current.delete(node.id);
+            }}
+            className={cn(
+              "shrink-0 truncate font-mono text-xs",
+              selected && "font-medium",
+              // The same dotted underline inline code wears when it previews a file.
+              peek && "leading-5 underline decoration-subtle-foreground decoration-dotted underline-offset-3",
+            )}
+          >
+            {node.label}
+          </span>
+          {node.meta ? (
+            <span className="hidden min-w-0 flex-1 truncate ps-4 text-end text-xs text-subtle-foreground sm:block">{node.meta}</span>
+          ) : null}
+        </>
+      );
 
       return (
         <li key={node.id} role="none">
-          <div
-            role="treeitem"
-            ref={(el) => tree.register(node.id, el)}
-            aria-level={level}
-            aria-posinset={index + 1}
-            aria-setsize={list.length}
-            aria-expanded={row.branch ? row.open : undefined}
-            aria-selected={selected}
-            aria-describedby={hintId}
-            tabIndex={tree.tabStop === node.id ? 0 : -1}
-            onFocus={() => tree.setFocusId(node.id)}
-            onKeyDown={(event) => tree.handleKey(event, row)}
-            onClick={() => {
-              tree.setSelectedId(node.id);
-              tree.focusRow(node.id);
-              if (row.branch) tree.toggle(node.id);
-            }}
-            className={cn(
-              "flex h-7 cursor-default items-center gap-1 rounded-md px-2 outline-none select-none",
-              "transition-[background-color,color,opacity] duration-300 ease-fluid",
-              "focus-visible:bg-primary/10 focus-visible:shadow-[inset_0_0_0_1px_var(--ring)]",
-              selected
-                ? "bg-muted text-foreground"
-                : tone === "lit"
-                  ? "bg-primary/10 text-foreground"
-                  : "text-card-foreground hover:bg-muted",
-              tone === "quiet" && !selected && "opacity-40",
-            )}
-          >
-            {row.branch ? <Caret open={row.open} /> : <span className="size-4 shrink-0" />}
-            <span className={cn("shrink-0 truncate font-mono text-xs", selected && "font-medium")}>{node.label}</span>
-            {node.meta ? (
-              <span className="hidden min-w-0 flex-1 truncate ps-4 text-end text-xs text-subtle-foreground sm:block">{node.meta}</span>
-            ) : null}
-          </div>
+          {peek ? (
+            <PreviewCard.Trigger
+              {...rowProps}
+              handle={peekHandle}
+              payload={{ ...peek, id: node.id }}
+              delay={OPEN_DELAY}
+              closeDelay={CLOSE_DELAY}
+              render={<div />}
+            >
+              {content}
+            </PreviewCard.Trigger>
+          ) : (
+            <div {...rowProps}>{content}</div>
+          )}
 
           {row.branch ? (
             <AnimatePresence initial={false}>
@@ -242,6 +283,7 @@ function TreeView({
       <ul role="tree" aria-label={label} className="p-1">
         {renderNodes(nodes, 1)}
       </ul>
+      {peeks ? <PeekGroup handle={peekHandle} anchorFor={(id) => labels.current.get(id) ?? null} /> : null}
       <span id={hintId} className="sr-only">
         Use the arrow keys to move. Right expands a folder, left collapses it or climbs to its parent. Home and End jump
         to the ends, and typing a letter jumps to the next name starting with it.

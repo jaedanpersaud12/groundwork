@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { Code, Compare, Prose } from "../../_site/docs-ui";
 import { CONTEXT_TREE, PROJECT_TREE } from "../../_site/kit";
+import { treePeeks } from "../../_site/peek";
 import { DocPage, Section } from "../../_site/prose";
 import { TEXT_LINK } from "../../_site/styles";
 import type { TocEntry } from "../../_site/toc";
@@ -28,7 +29,10 @@ const PROJECT_CONTEXT = PROJECT_TREE.slice(start + 1, end === -1 ? undefined : e
   depth: line.depth - 1,
 }));
 
-export default function ContextPage() {
+const PROJECT_NODES = nodesFromLines(PROJECT_CONTEXT);
+const GROUNDWORK_NODES = nodesFromNested(CONTEXT_TREE);
+
+export default async function ContextPage() {
   return (
     <DocPage
       title="Context"
@@ -47,13 +51,15 @@ export default function ContextPage() {
               value: "project",
               label: "A new project",
               title: "your-project/context/",
-              nodes: nodesFromLines(PROJECT_CONTEXT),
+              nodes: PROJECT_NODES,
+              peeks: await treePeeks("your-project/context/", PROJECT_NODES),
             },
             {
               value: "groundwork",
               label: "Groundwork itself",
               title: "groundwork/",
-              nodes: nodesFromNested(CONTEXT_TREE),
+              nodes: GROUNDWORK_NODES,
+              peeks: await treePeeks("groundwork/", GROUNDWORK_NODES),
             },
           ]}
         />

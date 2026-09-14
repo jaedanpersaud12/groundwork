@@ -256,6 +256,7 @@ function skillFrontmatter(name: string): string {
 }
 
 export {
+  ROOT,
   contextFiles,
   featureFolder,
   featureFolders,

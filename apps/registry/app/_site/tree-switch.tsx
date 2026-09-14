@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { ViewToggle } from "@/registry/groundwork/ui/view-toggle";
 
+import type { Peek } from "./file-peek";
 import type { TreeNode } from "./tree-nodes";
 import { TreeView } from "./tree-view";
 
@@ -16,7 +17,7 @@ function TreeSwitch({
   options,
 }: {
   label: string;
-  options: { value: string; label: string; title: string; nodes: TreeNode[] }[];
+  options: { value: string; label: string; title: string; nodes: TreeNode[]; peeks?: Record<string, Peek> }[];
 }) {
   const [value, setValue] = useState(options[0]?.value ?? "");
   const current = options.find((option) => option.value === value) ?? options[0];
@@ -29,7 +30,13 @@ function TreeSwitch({
         onChange={setValue}
         options={options.map((option) => ({ value: option.value, label: option.label }))}
       />
-      <TreeView key={current.value} title={current.title} label={`${label}: ${current.label}`} nodes={current.nodes} />
+      <TreeView
+        key={current.value}
+        title={current.title}
+        label={`${label}: ${current.label}`}
+        nodes={current.nodes}
+        peeks={current.peeks}
+      />
     </div>
   );
 }

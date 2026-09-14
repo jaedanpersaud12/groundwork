@@ -16,8 +16,11 @@ import {
 
 import { CodeBlock } from "../../_site/code-block";
 import { Code, Note, Prose } from "../../_site/docs-ui";
+import { FilePeek } from "../../_site/file-peek";
+import { peekFile } from "../../_site/peek";
 import { DocPage, Section } from "../../_site/prose";
 import { knowledgeFiles } from "../../_site/repo";
+import { FOCUS_RING } from "../../_site/styles";
 import type { TocEntry } from "../../_site/toc";
 
 export const metadata: Metadata = {
@@ -37,7 +40,10 @@ const FILES = knowledgeFiles();
 /** The format is shown with whichever file's first gotcha is shortest, so it reads in one glance. */
 const SPECIMEN = [...FILES].filter((file) => file.firstGotcha).sort((a, b) => a.firstGotcha.length - b.firstGotcha.length)[0];
 
-export default function KnowledgePage() {
+export default async function KnowledgePage() {
+  const peeks = Object.fromEntries(
+    await Promise.all(FILES.map(async (file) => [file.file, await peekFile(`knowledge/${file.file}`)] as const)),
+  );
   const total = FILES.reduce((sum, file) => sum + file.gotchas, 0);
   return (
     <DocPage
@@ -65,7 +71,21 @@ export default function KnowledgePage() {
               {FILES.map((file) => (
                 <Tr key={file.file}>
                   <Td>
-                    <StackedCell primary={file.title} secondary={file.file} />
+                    <StackedCell
+                      primary={file.title}
+                      secondary={
+                        <FilePeek
+                          peek={peeks[file.file]}
+                          render={
+                            <span
+                              className={`cursor-default rounded-sm font-mono underline decoration-subtle-foreground decoration-dotted underline-offset-4 hover:text-foreground data-popup-open:text-foreground ${FOCUS_RING}`}
+                            />
+                          }
+                        >
+                          {file.file}
+                        </FilePeek>
+                      }
+                    />
                   </Td>
                   <Td>
                     <span className="flex flex-wrap gap-1">

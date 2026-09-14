@@ -119,8 +119,8 @@ export default function TokensPage() {
           items={[{ command: "bun run tokens", note: "regenerate theme.css and TOKENS.md, and validate every theme" }]}
         />
         <Note title="The generated files are not edited by hand">
-          Change <Code>contract.json</Code> and regenerate. A hook blocks direct edits to <Code>theme.css</Code> and{" "}
-          <Code>TOKENS.md</Code>.
+          Change <Code file="packages/tokens/contract.json">contract.json</Code> and regenerate. A hook blocks direct edits to <Code file="packages/tokens/theme.css">theme.css</Code> and{" "}
+          <Code file="packages/tokens/TOKENS.md">TOKENS.md</Code>.
         </Note>
         <Prose>Exceptions are how a lint rule turns into an allowlist of workarounds.</Prose>
       </Section>
