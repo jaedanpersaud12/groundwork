@@ -1,6 +1,8 @@
 <div align="center">
 
-# 🧱 groundwork
+<img src="apps/registry/public/groundwork-purple.svg" alt="" width="72" height="72">
+
+# groundwork
 
 **The foundation a new repo starts on.**
 

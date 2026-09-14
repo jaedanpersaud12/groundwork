@@ -19,6 +19,37 @@ function subscribe(onChange: () => void) {
 
 const isDark = () => document.documentElement.classList.contains("dark");
 
+/**
+ * Changes theme as one cross-fade rather than a flip. A view transition snapshots the page
+ * before and after and fades between the two, so every surface arrives on the same frame.
+ *
+ * `data-theme-switching` turns off element transitions for the length of the swap. Without
+ * it, anything with its own colour transition (links, the tagline's words, hover states)
+ * would keep easing into the new theme after the fade had finished, and the page would land
+ * in pieces. Browsers without view transitions, and anyone who asked for reduced motion,
+ * get the same guard around an instant swap.
+ */
+function switchTheme(dark: boolean) {
+  const root = document.documentElement;
+  const swap = () => root.classList.toggle("dark", dark);
+  const settle = () => root.removeAttribute("data-theme-switching");
+
+  root.setAttribute("data-theme-switching", "");
+
+  if (
+    typeof document.startViewTransition !== "function" ||
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  ) {
+    swap();
+    // Resolve styles with transitions still off, so re-enabling them has nothing to animate.
+    void window.getComputedStyle(document.body).color;
+    settle();
+    return;
+  }
+
+  document.startViewTransition(swap).finished.finally(settle);
+}
+
 /** The server has no way to know. Only `aria-pressed` reads this; the icon doesn't. */
 const isDarkOnServer = () => false;
 
@@ -34,7 +65,7 @@ function ThemeToggle({ className }: { className?: string }) {
 
   function toggle() {
     const next = !isDark();
-    document.documentElement.classList.toggle("dark", next);
+    switchTheme(next);
     try {
       localStorage.setItem("gw-theme", next ? "dark" : "light");
     } catch {

@@ -220,6 +220,23 @@
 }
 
 /*
+ * Theme switching. `theme-toggle.tsx` wraps the class change in a view transition; these
+ * rules make that one slow, even cross-fade, and hold every element transition off while
+ * it runs so nothing eases into the new theme on its own clock after the fade lands.
+ */
+:root[data-theme-switching] *,
+:root[data-theme-switching] *::before,
+:root[data-theme-switching] *::after {
+  transition: none !important;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 450ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/*
  * Reduced motion is honoured globally rather than per-animation: this site's only
  * non-user-triggered motion is the hero settling, and nothing about the page depends
  * on it having happened.

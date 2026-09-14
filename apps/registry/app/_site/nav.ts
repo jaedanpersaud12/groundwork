@@ -1,10 +1,10 @@
-/** The site's section links, shared by the docs header and the landing page's island. */
+/**
+ * The landing header's links. Three, because the docs sidebar is the full index — the
+ * header only has to get someone to the part of the site they came for.
+ */
 const NAV = [
-  { href: "/docs", label: "Start here" },
+  { href: "/#registry", label: "Components" },
   { href: "/docs/loop", label: "The loop" },
-  { href: "/docs/context", label: "Context" },
-  { href: "/docs/knowledge", label: "Knowledge" },
-  { href: "/docs/kickoff", label: "Kickoff" },
   { href: "/docs/tokens", label: "Tokens" },
 ];
 

@@ -22,6 +22,7 @@ import { Tagline } from "./_site/landing/tagline";
 import { TiltCard } from "./_site/landing/tilt-card";
 import { groups, items, setupCommand } from "./_site/registry";
 import { Reveal } from "./_site/reveal";
+import { Mark } from "./_site/mark";
 import { FOCUS_RING, TEXT_LINK } from "./_site/styles";
 
 /*
@@ -332,7 +333,10 @@ export default async function Home() {
 
       <footer>
         <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-10 sm:px-6">
-          <p className="type-display text-base text-foreground">groundwork</p>
+          <p className="flex items-center gap-2 type-display text-base text-foreground">
+            <Mark className="h-[1.15em] w-auto" />
+            groundwork
+          </p>
           <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
             <Link href="/docs" className={`rounded-sm hover:text-foreground ${FOCUS_RING}`}>Docs</Link>
             <Link href="/docs/loop" className={`rounded-sm hover:text-foreground ${FOCUS_RING}`}>The loop</Link>
