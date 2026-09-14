@@ -102,7 +102,7 @@ export default async function ItemPage({ params }: PageProps<"/docs/components/[
 
       {related ? (
         <Section id="related" title="Related items">
-          <div className="grid min-w-0 grid-cols-1 gap-6 sm:grid-cols-2">
+          <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
             {item.dependsOn.length ? (
               <div className="grid content-start gap-3">
                 <h3 className="text-sm font-semibold text-foreground">Installs alongside it</h3>

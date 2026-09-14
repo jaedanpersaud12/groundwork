@@ -95,9 +95,11 @@ const PAGE_SIZE = 8;
 
 /**
  * Fixed widths, so columns hold still while paging, sorting and filtering. Role takes
- * the rest: the fixed columns sum to 672px, so at the 880px minimum it keeps 208px.
+ * the rest: the fixed columns sum to 640px, so at the 880px minimum it keeps 240px.
+ * Company is 160 rather than a rounder 192: the longest sample city ("San Francisco")
+ * only needs ~110px, and the extra 32 read as dead space next to short company names.
  */
-const COLUMNS = ["w-48", "", "w-36", "w-28", "w-24", "w-32"] as const;
+const COLUMNS = ["w-40", "", "w-36", "w-28", "w-24", "w-32"] as const;
 
 const DENSITY_OPTIONS = [
   { value: "comfortable", label: "Comfortable", icon: <Rows2Icon aria-hidden /> },
@@ -154,7 +156,7 @@ export function ApplicationsTable({ data = SAMPLE_APPLICATIONS }: { data?: Appli
               icon={<SearchIcon aria-hidden />}
               value={table.query}
               onChange={(event) => table.setQuery(event.target.value)}
-              className="h-8 w-full rounded-lg sm:w-64"
+              className="h-8 min-w-32 flex-1 rounded-lg"
               trailing={
                 table.query ? (
                   <button
@@ -168,7 +170,13 @@ export function ApplicationsTable({ data = SAMPLE_APPLICATIONS }: { data?: Appli
                 ) : null
               }
             />
-            <ViewToggle label="Row density" value={density} onChange={setDensity} options={DENSITY_OPTIONS} />
+            <ViewToggle
+              label="Row density"
+              value={density}
+              onChange={setDensity}
+              options={DENSITY_OPTIONS}
+              className="shrink-0"
+            />
           </>
         ) : null}
       </TableCardHeader>

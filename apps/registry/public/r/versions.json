@@ -7,11 +7,12 @@
     }
   },
   "data-table": {
-    "version": "1.0.1",
-    "hash": "69528d153a2e698f1ad2b308daae7ef384038d4103026979965b7749bbd8e7c2",
+    "version": "1.0.2",
+    "hash": "e7c77abf43193c6064159953e2d0655d2e26b5364781762fef310ff0bb66a5eb",
     "history": {
       "1.0.0": "273d685c7fe1bcab1e9487b1032e54a622b7656fb827e193289233234c522d04",
-      "1.0.1": "69528d153a2e698f1ad2b308daae7ef384038d4103026979965b7749bbd8e7c2"
+      "1.0.1": "69528d153a2e698f1ad2b308daae7ef384038d4103026979965b7749bbd8e7c2",
+      "1.0.2": "e7c77abf43193c6064159953e2d0655d2e26b5364781762fef310ff0bb66a5eb"
     }
   },
   "button": {
@@ -78,24 +79,27 @@
     }
   },
   "view-toggle": {
-    "version": "1.0.0",
-    "hash": "0ae8888be7877499da4c94ffd7a70569760434e223daf7f5842db666b4248121",
+    "version": "1.0.1",
+    "hash": "4f4148ac9179129dae527429c0d2fe2946b35940b09472e2c6a379eacc0dee27",
     "history": {
-      "1.0.0": "0ae8888be7877499da4c94ffd7a70569760434e223daf7f5842db666b4248121"
+      "1.0.0": "0ae8888be7877499da4c94ffd7a70569760434e223daf7f5842db666b4248121",
+      "1.0.1": "4f4148ac9179129dae527429c0d2fe2946b35940b09472e2c6a379eacc0dee27"
     }
   },
   "table-card": {
-    "version": "1.0.0",
-    "hash": "381bf4d7fdb5be1be545f4a9eb646885d06ac7c087ea2e56e59c23b19d0ffa7a",
+    "version": "1.0.1",
+    "hash": "6486109605147b9f930588fd593e0c5867029e6375e8fbdd3030c1cc43936794",
     "history": {
-      "1.0.0": "381bf4d7fdb5be1be545f4a9eb646885d06ac7c087ea2e56e59c23b19d0ffa7a"
+      "1.0.0": "381bf4d7fdb5be1be545f4a9eb646885d06ac7c087ea2e56e59c23b19d0ffa7a",
+      "1.0.1": "6486109605147b9f930588fd593e0c5867029e6375e8fbdd3030c1cc43936794"
     }
   },
   "table": {
-    "version": "1.0.0",
-    "hash": "68b0db34c3aeda875485f55e4001b7d6dd7578a4a964c7f545e5a9ec106ba63f",
+    "version": "1.0.1",
+    "hash": "37826a0ac77540401177fa3ff602e32989e0b80a6b379c1904856d0d664945e6",
     "history": {
-      "1.0.0": "68b0db34c3aeda875485f55e4001b7d6dd7578a4a964c7f545e5a9ec106ba63f"
+      "1.0.0": "68b0db34c3aeda875485f55e4001b7d6dd7578a4a964c7f545e5a9ec106ba63f",
+      "1.0.1": "37826a0ac77540401177fa3ff602e32989e0b80a6b379c1904856d0d664945e6"
     }
   },
   "sortable-table-head": {
@@ -113,10 +117,11 @@
     }
   },
   "filter-chip": {
-    "version": "1.0.0",
-    "hash": "e506faa65339285c0acd3202e42b408020d727b1b8a5601ec39dad446392812e",
+    "version": "1.0.1",
+    "hash": "54c57a36436f169922f618aaaf13bb7c48564815d647e4f3a9e972a7b8c33371",
     "history": {
-      "1.0.0": "e506faa65339285c0acd3202e42b408020d727b1b8a5601ec39dad446392812e"
+      "1.0.0": "e506faa65339285c0acd3202e42b408020d727b1b8a5601ec39dad446392812e",
+      "1.0.1": "54c57a36436f169922f618aaaf13bb7c48564815d647e4f3a9e972a7b8c33371"
     }
   },
   "empty-state": {

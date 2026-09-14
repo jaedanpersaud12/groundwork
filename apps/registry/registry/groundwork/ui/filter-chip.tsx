@@ -19,14 +19,14 @@ const CHIP = "inline-flex h-8 items-stretch gap-0.5 rounded-lg border border-bor
 
 /**
  * The trigger inside a chip. No height of its own (see CHIP). Its radius is the chip's
- * less the 4px inset, so the two curves are concentric.
+ * less the 5px inset — 4px padding and the 1px border — so the two curves are concentric.
  */
 const CHIP_TRIGGER =
-  "flex h-full items-center gap-1.5 rounded-[calc(var(--radius-lg)-4px)] px-2.5 text-xs font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring/50 data-popup-open:bg-muted";
+  "flex h-full items-center gap-1.5 rounded-[calc(var(--radius-lg)-5px)] px-2.5 text-xs font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-inset data-popup-open:bg-muted";
 
 /** The × that drops a filter back to "all". Square against whatever the inner height is. */
 const CHIP_CLEAR =
-  "flex aspect-square shrink-0 items-center justify-center rounded-[calc(var(--radius-lg)-4px)] text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50";
+  "flex aspect-square shrink-0 items-center justify-center rounded-[calc(var(--radius-lg)-5px)] text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-inset";
 
 /** The label half of a chip: what it filters, what it's set to, and the chevron. */
 function FilterChipLabel({ icon, label, valueLabel }: { icon?: ReactNode; label: string; valueLabel: string | null }) {
