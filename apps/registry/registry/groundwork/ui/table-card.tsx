@@ -43,34 +43,51 @@ function TableCardHeader({
   note?: React.ReactNode;
 }) {
   return (
-    <header
-      data-slot="table-card-header"
-      className={cn(
-        "flex flex-wrap gap-x-3 gap-y-2.5 border-b border-border px-4 py-3.5",
-        // With a note the heading is two lines and the controls belong beside its
-        // first line; without one, centring keeps the title on the controls' centre.
-        note ? "items-start" : "items-center",
-        className,
-      )}
-      {...props}
-    >
-      {icon ? (
-        <span
-          aria-hidden
-          className={cn(
-            "grid size-7 shrink-0 place-items-center rounded-lg bg-muted/60 text-muted-foreground [&_svg]:size-3.5",
-            note && "mt-0.5",
-          )}
-        >
-          {icon}
-        </span>
+    <>
+      <header
+        data-slot="table-card-header"
+        className={cn(
+          // Tinted, so the card names itself on its own ground rather than on the rows'.
+          // `background` and not `muted`: muted sits a hair under the card in light and
+          // above it in dark, so only this one reads as a step down in both.
+          "flex flex-wrap gap-x-3 gap-y-2.5 border-b border-border bg-background px-4 py-3.5",
+          // With a note the heading is two lines and the icon belongs beside its first
+          // line; without one, centring keeps the two on one centre.
+          note ? "items-start" : "items-center",
+          className,
+        )}
+        {...props}
+      >
+        {icon ? (
+          <span
+            aria-hidden
+            className={cn(
+              "grid size-7 shrink-0 place-items-center rounded-lg bg-card text-muted-foreground [&_svg]:size-3.5",
+              note && "mt-0.5",
+            )}
+          >
+            {icon}
+          </span>
+        ) : null}
+        <div className="min-w-0">
+          <h2 className="font-heading text-lg leading-tight font-semibold">{title}</h2>
+          {note ? <p className="mt-0.5 h-4 truncate text-[11px] leading-4 tracking-normal text-muted-foreground">{note}</p> : null}
+        </div>
+      </header>
+      {/*
+       * A strip of its own under the header, not a tail on the title's row: a toolbar this
+       * size only just fits beside a title, and when it doesn't it wraps to a line it doesn't
+       * fill, stranding a search field on the right with dead air beside it. Its own strip is
+       * the same layout every time, and a field inside can grow across it — see
+       * `applications-table.tsx`. `flex-wrap` is for the strip that is still too narrow for
+       * the whole toolbar: the parts stack instead of clipping.
+       */}
+      {children ? (
+        <div data-slot="table-card-toolbar" className="flex flex-wrap items-center gap-2 px-4 py-3">
+          {children}
+        </div>
       ) : null}
-      <div className="min-w-0">
-        <h2 className="font-heading text-lg leading-tight font-semibold">{title}</h2>
-        {note ? <p className="mt-0.5 h-4 truncate text-[11px] leading-4 text-muted-foreground">{note}</p> : null}
-      </div>
-      {children ? <div className="ms-auto flex flex-wrap items-center gap-2">{children}</div> : null}
-    </header>
+    </>
   );
 }
 
@@ -138,7 +155,7 @@ function DataTable({
 function Thead({ className, ...props }: React.ComponentProps<"thead">) {
   return (
     <thead
-      className={cn("border-b border-border bg-muted/40 text-left text-[13px] font-medium text-muted-foreground", className)}
+      className={cn("border-b border-border bg-muted/40 text-left text-[13px] font-medium tracking-normal text-muted-foreground", className)}
       {...props}
     />
   );

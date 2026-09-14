@@ -1,197 +1,456 @@
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
+import { ArrowRightIcon } from "lucide-react";
 
 import background from "@/public/backgrounds/background.webp";
+import nightCliff from "@/public/HR0LNgXbgAAa7sy.jpeg";
+import nightCove from "@/public/HR0LQMRW8A4qAWP.jpeg";
+import { Button } from "@/registry/groundwork/ui/button";
+import { StatusPill } from "@/registry/groundwork/ui/status-pill";
 
+import { Command } from "./_site/code";
 import { SiteHeader } from "./_site/header";
-import { CONTEXT_TREE, HALVES, LOOP } from "./_site/kit";
-import { Tree } from "./_site/prose";
-import { groups, items } from "./_site/registry";
+import { EVIDENCE, KICKOFF, KIT_INIT, LOOP, PROJECT_STEPS, PROJECT_TREE, STATS } from "./_site/kit";
+import { highlight } from "./_site/highlight";
+import { CountUp } from "./_site/landing/count-up";
+import { FeatureTable } from "./_site/landing/feature-table";
+import { ProjectSteps } from "./_site/landing/project-steps";
+import { FilterChipDemo, ViewToggleDemo } from "./_site/landing/specimen";
+import { Tagline } from "./_site/landing/tagline";
+import { TiltCard } from "./_site/landing/tilt-card";
+import { groups, items, setupCommand } from "./_site/registry";
+import { Reveal } from "./_site/reveal";
 import { FOCUS_RING, TEXT_LINK } from "./_site/styles";
 
-export default function Home() {
+/*
+ * The page's structure. Every section below follows it, and a change that breaks it is the
+ * thing to fix, not the rule.
+ *
+ * Edges. Two vertical edges only: the leading margin, and the halfway line. Two-up layouts
+ *   are `lg:grid-cols-2 gap-4`, so the second column always starts on the same x.
+ * Openings. Every section after the hero opens with <SectionHead>: a heading over one
+ *   sentence, then 48px to the content.
+ * Surfaces. A panel is the contract's raised surface (`bg-card shadow-border`), the same one
+ *   the registry's own TableCard uses. Code inside a panel sits on `bg-muted`.
+ * Rows. Panels side by side share their rows through `grid-rows-subgrid`, so titles,
+ *   artefacts and links line up across the pair however long either one's copy runs.
+ * Spacing. 8px inside a group, 24px between groups in a panel, 16px between panels,
+ *   48px from a section's opening to its content, 96-128px between sections (2x that).
+ *   Only values from the spacing table (0 2 4 8 12 16 24 32 40 48 64 80 96px) and
+ *   Tailwind's type scale; no arbitrary sizes.
+ */
+
+const PANEL = "rounded-2xl bg-card text-card-foreground shadow-border";
+
+const [KIT, DESIGN] = EVIDENCE;
+
+
+
+function SectionHead({ title, lead }: { title: React.ReactNode; lead: string }) {
+  return (
+    <div className="grid max-w-2xl gap-3">
+      <h2 className="type-display text-3xl lg:text-4xl text-foreground">{title}</h2>
+      <p className="text-lg text-pretty text-muted-foreground">{lead}</p>
+    </div>
+  );
+}
+
+function More({ href, children }: { href: string; children: string }) {
+  return (
+    <Link href={href} className={`inline-flex shrink-0 items-center gap-2 text-sm ${TEXT_LINK}`}>
+      {children}
+      <ArrowRightIcon aria-hidden className="size-3.5 rtl:-scale-x-100" />
+    </Link>
+  );
+}
+
+export default async function Home() {
+  const kitHtml = await highlight(KIT.artefact.kind === "source" ? KIT.artefact.excerpt : "", "markdown");
+  const lint = DESIGN.artefact.kind === "lint" ? DESIGN.artefact : null;
+  const [before, after] = lint ? lint.violation.split(lint.offending) : ["", ""];
+  const tier = (name: string) => groups.find((group) => group.tier === name);
+  const primitives = tier("primitive");
+  const patterns = tier("pattern");
+  const smaller = [tier("block"), tier("hook"), tier("lib")].filter((group) => group && group.items.length > 0);
+
   return (
     <>
+      <SiteHeader variant="plate" />
       <main id="content">
-        <section className="relative isolate flex min-h-[92svh] flex-col overflow-hidden">
-          <Image
-            src={background}
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            placeholder="blur"
-            className="-z-20 object-cover object-center"
-          />
+        {/* Hero */}
+        <section className="mx-auto w-full max-w-6xl px-4 pt-16 pb-12 sm:px-6 lg:pt-24 lg:pb-16">
           {/*
-           * Four layers, each with one job: read the illustration through the page's own
-           * ground colour, settle the band behind the header, lift the area behind the words,
-           * then dissolve into the page. The percentages were set by looking and then measured
-           * against the illustration's pixels in both themes (see the feature log), so
-           * re-measure them if the illustration is ever replaced.
-           */}
-          <div className="absolute inset-0 -z-10 bg-background/46 dark:bg-background/50" />
-          <div className="plate-top absolute inset-x-0 top-0 -z-10 h-32" />
-          <div className="plate-copy absolute inset-0 -z-10" />
-          <div className="plate-fade absolute inset-x-0 bottom-0 -z-10 h-3/5" />
-
-          <SiteHeader variant="plate" />
-
-          {/*
-           * The one motion moment: the words settle onto the plate once, on load. Nothing else
-           * on the site moves without being asked, and reduced motion collapses it to nothing.
-           */}
-          <div className="mx-auto flex w-full max-w-4xl flex-1 animate-in flex-col items-center justify-center px-4 pt-32 pb-28 text-center duration-700 ease-out fade-in slide-in-from-bottom-3 sm:px-6">
-            <h1 className="type-display text-[clamp(2.5rem,7vw,4.75rem)] text-foreground">
-              Your next project starts where the last one finished
-            </h1>
-            <p className="mt-6 max-w-xl text-lg text-foreground/80">
-              Groundwork lays a repo&apos;s foundation before you write any code: the skills and context your agents work
-              from, a token contract your components can&apos;t break, and the gotchas you already paid for somewhere
-              else.
+            * Capped at 680px and broken after "last", where the thought turns. The gradient is
+            * the contract's own foreground into muted-foreground, left to right, so it follows
+            * the theme; `pb-2` keeps the descenders inside the clipped background.
+            */}
+          <h1 className="max-w-[680px] animate-in bg-linear-to-r from-foreground to-muted-foreground bg-clip-text pb-2 type-display text-5xl text-transparent duration-700 ease-fluid fade-in fill-mode-both slide-in-from-bottom-3 sm:text-6xl">
+            Start where the last <br className="hidden sm:block" />
+            project finished.
+          </h1>
+          <div className="mt-12 grid animate-in grid-cols-1 gap-6 delay-100 duration-700 ease-fluid fade-in fill-mode-both lg:grid-cols-2 lg:items-end lg:gap-4">
+            <p className="max-w-[680px] text-lg text-pretty text-muted-foreground lg:max-w-md">
+              Agent skills, project context and a token contract, in your repo before the first line of code.
             </p>
-            <div className="mt-9 flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
-              <Link
-                href="/docs"
-                className={`rounded-full bg-card px-6 py-3 text-sm font-medium text-card-foreground shadow-border transition-colors hover:bg-accent hover:text-accent-foreground ${FOCUS_RING}`}
-              >
-                Read the docs
-              </Link>
-              <a
-                href="#registry"
-                className={`rounded-full px-5 py-3 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground ${FOCUS_RING}`}
-              >
-                See the components
+            <div className="grid min-w-0 grid-cols-1 gap-2">
+              <Command value={KIT_INIT.command} />
+              <a href="#registry" className={`inline-flex items-center gap-2 justify-self-start text-sm ${TEXT_LINK}`}>
+                Browse components
+                <ArrowRightIcon aria-hidden className="size-3.5 rtl:-scale-x-100" />
               </a>
             </div>
           </div>
         </section>
 
-        <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-          <h2 className="type-section text-xl text-foreground">Two halves</h2>
-          <p className="mt-2 max-w-prose text-muted-foreground">
-            A project can take either one on its own. Most take both, which is the point.
-          </p>
-          <div className="mt-8 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-2">
-            {HALVES.map((half) => (
-              <div key={half.title} className="grid content-start gap-5 bg-card p-6">
-                <div className="grid gap-2">
-                  <h3 className="type-section text-lg text-card-foreground">{half.title}</h3>
-                  <p className="max-w-prose text-sm text-muted-foreground">{half.lead}</p>
+        <div className="relative h-[clamp(16rem,40vw,34rem)] w-full animate-in overflow-hidden delay-200 duration-1000 ease-fluid fade-in fill-mode-both">
+          <Image
+            src={background}
+            alt="An illustrated valley below snow-capped mountains, a golden tree beside a river"
+            fill
+            priority
+            sizes="100vw"
+            placeholder="blur"
+            className="object-cover object-[center_42%]"
+          />
+        </div>
+
+        {/* The two halves: one panel each, identical anatomy, rows shared. */}
+        <Reveal>
+          <section className="mx-auto w-full max-w-6xl px-4 pt-20 pb-12 sm:px-6 lg:pt-24 lg:pb-16">
+            <SectionHead title="Two halves" lead="Take either one on its own. Most projects take both." />
+
+            {/*
+              * One object, split at a seam, not two cards: the halves share one frame and one
+              * surface, divided by a single line. Each half opens a window onto a real file that
+              * runs off the half's bottom and trailing edges, so it reads as a view into the file
+              * rather than a boxed quotation of it.
+              */}
+            <div className={`${PANEL} relative mt-12 grid grid-cols-1 overflow-hidden lg:grid-cols-2 lg:grid-rows-[auto_1fr]`}>
+              <article className="grid min-w-0 grid-rows-[auto_1fr] gap-8 bg-card pt-8 sm:pt-10 lg:row-span-2 lg:grid-rows-subgrid">
+                <HalfHead title={KIT.title} href={KIT.href} link={KIT.linkLabel}>
+                  <CountUp value={STATS.skills} /> skills your agents run, and the context they read before they touch
+                  code.
+                </HalfHead>
+                <Window path={KIT.artefact.kind === "source" ? KIT.artefact.path : ""}>
+                  <span data-line-numbers="" className="syntax block whitespace-pre" dangerouslySetInnerHTML={{ __html: kitHtml }} />
+                </Window>
+              </article>
+
+              <article className="grid min-w-0 grid-rows-[auto_1fr] gap-8 border-t border-border bg-card pt-8 sm:pt-10 lg:row-span-2 lg:grid-rows-subgrid lg:border-t-0 lg:border-s">
+                <HalfHead title={DESIGN.title} href={DESIGN.href} link={DESIGN.linkLabel}>
+                  <CountUp value={STATS.tokens} /> tokens in one contract, and a lint rule that fails anything outside
+                  it.
+                </HalfHead>
+                {lint ? (
+                  <Window path={lint.path}>
+                    <span className="block whitespace-pre text-muted-foreground">
+                      <span className="sr-only">Fails: </span>
+                      {before}
+                      <span className="text-foreground underline decoration-destructive decoration-wavy decoration-1 underline-offset-4">
+                        {lint.offending}
+                      </span>
+                      {after}
+                    </span>
+                    <span className="mt-2 block whitespace-pre-wrap text-destructive">
+                      <span aria-hidden>✕ </span>
+                      {lint.message}
+                    </span>
+                    <span className="mt-6 block whitespace-pre text-success">
+                      <span className="sr-only">Passes: </span>
+                      {lint.fix}
+                    </span>
+                    <span className="mt-2 block text-subtle-foreground">
+                      <span aria-hidden>✓ </span>no problems
+                    </span>
+                  </Window>
+                ) : null}
+              </article>
+            </div>
+          </section>
+        </Reveal>
+
+        {/* The statement, on its own: why the whole thing exists. */}
+        <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:py-24">
+          <Tagline lines={["Every project you finish", "makes the next one", "cheaper to start."]} />
+        </section>
+
+        {/* How a project starts: the kit installs, then kickoff writes the project's own context. */}
+        <Reveal>
+          <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:py-16">
+            <SectionHead
+              title="How a project starts"
+              lead="An empty repo, three steps, and every file each one leaves behind."
+            />
+
+            <div className="mt-12">
+              <ProjectSteps
+                steps={PROJECT_STEPS}
+                tree={PROJECT_TREE}
+                prompts={KICKOFF.map((entry) => entry.prompt)}
+              />
+            </div>
+          </section>
+        </Reveal>
+
+        {/* The loop: one panel, five columns, the same three rows in each. */}
+        <Reveal>
+          <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:py-16">
+            <SectionHead
+              title="Then every feature takes the same path"
+              lead="Most steps leave a file in the feature's folder. The last one will not close while a criterion lacks evidence."
+            />
+
+            <div className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <Plate
+                src={nightCove}
+                alt="A figure walking a moonlit cove, palms silhouetted in blue with gold edges"
+                focus="object-[center_30%]"
+              />
+              <ol className={`${PANEL} grid min-w-0 divide-y divide-border`}>
+                {LOOP.map((stage) => (
+                  <li key={stage.title} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-6 gap-y-1 px-6 py-4 sm:px-8">
+                    <h3 className="type-section text-lg text-foreground">{stage.title}</h3>
+                    <p className="row-span-2 self-center font-mono text-xs text-subtle-foreground">
+                      {stage.writes.length ? stage.writes.join(", ") : "opens the PR"}
+                    </p>
+                    <code className="font-mono text-xs text-primary">{stage.command || "the work"}</code>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <div className="mt-6">
+              <More href="/docs/loop">Read the loop</More>
+            </div>
+          </section>
+        </Reveal>
+
+        {/* The registry: two working panels, then the full index in one panel. */}
+        <Reveal>
+          <section id="registry" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-12 sm:px-6 lg:py-16">
+            <SectionHead
+              title={
+                <>
+                  <CountUp value={items.length} /> components, yours to edit
+                </>
+              }
+              lead="Copied in by shadcn and versioned, so a later update can merge with your edits."
+            />
+
+            <ul className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <Block name="data-table" tier="Block" wide>
+                <FeatureTable rows={3} className="w-full" />
+              </Block>
+              <Block name="status-pill" tier="Primitive">
+                <div className="flex flex-wrap justify-center gap-2">
+                  <StatusPill tone="success">Merged</StatusPill>
+                  <StatusPill tone="warning">In review</StatusPill>
+                  <StatusPill tone="danger">Failing</StatusPill>
+                  <StatusPill tone="neutral">Draft</StatusPill>
                 </div>
-                <dl className="grid gap-3">
-                  {half.parts.map((part) => (
-                    <div key={part.name} className="grid gap-0.5 border-s border-border ps-3">
-                      <dt className="font-mono text-xs text-foreground">{part.name}</dt>
-                      <dd className="text-sm text-muted-foreground">{part.body}</dd>
+              </Block>
+              <Block name="filter-chip" tier="Pattern">
+                <FilterChipDemo />
+              </Block>
+              <Block name="button" tier="Primitive">
+                <div className="flex flex-wrap justify-center gap-3">
+                  <Button>Save</Button>
+                  <Button variant="outline">Cancel</Button>
+                </div>
+              </Block>
+              <Block name="view-toggle" tier="Primitive">
+                <ViewToggleDemo />
+              </Block>
+            </ul>
+
+            <div className={`${PANEL} mt-4 grid gap-8 p-6 sm:p-8 lg:grid-cols-12 lg:gap-4`}>
+              {primitives ? (
+                <div id={primitives.tier} className="grid scroll-mt-24 content-start gap-3 lg:col-span-6">
+                  <IndexHeading title={primitives.title} count={primitives.items.length} />
+                  <IndexList names={primitives.items.map((item) => item.name)} columns />
+                </div>
+              ) : null}
+              {patterns ? (
+                <div id={patterns.tier} className="grid scroll-mt-24 content-start gap-3 lg:col-span-3">
+                  <IndexHeading title={patterns.title} count={patterns.items.length} />
+                  <IndexList names={patterns.items.map((item) => item.name)} />
+                </div>
+              ) : null}
+              <div className="grid content-start gap-6 lg:col-span-3">
+                {smaller.map((group) =>
+                  group ? (
+                    <div key={group.tier} id={group.tier} className="grid scroll-mt-24 content-start gap-3">
+                      <IndexHeading title={group.title} count={group.items.length} />
+                      <IndexList names={group.items.map((item) => item.name)} />
                     </div>
-                  ))}
-                </dl>
-                <Link
-                  href={half.href}
-                  className={`mt-auto justify-self-start pt-1 text-sm ${TEXT_LINK}`}
-                >
-                  {half.linkLabel}
-                </Link>
+                  ) : null,
+                )}
               </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6 sm:pb-20">
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-16">
-            <div className="grid content-start gap-3">
-              <h2 className="type-section text-xl text-foreground">Every feature takes the same path</h2>
-              <p className="max-w-prose text-muted-foreground">
-                {LOOP.length} steps around a piece of work, most leaving a file behind in the feature&apos;s own folder.
-                The last one refuses to close while any criterion still lacks evidence.
-              </p>
-              <Link
-                href="/docs/loop"
-                className={`justify-self-start text-sm ${TEXT_LINK}`}
-              >
-                Read the loop
-              </Link>
             </div>
+          </section>
+        </Reveal>
 
-            <ol className="grid">
-              {LOOP.map((stage, index) => (
-                <li
-                  key={stage.title}
-                  className="grid gap-1 border-b border-border py-4 first:border-t sm:grid-cols-[1.5rem_10rem_minmax(0,1fr)] sm:items-baseline sm:gap-4"
-                >
-                  <span className="font-mono text-sm text-subtle-foreground">{index + 1}</span>
-                  <span className="font-mono text-sm text-foreground">{stage.command || "build"}</span>
-                  <span className="text-sm text-muted-foreground">{stage.title}</span>
+        {/* Close: the two commands, as a pair of panels on the same rows. */}
+        <Reveal>
+          <section id="start" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-12 sm:px-6 lg:py-16">
+            <SectionHead title="Start a project" lead="The whole kit in one command, or the design system on its own." />
+
+            <div className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <ol className="grid min-w-0 grid-cols-1 gap-4">
+                <li className={`${PANEL} grid min-w-0 grid-cols-1 content-between gap-6 p-6 sm:p-8`}>
+                  <div className="grid content-start gap-2">
+                    <h3 className="type-section text-lg">The whole kit</h3>
+                    <p className="text-muted-foreground">Skills, context and the design system, installed and locked.</p>
+                  </div>
+                  <Command value={KIT_INIT.command} />
                 </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-
-        <section className="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6 sm:pb-20">
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-16">
-            <div className="grid content-start gap-3">
-              <h2 className="type-section text-xl text-foreground">The architecture exists before the code does</h2>
-              <p className="max-w-prose text-muted-foreground">
-                A new repo starts with its overview, its standards and its build plan already written — so the first
-                session begins by reading the project rather than inventing it.
-              </p>
-              <Link
-                href="/docs/context"
-                className={`justify-self-start text-sm ${TEXT_LINK}`}
-              >
-                Read the scaffold
-              </Link>
+                <li className={`${PANEL} grid min-w-0 grid-cols-1 content-between gap-6 p-6 sm:p-8`}>
+                  <div className="grid content-start gap-2">
+                    <h3 className="type-section text-lg">Only the design system</h3>
+                    <p className="text-muted-foreground">The tokens, the theme and the lint rule, through shadcn.</p>
+                  </div>
+                  <Command value={setupCommand} />
+                </li>
+              </ol>
+              <Plate
+                src={nightCliff}
+                alt="Palms leaning out from a dark cliff over deep blue water scattered with light, a figure at the shore"
+                focus="object-[center_93%]"
+              />
             </div>
-            <div className="rounded-md border border-border bg-card p-5">
-              <Tree nodes={CONTEXT_TREE} />
+
+            <div className="mt-6">
+              <More href="/docs">Read the setup guide</More>
             </div>
-          </div>
-        </section>
+          </section>
+        </Reveal>
 
-        <section id="registry" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 pb-24 sm:px-6">
-          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-            <h2 className="type-section text-xl text-foreground">{items.length} components</h2>
-            <p className="text-sm text-muted-foreground">
-              Grouped by how finished a thing is, not by what widget it is.
-            </p>
-          </div>
-
-          <div className="mt-8 grid gap-10">
-            {groups.map((group) => (
-              <div key={group.tier} id={group.tier} className="scroll-mt-20">
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-border pb-2">
-                  <h3 className="type-section text-base text-foreground">{group.title}</h3>
-                  <p className="text-sm text-muted-foreground">{group.blurb}</p>
-                </div>
-                <ul>
-                  {group.items.map((item) => (
-                    <li key={item.name}>
-                      <Link
-                        href={`/docs/components/${item.name}`}
-                        className={`grid gap-0.5 border-b border-border py-3 transition-colors hover:bg-accent/60 sm:grid-cols-[13rem_minmax(0,1fr)_4rem] sm:items-baseline sm:gap-6 sm:px-2 ${FOCUS_RING}`}
-                      >
-                        <span className="font-mono text-sm text-foreground">{item.name}</span>
-                        <span className="text-sm text-muted-foreground">{item.description}</span>
-                        <span className="font-mono text-xs text-subtle-foreground sm:text-end">{item.version}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </section>
       </main>
-      <footer className="border-t border-border">
-        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-8 sm:px-6">
+
+      <footer>
+        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-10 sm:px-6">
           <p className="type-display text-base text-foreground">groundwork</p>
-          <p className="text-sm text-subtle-foreground">
-            The skills, the context and the design system a new repo starts with.
-          </p>
+          <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+            <Link href="/docs" className={`rounded-sm hover:text-foreground ${FOCUS_RING}`}>Docs</Link>
+            <Link href="/docs/loop" className={`rounded-sm hover:text-foreground ${FOCUS_RING}`}>The loop</Link>
+            <Link href="/docs/tokens" className={`rounded-sm hover:text-foreground ${FOCUS_RING}`}>Tokens</Link>
+            <a href="#registry" className={`rounded-sm hover:text-foreground ${FOCUS_RING}`}>Components</a>
+          </nav>
         </div>
       </footer>
     </>
+  );
+}
+
+/**
+ * A painting set into the layout. It takes the height of the panels beside it (the grid row
+ * stretches it), shares their radius, and on narrow screens becomes a landscape crop above
+ * them. `focus` keeps the painting's figure inside whichever crop is showing.
+ */
+function Plate({ src, alt, focus }: { src: StaticImageData; alt: string; focus: string }) {
+  return (
+    <figure className="relative aspect-[4/3] min-h-full overflow-hidden rounded-2xl ring-1 ring-foreground/5 ring-inset lg:aspect-auto">
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes="(min-width: 1152px) 544px, (min-width: 1024px) 48vw, 100vw"
+        placeholder="blur"
+        className={`object-cover ${focus}`}
+      />
+    </figure>
+  );
+}
+
+/**
+ * One component, on its own stage. The stage is the same height in every block of a row, the
+ * component sits in its middle, and the caption row underneath names it. That is the whole
+ * anatomy; nothing else goes in a block.
+ *
+ * A block narrow enough to read as one card leans toward the pointer and catches a spotlight
+ * (`TiltCard`, from Spell UI); the wide data-table block sits still; a grid of numbers tilting
+ * in 3D reads as broken, not alive.
+ */
+function Block({ name, tier, wide = false, children }: { name: string; tier: string; wide?: boolean; children: React.ReactNode }) {
+  const face = `${PANEL} grid min-w-0 grid-rows-[1fr_auto] overflow-hidden`;
+  const body = (
+    <>
+      <div className="grid min-h-64 place-items-center bg-muted p-6 sm:p-8">{children}</div>
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-border px-6 py-4">
+        <Link
+          href={`/docs/components/${name}`}
+          className={`min-w-0 rounded-sm font-mono text-sm text-card-foreground underline decoration-border underline-offset-4 transition-colors duration-300 ease-fluid hover:decoration-current ${FOCUS_RING}`}
+        >
+          {name}
+        </Link>
+        <span className="text-xs text-subtle-foreground">{tier}</span>
+      </div>
+    </>
+  );
+
+  return (
+    <li className={wide ? "sm:col-span-2" : ""}>
+      {wide ? (
+        <div className={face}>{body}</div>
+      ) : (
+        <TiltCard className={face} tiltLimit={8} scale={1.015}>
+          {body}
+        </TiltCard>
+      )}
+    </li>
+  );
+}
+
+/** A half's heading row: the title with its link on the same line, then one sentence. */
+function HalfHead({ title, href, link, children }: { title: string; href: string; link: string; children: React.ReactNode }) {
+  return (
+    <div className="grid content-start gap-3 px-6 sm:px-10">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+        <h3 className="type-display text-2xl text-foreground sm:text-3xl">{title}</h3>
+        <More href={href}>{link}</More>
+      </div>
+      <p className="max-w-md text-pretty text-muted-foreground">{children}</p>
+    </div>
+  );
+}
+
+/**
+ * A window onto a file. It starts inset from the leading edge and runs off the bottom and
+ * trailing edges of its half, which crops it, so only its top leading corner is rounded.
+ */
+function Window({ path, children }: { path: string; children: React.ReactNode }) {
+  return (
+    <figure
+      className="ms-6 grid h-72 min-w-0 grid-rows-[auto_1fr] overflow-hidden rounded-ss-lg bg-card text-card-foreground shadow-border sm:ms-10 lg:h-80"
+    >
+      <figcaption className="flex h-10 items-center border-b border-border ps-4 font-mono text-xs text-muted-foreground">{path}</figcaption>
+      <code className="block overflow-hidden px-4 py-3 font-mono text-xs leading-6">{children}</code>
+    </figure>
+  );
+}
+
+function IndexHeading({ title, count }: { title: string; count: number }) {
+  return (
+    <h3 className="flex items-baseline gap-2 text-sm font-medium text-foreground">
+      {title}
+      <span className="font-normal text-subtle-foreground tabular-nums">{count}</span>
+    </h3>
+  );
+}
+
+function IndexList({ names, columns = false }: { names: string[]; columns?: boolean }) {
+  return (
+    <ul className={columns ? "gap-x-4 sm:columns-2 [&>li]:mb-3" : "grid gap-3"}>
+      {names.map((name) => (
+        <li key={name}>
+          <Link
+            href={`/docs/components/${name}`}
+            className={`rounded-sm font-mono text-xs text-muted-foreground underline decoration-border underline-offset-4 transition-colors duration-300 ease-fluid hover:text-foreground hover:decoration-current ${FOCUS_RING}`}
+          >
+            {name}
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 }

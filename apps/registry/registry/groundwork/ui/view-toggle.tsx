@@ -4,7 +4,13 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-/** Segmented control for swapping one view of the same data for another. Source: flvs. */
+/**
+ * Segmented control for swapping one view of the same data for another. Source: flvs.
+ *
+ * The track's padding plus its border is the inset on every side, and each segment's
+ * radius is the track's less that inset, so the selected fill's corners run concentric
+ * with the track's instead of pinching at the ends.
+ */
 function ViewToggle<T extends string>({
   value,
   onChange,
@@ -24,7 +30,7 @@ function ViewToggle<T extends string>({
       role="group"
       aria-label={label}
       data-slot="view-toggle"
-      className={cn("inline-flex h-8 items-center rounded-lg border border-border p-0.5", className)}
+      className={cn("inline-flex h-8 items-stretch rounded-lg border border-border p-[3px]", className)}
     >
       {options.map((option) => (
         <button
@@ -33,8 +39,8 @@ function ViewToggle<T extends string>({
           onClick={() => onChange(option.value)}
           aria-pressed={value === option.value}
           className={cn(
-            "inline-flex h-full items-center gap-1.5 rounded-md px-2.5 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50 [&_svg]:size-3.5",
-            value === option.value ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
+            "inline-flex items-center gap-1.5 rounded-[calc(var(--radius-lg)-4px)] px-2.5 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-inset [&_svg]:size-3.5",
+            value === option.value ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
           )}
         >
           {option.icon}

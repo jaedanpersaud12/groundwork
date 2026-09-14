@@ -141,6 +141,47 @@ real run of `/imprint` against a genuinely composed (non-registry-primitive) pie
 the throwaway project produces an entry that would actually help the next session build a
 matching one — not a restatement of a contract token.
 
+## 11 — Show, don't tell: the landing page
+
+Not a redesign. The site's engineering is sound — an audit at 400px across eight routes in
+both themes found no overflow and no theme fault — and the brand is deliberate: dark-first,
+one purple accent, a pill CTA, an illustrated hero with four overlay plates measured against
+the illustration's own pixels. None of that changes.
+
+What is weak is the ratio of description to evidence. `/` already has one section that
+cannot lie: the `context/` tree is generated from the repo at build time. The sections on
+either side of it fall back to bullet lists that any project could have written — "fails the
+build on a hex, an arbitrary colour or a palette class" is a claim where the actual
+`no-raw-colors` message would be proof, and costs more words to be less convincing.
+
+Also fixes a live factual error: `/docs` still tells the reader that the automated half
+(`kit init`) does not exist. It has since 09.
+
+**Narrowed during the build to the landing page only.** `/docs` is a second pass, so the two
+findings that belong to it are held in `context/features/11-show-not-tell/spec.md`'s
+out-of-scope section: `/docs` still states that `kit init` does not exist (false since 09),
+and it renders the same `HALVES` data the landing page has now stopped using.
+
+**Done when:** the "Two halves" section on `/` renders real artefacts read off disk at build
+time — frontmatter from a real `skills/*/SKILL.md`, the verbatim message string from
+`packages/eslint-plugin`'s own rule metadata — so that changing either source changes the
+site and deleting it fails the build; the rendered word count for `/` is lower than the
+pre-change number recorded in the feature log; below-the-fold sections fade in once on
+scroll entry and sit fully visible under `prefers-reduced-motion`, with JavaScript off, and
+when the page's own JavaScript fails to run; and the diff touches no token, font, icon
+library or colour.
+
+## 12 — Docs refresh, starting with setup
+
+The landing page now sends people to `/docs`, which still opens with a wall of prose, only
+sets up the design system, and says `kit init` does not exist. This rebuilds the docs shell
+and turns `/docs` into the setup guide: the whole kit (`create-next-app`, `kit init`, the
+kickoff prompts, the checks, the first feature) or only the design system.
+
+**Done when:** `/docs` documents both paths with every command in run order, sourced from the
+kit's CLI and init.ts; no docs page calls `kit init` unbuilt; the shared docs shell is rebuilt;
+no overflow from 320 to 1920px; checks pass.
+
 ---
 
 ## Later

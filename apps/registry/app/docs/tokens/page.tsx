@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import contract from "@ja3dan/tokens/contract.json";
 
+import { CODE_FRAME } from "../../_site/code";
+import { Code, CommandList, Note, Prose, Rows } from "../../_site/docs-ui";
 import { DocPage, Section } from "../../_site/prose";
 import type { TocEntry } from "../../_site/toc";
 
@@ -18,97 +20,109 @@ const TOC: TocEntry[] = [
 
 type TokenMeta = { group: string; required: boolean; role: string };
 
-const tokenGroups = Object.entries(contract.tokens as Record<string, TokenMeta>).reduce<
-  Record<string, { name: string; required: boolean; role: string }[]>
+/** Grouped in the contract's own order, straight from contract.json. */
+const GROUPS = Object.entries(contract.tokens as Record<string, TokenMeta>).reduce<
+  { group: string; tokens: { name: string; required: boolean; role: string }[] }[]
 >((acc, [name, meta]) => {
-  (acc[meta.group] ??= []).push({ name, required: meta.required, role: meta.role });
+  const existing = acc.find((entry) => entry.group === meta.group);
+  const token = { name, required: meta.required, role: meta.role };
+  if (existing) existing.tokens.push(token);
+  else acc.push({ group: meta.group, tokens: [token] });
   return acc;
-}, {});
+}, []);
 
-const RULES = [
-  {
-    title: "Names and roles are the contract's business; values are a theme's",
-    body: (
-      <>
-        A token whose role can&apos;t be stated without naming a colour is a value wearing a name&apos;s clothes.{" "}
-        <code className="font-mono text-sm">primary</code> is &ldquo;brand action: primary button, selected state,
-        links&rdquo;, not &ldquo;the violet one&rdquo;.
-      </>
-    ),
-  },
-  {
-    title: "A required token is required in both selectors",
-    body: (
-      <>
-        Every theme defines every required token in <code className="font-mono text-sm">:root</code> and in{" "}
-        <code className="font-mono text-sm">.dark</code>. The build fails per selector, naming what is missing — because
-        a value changed in one and forgotten in the other is the most common bug here.
-      </>
-    ),
-  },
-  {
-    title: "Anything not every brand needs is optional",
-    body: (
-      <>
-        <code className="font-mono text-sm">chart-*</code> and <code className="font-mono text-sm">sidebar-*</code> are
-        optional for exactly this reason. A new required token is a breaking change for every theme that already exists.
-      </>
-    ),
-  },
-];
+const TOTAL = Object.keys(contract.tokens).length;
 
 export default function TokensPage() {
   return (
     <DocPage
       title="Token contract"
-      lead="The one thing every project and every component depends on. Components name tokens; themes supply the values, once for light and once for dark. That is what lets the same button take on each project's look without being forked."
+      lead="Components name tokens; themes supply the values, once for light and once for dark. That is what lets the same button take on each project's look without being forked."
       toc={TOC}
     >
       <Section
         id="names"
         title="The names"
-        lead="Grouped by what they are for. A component may use any of these and nothing else — no hex, no palette class, no arbitrary value."
+        lead={`${TOTAL} tokens. A component may use these and nothing else. The swatches are the current theme's values, so they change with the theme toggle.`}
       >
-        <div className="grid gap-6 sm:grid-cols-2">
-          {Object.entries(tokenGroups).map(([group, tokens]) => (
-            <div key={group} className="grid content-start gap-2">
-              <p className="type-section text-sm text-foreground">{group}</p>
-              <dl className="grid gap-2">
+        <div className="grid min-w-0 grid-cols-1 gap-8">
+          {GROUPS.map(({ group, tokens }) => (
+            <div key={group} className="grid min-w-0 grid-cols-1 gap-3">
+              <h3 className="flex items-baseline gap-2 text-sm font-semibold text-foreground">
+                {group.charAt(0).toUpperCase() + group.slice(1)}
+                <span className="font-normal text-subtle-foreground tabular-nums">{tokens.length}</span>
+              </h3>
+              <ul className={`${CODE_FRAME} grid grid-cols-1 divide-y divide-border`}>
                 {tokens.map((token) => (
-                  <div key={token.name} className="grid gap-0.5">
-                    <dt className="flex flex-wrap items-baseline gap-x-2">
-                      <span className="font-mono text-xs text-foreground">{token.name}</span>
+                  <li
+                    key={token.name}
+                    className="grid min-w-0 grid-cols-[1.5rem_minmax(0,1fr)] items-start gap-x-4 gap-y-1 px-4 py-3 sm:grid-cols-[1.5rem_12rem_minmax(0,1fr)]"
+                  >
+                    <span
+                      aria-hidden
+                      className="mt-0.5 size-5 rounded-md ring-1 ring-foreground/10 ring-inset"
+                      style={{ background: `var(--${token.name})` }}
+                    />
+                    <span className="flex min-w-0 items-baseline gap-2">
+                      <code className="truncate font-mono text-xs text-card-foreground">{token.name}</code>
                       {token.required ? null : <span className="text-xs text-subtle-foreground">optional</span>}
-                    </dt>
-                    <dd className="text-sm text-muted-foreground">{token.role}</dd>
-                  </div>
+                    </span>
+                    <span className="col-start-2 text-sm text-pretty text-muted-foreground sm:col-start-3">{token.role}</span>
+                  </li>
                 ))}
-              </dl>
+              </ul>
             </div>
           ))}
         </div>
       </Section>
 
       <Section id="rules" title="The rules">
-        <dl className="grid gap-6">
-          {RULES.map((rule) => (
-            <div key={rule.title} className="grid gap-1.5 border-s border-border ps-4">
-              <dt className="text-sm text-foreground">{rule.title}</dt>
-              <dd className="max-w-prose text-sm text-muted-foreground">{rule.body}</dd>
-            </div>
-          ))}
-        </dl>
+        <Rows
+          items={[
+            {
+              title: "Names and roles belong to the contract; values belong to a theme",
+              body: (
+                <>
+                  If a role can&apos;t be stated without naming a colour, it is a value, not a name.{" "}
+                  <Code>primary</Code> is the brand action, not the violet one.
+                </>
+              ),
+            },
+            {
+              title: "A required token is required in both selectors",
+              body: (
+                <>
+                  Every theme defines every required token in <Code>:root</Code> and in <Code>.dark</Code>. The build
+                  fails per selector and names what is missing.
+                </>
+              ),
+            },
+            {
+              title: "Anything not every brand needs is optional",
+              body: (
+                <>
+                  <Code>chart-*</Code> and <Code>sidebar-*</Code> are optional for that reason. A new required token
+                  breaks every theme that already exists.
+                </>
+              ),
+            },
+          ]}
+        />
       </Section>
 
-      <Section id="changing" title="Changing it">
-        <p className="max-w-prose text-muted-foreground">
-          If a component needs a colour the contract does not have, that is a contract conversation — not a local
-          exception. Exceptions are how a lint rule turns into an allowlist of workarounds.
-        </p>
-        <p className="max-w-prose text-muted-foreground">
-          The generated files are not editable by hand. Change the contract, regenerate, and the build validates every
-          theme against it. A hook blocks the direct edit, because this was prose once and prose did not hold.
-        </p>
+      <Section
+        id="changing"
+        title="Changing it"
+        lead="A component that needs a colour the contract doesn't have is a contract change, not a local exception."
+      >
+        <CommandList
+          items={[{ command: "bun run tokens", note: "regenerate theme.css and TOKENS.md, and validate every theme" }]}
+        />
+        <Note title="The generated files are not edited by hand">
+          Change <Code>contract.json</Code> and regenerate. A hook blocks direct edits to <Code>theme.css</Code> and{" "}
+          <Code>TOKENS.md</Code>.
+        </Note>
+        <Prose>Exceptions are how a lint rule turns into an allowlist of workarounds.</Prose>
       </Section>
     </DocPage>
   );

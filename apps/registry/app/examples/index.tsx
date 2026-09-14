@@ -34,7 +34,7 @@ export function Examples({ name, fallback }: { name: string; fallback: string })
   const entries = ALL[name];
   if (!entries?.length) {
     return (
-      <div className="rounded-lg border border-dashed border-border p-6 text-sm text-muted-foreground">{fallback}</div>
+      <div className="rounded-lg bg-muted px-4 py-3 text-sm text-muted-foreground">{fallback}</div>
     );
   }
   return (
@@ -42,11 +42,16 @@ export function Examples({ name, fallback }: { name: string; fallback: string })
     // track's width and the page scrolls sideways instead of the panel.
     <div className="grid grid-cols-1 gap-4">
       {entries.map((entry) => (
-        <figure key={entry.title} className="grid min-w-0 grid-cols-1 gap-2">
+        // `gap-4`: the same heading-to-content rhythm as `Section` in prose.tsx, so a
+        // caption's distance from its demo doesn't read as a different unit than a
+        // section title's distance from its own body.
+        <figure key={entry.title} className="grid min-w-0 grid-cols-1 gap-4">
           {entries.length > 1 || entry.description ? (
             <figcaption className="grid gap-0.5">
               <span className="text-sm font-medium text-foreground">{entry.title}</span>
-              {entry.description ? <span className="text-xs text-muted-foreground">{entry.description}</span> : null}
+              {entry.description ? (
+                <span className="text-xs text-pretty text-muted-foreground">{entry.description}</span>
+              ) : null}
             </figcaption>
           ) : null}
           {/*
@@ -57,7 +62,7 @@ export function Examples({ name, fallback }: { name: string; fallback: string })
            */}
           <div
             className={cn(
-              "flex min-h-32 min-w-0 overflow-x-auto rounded-lg border border-border bg-card",
+              "flex min-h-32 min-w-0 overflow-x-auto rounded-lg bg-card shadow-border",
               entry.wide ? "items-start p-4" : "items-center justify-center-safe p-6",
             )}
           >

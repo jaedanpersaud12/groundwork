@@ -52,6 +52,22 @@ the registry's own components, so it is also the first place a bad change shows 
   `app/examples/`, reachable from `index.tsx`. Libs and hooks are exempt and correctly show
   "No visual preview".
 
+## The site's one scroll effect
+
+`app/_site/reveal.tsx` fades sections in on scroll. Three guards keep it from ever leaving a
+reader on a blank page, and they are easy to undo by accident:
+
+- The hidden starting state is in `globals.css` inside
+  `@media (prefers-reduced-motion: no-preference)` — **never set `opacity: 0` from
+  JavaScript**. `globals.css` zeroes every transition under `reduce`, so a JS-owned hidden
+  state strands anyone with that preference if the observer never runs.
+- `layout.tsx` carries a `<noscript>` rule (scripting off) and an inline failsafe script
+  (scripting on, bundle never arrives — `Reveal` switches it off by setting `__gwReveal`).
+- `Reveal` itself has a timer for the observer-never-reports case.
+
+Removing any one of them reintroduces a state where content is permanently invisible.
+`context/features/11-show-not-tell/log.md` has the five-state verification table.
+
 ## Commands
 
 ```bash

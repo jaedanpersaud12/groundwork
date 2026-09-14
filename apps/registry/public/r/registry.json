@@ -81,7 +81,7 @@
         }
       ],
       "meta": {
-        "version": "1.0.1",
+        "version": "1.0.2",
         "tier": "block",
         "track": "none"
       }
@@ -273,7 +273,7 @@
         }
       ],
       "meta": {
-        "version": "1.0.0",
+        "version": "1.0.1",
         "tier": "primitive",
         "track": "minor",
         "source": "flvs"
@@ -291,7 +291,7 @@
         }
       ],
       "meta": {
-        "version": "1.0.0",
+        "version": "1.0.1",
         "tier": "primitive",
         "track": "minor",
         "source": "flvs"
@@ -309,7 +309,7 @@
         }
       ],
       "meta": {
-        "version": "1.0.0",
+        "version": "1.0.1",
         "tier": "primitive",
         "track": "minor",
         "source": "jobpilot"
@@ -381,7 +381,7 @@
         }
       ],
       "meta": {
-        "version": "1.0.0",
+        "version": "1.0.1",
         "tier": "pattern",
         "track": "patch",
         "source": "flvs \u2192 jobpilot"

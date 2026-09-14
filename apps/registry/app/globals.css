@@ -6,8 +6,10 @@
 @import "@ja3dan/tokens/themes/jobpilot.css";
 
 @theme {
-  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  /* The one curve for motion on this site: mass and a soft landing, never a default ease. */
+  --ease-fluid: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 /*
@@ -16,7 +18,7 @@
  * project, which is the whole point of this app.
  */
 :root {
-  --typeface-heading: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --typeface-heading: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
@@ -26,26 +28,21 @@
 }
 
 /*
- * The headline voice: Archivo pushed toward its expanded width, set the way a survey
- * plate or a trailhead sign is set. The width axis does the work — Tailwind's named
- * `font-stretch` steps land either side of where this wants to sit, and the weight falls
- * between semibold and bold, which only the variable axis can reach.
+ * The headline voice: Geist at semibold, tracked tight as it grows. Line height comes from
+ * the type-scale step each heading uses, so it is not set here.
  */
 @utility type-display {
   @apply font-heading;
-  font-stretch: 112%;
-  font-weight: 620;
-  line-height: 0.96;
+  font-weight: 600;
+  letter-spacing: -0.025em;
   text-wrap: balance;
 }
 
-/*
- * Section headings share the display face at normal width, so the page has one voice
- * without the hero's shout repeating down the page.
- */
+/* Section and panel headings: the same face and weight, normal tracking. */
 @utility type-section {
   @apply font-heading;
-  font-weight: 560;
+  font-weight: 600;
+  text-wrap: balance;
 }
 
 /*
@@ -92,6 +89,134 @@
     color-mix(in oklab, var(--background) 75%, transparent) 74%,
     var(--background) 100%
   );
+}
+
+/*
+ * Syntax colours. Shiki writes `var(--shiki-token-*)`; these point each at a contract token.
+ * The status tokens carry the contract's promise that they read as small text on the page's
+ * own ground in both themes, which is exactly what 12px code needs; the chart tokens don't.
+ */
+.syntax {
+  --shiki-foreground: var(--card-foreground);
+  --shiki-background: transparent;
+  --shiki-token-keyword: var(--primary);
+  --shiki-token-string: var(--success);
+  --shiki-token-string-expression: var(--success);
+  --shiki-token-constant: var(--warning);
+  --shiki-token-function: var(--info);
+  --shiki-token-parameter: var(--card-foreground);
+  --shiki-token-punctuation: var(--muted-foreground);
+  --shiki-token-comment: var(--subtle-foreground);
+  --shiki-token-link: var(--primary);
+  --shiki-token-inserted: var(--success);
+  --shiki-token-deleted: var(--destructive);
+}
+
+/* One block per line, so an empty line keeps its height and a wrapped line stays one line. */
+.syntax .line {
+  display: block;
+  min-height: 1.5rem;
+}
+
+/*
+ * Line numbers, drawn by a counter so selecting the code never selects them. The hanging
+ * indent keeps a wrapped line's continuation aligned with its text, not under the number.
+ */
+.syntax[data-line-numbers] {
+  counter-reset: line;
+}
+
+.syntax[data-line-numbers] .line {
+  padding-inline-start: 3rem;
+  text-indent: -3rem;
+}
+
+.syntax[data-line-numbers] .line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 2rem;
+  margin-inline-end: 1rem;
+  text-indent: 0;
+  text-align: end;
+  color: var(--subtle-foreground);
+  user-select: none;
+}
+
+/*
+ * Sections arriving on scroll. The hidden state is deliberately scoped to
+ * `no-preference`: the reduced-motion block below zeroes every transition, so a hidden
+ * starting state that survived it would strand anyone whose observer never fired on a
+ * blank page. Under `reduce` these rules simply do not exist and the content is visible
+ * with no transform — which is the behaviour the criterion asks for, arrived at by not
+ * writing a rule rather than by overriding one.
+ *
+ * `layout.tsx` carries the matching <noscript> rule for motion-allowed, JavaScript-off.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  /* A heavy rise: 4rem, through a blur, over 800ms on a spring-like curve. */
+  .reveal[data-shown="false"] {
+    opacity: 0;
+    transform: translateY(4rem);
+    filter: blur(12px);
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition:
+      opacity 800ms cubic-bezier(0.32, 0.72, 0, 1),
+      transform 800ms cubic-bezier(0.32, 0.72, 0, 1),
+      filter 800ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  /*
+   * Set by the inline failsafe in layout.tsx when the page's own JavaScript never mounted
+   * Reveal. Not `!important` games — it just needs to beat `.reveal[data-shown="false"]`,
+   * which the extra attribute on :root does on specificity alone.
+   */
+  :root[data-reveal-failsafe="on"] .reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  /* Print never scrolls, so the observer never fires and every section would print blank. */
+  @media print {
+    .reveal,
+    .reveal[data-shown="false"] {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+  }
+}
+
+/*
+ * The tagline: each word starts at 30% of the text colour and comes up to full as it crosses
+ * the trigger line. Same guard shape as `.reveal`: the muted state exists only under
+ * `no-preference`, the failsafe attribute and <noscript> hand the colour back, and print
+ * shows it whole.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .tagline [data-word] {
+    transition: color 700ms var(--ease-fluid);
+  }
+
+  .tagline [data-word]:not([data-lit]) {
+    color: color-mix(in oklab, var(--foreground) 30%, transparent);
+  }
+
+  :root[data-reveal-failsafe="on"] .tagline [data-word] {
+    color: inherit;
+  }
+
+  @media print {
+    .tagline [data-word] {
+      color: inherit;
+    }
+  }
 }
 
 /*

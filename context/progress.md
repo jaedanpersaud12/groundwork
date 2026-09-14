@@ -1,9 +1,9 @@
 # Progress
 
-**Stage:** 10 — `imprint`, and `ui-registry.md` with it
-**Last completed:** 10 — `imprint`, and `ui-registry.md` with it
-**Active feature:** none
-**Next:** none — every promoted stage is built; nothing else is scheduled
+**Stage:** 12 — Docs refresh, starting with setup
+**Last completed:** 11 — Show, don't tell: the landing page
+**Active feature:** 12 — `feat/12-docs-setup`
+**Next:** the `/docs` pass — `kit init` is described there as not existing (false since 09), and `/docs` still renders the `HALVES` prose the landing page replaced
 **Blocker:** none
 
 Keep this short. Detail belongs in the feature's own folder — `spec.md`, `plan.md`,
@@ -28,6 +28,9 @@ version of it that grew to 450 lines is the reason the feature folders exist.
       project: `kit init` → the three kickoff prompts → a real feature 01 built and merged*
 - [x] **10** `imprint`, and `ui-registry.md` with it — *promoted from "Later"; verified
       against a real composition that a registry item's own source leaves open*
+- [x] **11** Show, don't tell — the landing page — *narrowed mid-build to `/` only; `/docs` is a
+      separate pass, with its two findings held in the feature's spec*
+- [ ] **12** Docs refresh, starting with setup
 
 ## Notes
 

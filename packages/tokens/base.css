@@ -5,14 +5,36 @@
     @apply border-border outline-ring/50;
   }
   /*
-   * Tracking is part of the foundation, not a per-project choice. Every groundwork
-   * project sets type tighter than the browser default, so a registry component dropped
-   * into any of them sits on the same rhythm as the text around it — and so the house
-   * look survives a project that never thinks about typography.
+   * Body copy starts at the 16px step's tracking. Any element that sets a size from the
+   * scale below replaces it with its own, so this only reaches text that never picks one.
    */
   body {
-    @apply bg-background text-foreground tracking-tight;
+    @apply bg-background text-foreground;
+    letter-spacing: var(--text-base--letter-spacing);
   }
+}
+
+/*
+ * Tracking is part of the foundation, not a per-project choice: every groundwork project
+ * sets type tighter than the browser default, so a registry component dropped into any of
+ * them sits on the same rhythm as the text around it.
+ *
+ * It scales with size. A single `tracking-tight` on body resolves to pixels at 16px and is
+ * inherited as pixels, so 12px labels got the tracking meant for 16px copy and read
+ * cramped. Small text wants none; the tightening grows with the size. Tailwind applies
+ * these with each `text-*` step, and a `tracking-*` class still wins.
+ */
+@theme {
+  --text-xs--letter-spacing: 0em;
+  --text-sm--letter-spacing: -0.006em;
+  --text-base--letter-spacing: -0.011em;
+  --text-lg--letter-spacing: -0.014em;
+  --text-xl--letter-spacing: -0.017em;
+  --text-2xl--letter-spacing: -0.019em;
+  --text-3xl--letter-spacing: -0.021em;
+  --text-4xl--letter-spacing: -0.022em;
+  --text-5xl--letter-spacing: -0.024em;
+  --text-6xl--letter-spacing: -0.025em;
 }
 
 /*

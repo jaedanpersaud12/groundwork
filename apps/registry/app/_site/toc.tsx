@@ -58,8 +58,8 @@ function Toc({ entries }: { entries: TocEntry[] }) {
   }, [entries]);
 
   return (
-    <nav aria-label="On this page" className="sticky top-20 hidden self-start xl:block">
-      <p className="pb-2 text-sm text-subtle-foreground">On this page</p>
+    <nav aria-label="On this page" className="sticky top-24 hidden self-start xl:block">
+      <p className="pb-3 text-xs font-semibold text-foreground">On this page</p>
       <ul className="grid gap-1">
         {entries.map((entry) => (
           <li key={entry.id}>
@@ -67,9 +67,9 @@ function Toc({ entries }: { entries: TocEntry[] }) {
               href={`#${entry.id}`}
               aria-current={active === entry.id ? "location" : undefined}
               className={cn(
-                "block rounded-sm py-0.5 text-sm transition-colors",
+                "block rounded-sm py-1 text-sm transition-colors duration-300 ease-fluid",
                 FOCUS_RING,
-                active === entry.id ? "text-primary" : "text-muted-foreground hover:text-foreground",
+                active === entry.id ? "font-medium text-foreground" : "text-muted-foreground hover:text-foreground",
               )}
             >
               {entry.label}

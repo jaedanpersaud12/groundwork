@@ -6,6 +6,19 @@
       "runtimeExecutable": "bun",
       "runtimeArgs": ["--cwd=apps/registry", "run", "dev", "--", "--port", "3100"],
       "port": 3100
+    },
+    {
+      "name": "registry-pr14",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": [
+        "--cwd=/private/tmp/claude-501/-Users-jaedanpersaud-Projects-groundwork/c14f36e2-ce8a-4b72-bc9c-14cc0e1ac1a1/scratchpad/pr14/apps/registry",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "3101"
+      ],
+      "port": 3101
     }
   ]
 }

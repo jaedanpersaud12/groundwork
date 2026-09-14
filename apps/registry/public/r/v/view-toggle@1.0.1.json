@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "view-toggle",
+  "title": "View toggle",
+  "description": "Segmented control for swapping one view of the same data for another.",
+  "files": [
+    {
+      "path": "registry/groundwork/ui/view-toggle.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n/**\n * Segmented control for swapping one view of the same data for another. Source: flvs.\n *\n * The track's padding plus its border is the inset on every side, and each segment's\n * radius is the track's less that inset, so the selected fill's corners run concentric\n * with the track's instead of pinching at the ends.\n */\nfunction ViewToggle<T extends string>({\n  value,\n  onChange,\n  options,\n  label,\n  className,\n}: {\n  value: T;\n  onChange: (value: T) => void;\n  options: readonly { value: T; label: string; icon?: React.ReactNode }[];\n  /** Accessible name for the group, e.g. \"Row density\". */\n  label?: string;\n  className?: string;\n}) {\n  return (\n    <div\n      role=\"group\"\n      aria-label={label}\n      data-slot=\"view-toggle\"\n      className={cn(\"inline-flex h-8 items-stretch rounded-lg border border-border p-[3px]\", className)}\n    >\n      {options.map((option) => (\n        <button\n          key={option.value}\n          type=\"button\"\n          onClick={() => onChange(option.value)}\n          aria-pressed={value === option.value}\n          className={cn(\n            \"inline-flex items-center gap-1.5 rounded-[calc(var(--radius-lg)-4px)] px-2.5 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-inset [&_svg]:size-3.5\",\n            value === option.value ? \"bg-primary text-primary-foreground\" : \"text-muted-foreground hover:text-foreground\",\n          )}\n        >\n          {option.icon}\n          {option.label}\n        </button>\n      ))}\n    </div>\n  );\n}\n\nexport { ViewToggle };\n",
+      "type": "registry:ui"
+    }
+  ],
+  "meta": {
+    "version": "1.0.1",
+    "tier": "primitive",
+    "track": "minor",
+    "source": "flvs"
+  },
+  "type": "registry:ui"
+}
