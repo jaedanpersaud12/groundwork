@@ -1,7 +1,7 @@
 {
   "name": "@ja3dan/kit",
   "version": "0.1.0",
-  "description": "Keep installed @ja3dan registry items current: lock, status, update with a 3-way merge, and link to a local registry.",
+  "description": "Bootstrap a project on the @ja3dan registry and keep it current: init, lock, status, update with a 3-way merge, check, doctor, and link to a local registry.",
   "license": "MIT",
   "type": "module",
   "bin": {
@@ -14,7 +14,7 @@
     "node": ">=20.18.1"
   },
   "scripts": {
-    "build": "bun build src/cli.ts --target node --outfile dist/kit.js",
+    "build": "bun scripts/bundle-assets.ts && bun build src/cli.ts --target node --outfile dist/kit.js",
     "test": "bun test --timeout 60000",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "bun run build"

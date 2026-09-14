@@ -17,10 +17,24 @@ type LockEntry = {
   computedHash: string;
 };
 
+/**
+ * `kit init`'s half of the shape the comment above promised. `sourceType: "kit"` means
+ * "bundled in the installing kit's own package" — groundwork's `skills/` has no external
+ * repo to point at the way jobpilot's real `skills-lock.json` did (`sourceType: "github"`).
+ * A future GitHub-sourced skill is a new `sourceType` value, not a schema change.
+ */
+type SkillEntry = {
+  source: string;
+  sourceType: "kit";
+  version: string;
+  computedHash: string;
+};
+
 type Lock = {
   version: 1;
   registries: Record<string, string>;
   items: Record<string, LockEntry>;
+  skills?: Record<string, SkillEntry>;
 };
 
 const LOCK_FILE = "kit.lock.json";
@@ -34,10 +48,11 @@ function readLock(cwd: string): Lock | null {
   return lock;
 }
 
-/** Items sorted by key, so adding one item is a one-entry diff rather than a reshuffle. */
+/** Items (and skills, if any) sorted by key, so adding one is a one-entry diff rather than a reshuffle. */
 function writeLock(cwd: string, lock: Lock): void {
   const items = Object.fromEntries(Object.entries(lock.items).sort(([a], [b]) => a.localeCompare(b)));
-  writeFileSync(lockPath(cwd), `${JSON.stringify({ ...lock, items }, null, 2)}\n`);
+  const skills = lock.skills ? Object.fromEntries(Object.entries(lock.skills).sort(([a], [b]) => a.localeCompare(b))) : undefined;
+  writeFileSync(lockPath(cwd), `${JSON.stringify({ ...lock, items, ...(skills ? { skills } : {}) }, null, 2)}\n`);
 }
 
-export { LOCK_FILE, lockPath, readLock, writeLock, type Lock, type LockEntry };
+export { LOCK_FILE, lockPath, readLock, writeLock, type Lock, type LockEntry, type SkillEntry };

@@ -42,6 +42,7 @@ function resolveImports(cwd: string, filePath: string, seen: Set<string> = new S
   });
 }
 
+/** Reused by `init.ts` to find the same file right after `shadcn init` creates it. */
 function tailwindCssPath(cwd: string): string {
   const file = path.join(cwd, "components.json");
   let config: { tailwind?: { css?: string } };
@@ -116,4 +117,4 @@ async function check(cwd: string): Promise<CheckResult> {
   return { tokenProblems, forbiddenClasses };
 }
 
-export { check, type CheckResult, type ForbiddenClassProblem, type TokenProblem };
+export { check, tailwindCssPath, type CheckResult, type ForbiddenClassProblem, type TokenProblem };

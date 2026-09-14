@@ -1,17 +1,43 @@
 import { existsSync } from "node:fs";
+import path from "node:path";
 
+import { readSkills, readTemplate as readTemplateFiles } from "../assets";
 import { LOCK_FILE, lockPath } from "../lockfile";
 import { readTemplate } from "../registry";
 import { status, type StatusResult } from "./status";
 
 type RequiredCheck = { label: string; reason: string; scope: "always" | "kickoff"; run: (cwd: string) => string | null };
 
+/** The only preset today — see 09's out-of-scope. A second preset needs this parameterized by lock metadata. */
+const KICKOFF_PRESET = "next16-insforge";
+
 /**
  * The bootstrapped project — `/kickoff` + `kit init` — is the design center, not jobpilot:
- * see context/features/05-kit-check-doctor/plan.md. Only "always" entries run today, since
- * 06 doesn't exist yet to say what its files are named; "kickoff" is a real, empty bucket
- * so 06 adds to this list instead of doctor being redesigned.
+ * see context/features/05-kit-check-doctor/plan.md. Generated from kit's own bundled assets
+ * (09) rather than hand-typed, so it can't drift from what `kit init` actually installs.
  */
+function kickoffChecks(): RequiredCheck[] {
+  const templateChecks: RequiredCheck[] = readTemplateFiles(KICKOFF_PRESET).map((file) => ({
+    label: `context/${file.path} exists`,
+    reason: `the ${KICKOFF_PRESET} template installs it`,
+    scope: "kickoff",
+    run: (cwd) =>
+      existsSync(path.join(cwd, "context", file.path))
+        ? null
+        : `No context/${file.path} in ${cwd}. Run \`kit init\`, or copy it from templates/${KICKOFF_PRESET}/ by hand.`,
+  }));
+  const skillChecks: RequiredCheck[] = readSkills().map((skill) => ({
+    label: `.claude/skills/${skill.name}/SKILL.md exists`,
+    reason: "a kickoff-installed lifecycle skill",
+    scope: "kickoff",
+    run: (cwd) =>
+      existsSync(path.join(cwd, ".claude", "skills", skill.name, "SKILL.md"))
+        ? null
+        : `No .claude/skills/${skill.name}/SKILL.md in ${cwd}. Run \`kit init\`.`,
+  }));
+  return [...templateChecks, ...skillChecks];
+}
+
 const REQUIRED: RequiredCheck[] = [
   {
     label: "components.json has a @ja3dan registry entry",
@@ -32,6 +58,7 @@ const REQUIRED: RequiredCheck[] = [
     scope: "always",
     run: (cwd) => (existsSync(lockPath(cwd)) ? null : `No ${LOCK_FILE} in ${cwd}. Run \`kit lock\` first.`),
   },
+  ...kickoffChecks(),
 ];
 
 type RequiredResult = { label: string; ok: boolean; detail: string | null };
