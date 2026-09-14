@@ -74,6 +74,31 @@ function featureFolder(): FeatureFile[] {
     .map((match) => ({ name: match[1], note: match[2], by: match[3] }));
 }
 
+type FeatureRecord = { id: string; slug: string; title: string; files: string[] };
+
+/**
+ * This repo's own feature folders, as the landing page shows them: the number, the slug, the
+ * spec's own heading cut to its short name, and which loop files the folder actually holds.
+ * The page's hero table is these rows, so what it shows is what `context/features/` holds.
+ */
+function featureFolders(): FeatureRecord[] {
+  const root = path.join(ROOT, "context", "features");
+  return readdirSync(root, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && /^\d{2}-/.test(entry.name))
+    .map((entry) => entry.name)
+    .sort()
+    .map((dir) => {
+      const files = readdirSync(path.join(root, dir)).filter((file) => file.endsWith(".md"));
+      const heading = /^#\s+(.+)$/m.exec(read("context", "features", dir, "spec.md"))?.[1] ?? dir;
+      const title = heading
+        .replace(/^\d{2}\s*(\u2014\s*)?/, "")
+        .split(" \u2014 ")[0]
+        .replace(/`/g, "")
+        .trim();
+      return { id: dir.slice(0, 2), slug: dir.slice(3), title, files };
+    });
+}
+
 /** The themes the contract ships, read off disk — never counted by hand. */
 function themeNames(): string[] {
   return readdirSync(path.join(ROOT, "packages", "tokens", "themes"))
@@ -181,6 +206,7 @@ function skillFrontmatter(name: string): string {
 export {
   contextFiles,
   featureFolder,
+  featureFolders,
   knowledgeFiles,
   lintMessage,
   promptFiles,
@@ -191,6 +217,7 @@ export {
   templateFiles,
   themeNames,
   type FeatureFile,
+  type FeatureRecord,
   type KnowledgeFile,
   type PromptFile,
   type Skill,

@@ -3,6 +3,8 @@ import contract from "@ja3dan/tokens/contract.json";
 import {
   contextFiles,
   featureFolder,
+  featureFolders,
+  knowledgeFiles,
   lintMessage,
   promptFiles,
   readSkill,
@@ -251,6 +253,7 @@ const EVIDENCE = [
       kind: "lint" as const,
       path: "app/page.tsx",
       violation: VIOLATION,
+      offending: OFFENDING_CLASS,
       fix: FIX,
       message: lintMessage("palette", { className: OFFENDING_CLASS }),
     },
@@ -259,6 +262,27 @@ const EVIDENCE = [
     linkLabel: "Read the contract",
   },
 ];
+
+/** The files a finished pass through the loop leaves in a feature folder, in the order they're written. */
+const LOOP_FILES = ["spec.md", "plan.md", "log.md", "review.md"] as const;
+
+/** The most recent features in this repo, newest first, for the landing page's hero table. */
+const RECENT_FEATURES = featureFolders()
+  .slice(-4)
+  .reverse()
+  .map((feature) => ({
+    ...feature,
+    loop: LOOP_FILES.filter((file) => feature.files.includes(file)).length,
+    reviewed: feature.files.includes("review.md"),
+  }));
+
+/** Counts the landing page states as fact. Every one is read off disk. */
+const STATS = {
+  skills: skillNames().length,
+  tokens: Object.keys(contract.tokens).length,
+  themes: themeNames().length,
+  gotchas: knowledgeFiles().reduce((total, file) => total + file.gotchas, 0),
+};
 
 const HALVES = [
   {
@@ -293,6 +317,9 @@ export {
   CONTEXT_TREE,
   EVIDENCE,
   HALVES,
+  LOOP_FILES,
+  RECENT_FEATURES,
+  STATS,
   LOOP,
   OUT_OF_BAND,
   PROMPT_FILES,

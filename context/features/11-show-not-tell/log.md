@@ -274,3 +274,16 @@ Two entries added to `knowledge/browser-verification.md`: the Browser pane deliv
 so scroll-reveal cannot be verified there at all; and blocking `_next/static/chunks/**` to
 simulate a failed bundle also blocks Next's stylesheet, which makes any
 "is the content still visible" check pass for the wrong reason.
+
+---
+
+## Finding for the registry, not fixed here: Pagination hydration mismatch under reduced motion
+
+Rendering `@ja3dan/pagination` in a page viewed with `prefers-reduced-motion: reduce` logs a
+React hydration mismatch: the server renders each page number's `motion.span` at
+`opacity: 0` / `translateX(8px)`, the client at `opacity: 1` / `transform: none`
+(`registry/groundwork/ui/pagination.tsx`, around line 122, where the reduced-motion branch
+is read). Found by the redesigned landing page, which put Pagination in its specimen sheet.
+It is a shipped component, so the fix needs a `meta.version` bump and a `registry-review`
+pass; the landing page dropped Pagination from the specimen instead of carrying the
+mismatch. The same example on `/docs/components/pagination` should show it too.
