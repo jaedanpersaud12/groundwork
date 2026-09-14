@@ -13,7 +13,11 @@ exists yet.
 Wrote `skills/imprint/SKILL.md`, restructured around the Step 1 fork (registry component
 alone → nothing to capture; composition → Step 2a; custom component → Step 2b) and
 `templates/next16-insforge/ui-registry.md`, seeded with structure and no fabricated entries
-per the same discipline `library-docs.md` already uses.
+per the same discipline `library-docs.md` already uses. Checked, not just asserted:
+`grep -c "^### " templates/next16-insforge/ui-registry.md` → `0` — no `###` entry heading
+of any kind, so nothing resembling a fabricated component or composition record; the file
+is 15 lines, all explanatory header, matching the criterion's "structure but no fabricated
+entries" exactly.
 
 **Automatic pickup confirmed, no code change needed** — `packages/kit`'s `readSkills()`/
 `readTemplate()` and `kit doctor`'s `kickoffChecks()` are all `readdirSync`-driven (09's own
@@ -58,3 +62,20 @@ time (a plan-mismatch instead of a timeout) — consistent with resource exhaust
 long session spawning many `bunx`/`shadcn`/dev-server subprocesses, not a deterministic
 regression. CI runs on a fresh machine per run, so it's the honest tiebreaker here rather
 than something to chase further locally.
+
+## 2026-09-14 — CI confirms it, and two CodeRabbit findings fixed
+
+`gh pr checks 12`: `check` passed in 3m28s on GitHub Actions' fresh machine — no failures,
+nowhere near the ~60-minute local run. Settles it: the local failure was session-local
+resource exhaustion, not a real problem with this branch's code. Updated `spec.md`'s
+`bun run check` criterion from unchecked to checked, citing the CI run directly, rather than
+leaving it in the ambiguous checked-with-a-caveat state CodeRabbit correctly flagged as
+inconsistent (a checked box next to four described failures).
+
+CodeRabbit's other finding was also real: `skills/imprint/SKILL.md`'s Step 2b ("Capture:")
+lists interactive states as hover/focus/active and a separate accent/status-color line, but
+the custom-component entry table only had a `Hover state` row — an agent following the
+table literally would drop focus/active/accent from the record even though the prose right
+above told it to capture them. Added `Focus state`, `Active state`, and
+`Accent / status usage` rows to the table so the format can't silently under-capture what
+the extraction step promises.

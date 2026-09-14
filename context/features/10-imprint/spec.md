@@ -48,18 +48,19 @@ they belong to the same app.
       *see `log.md`; the build genuinely failed first, naming `imprint`, before the fix*
 - [x] `ui-registry.md` is back in `templates/next16-insforge/`, seeded with the file's
       structure but no fabricated entries — nothing to capture until a real component
-      exists — *done*
+      exists — *see `log.md`: `grep -c "^### " ...` → `0`, no entry headings at all*
 - [x] A real run of `/imprint` against a genuinely composed (non-registry-primitive) piece
       of UI produces an entry that isn't a restatement of a contract token — demonstrated
       against something in the throwaway project from 09, or a fresh equivalent — *see
       `log.md`; composed `@ja3dan/empty-state` + `@ja3dan/button`, the resulting entry
       mentions zero contract tokens, only the composition decisions the registry items'
       own sources leave open*
-- [x] `bun run check` passes — *tokens/lint/registry:build clean; the test step hit 4
-      failures in `update.test.ts`'s unrelated `chip`-fixture cases on code this feature
-      never touches (confirmed via `git diff --stat`) — attributed to session-local
-      resource exhaustion, not a regression; see `log.md` for the full reasoning. CI (fresh
-      machine, this branch) is the real tiebreaker.*
+- [x] `bun run check` passes — *confirmed on CI (a fresh machine), this branch: `check`
+      passed in 3m28s — https://github.com/jaedanpersaud12/groundwork/actions/runs/34834544618.
+      Locally it failed on 4 `update.test.ts` `chip`-fixture failures, taking ~60 minutes
+      instead of ~100 seconds; ruled unrelated before CI ran (code this feature doesn't
+      touch, per `git diff --stat`, reproduced identically on unmodified code) and CI now
+      settles it — the local run was environmental, not a real failure. See `log.md`.*
 
 ## Out of scope
 

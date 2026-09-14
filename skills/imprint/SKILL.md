@@ -126,16 +126,19 @@ reuse, what's allowed to vary]
 File: [filepath]
 Last updated: [date]
 
-| Property         | Token           |
-| ----------------- | --------------- |
-| Background        | [token class]   |
-| Border             | [token class]   |
-| Border radius      | [token class]  |
-| Text — primary     | [token class]  |
-| Text — secondary   | [token class]  |
-| Spacing            | [token class]  |
-| Hover state         | [token class] |
-| Shadow              | [token class or none] |
+| Property           | Token                  |
+| ------------------- | ---------------------- |
+| Background          | [token class]          |
+| Border               | [token class]          |
+| Border radius        | [token class]          |
+| Text — primary       | [token class]          |
+| Text — secondary     | [token class]          |
+| Spacing              | [token class]          |
+| Hover state          | [token class]          |
+| Focus state           | [token class or none] |
+| Active state           | [token class or none] |
+| Shadow                  | [token class or none] |
+| Accent / status usage    | [token class or none] |
 
 **Pattern notes:** [why this token was chosen over an equally valid alternative, what this
 component type should always match]
