@@ -114,14 +114,37 @@ template from 06. Starts after both.
 only the kit and the 06 prompts — and every rough edge hit along the way has gone back in
 as a change here.
 
+## 10 — `imprint`, and `ui-registry.md` with it
+
+A 7th lifecycle skill, kickoff-installed like the other 6: after building a UI component,
+capture what makes it match the rest of the project, and save it to `ui-registry.md`. Moved
+off the "Later" list — see that section's old note for the jobpilot precedent this adapts.
+
+**Not a port.** jobpilot's real `imprint` (from `jsm-agent-skill`) captures raw Tailwind
+classes (`bg-`, `rounded-`, `text-`) because jobpilot had no token contract — every class
+choice was a real decision worth recording. A groundwork project has a contract:
+`bg-card`/`rounded-md`/`text-muted-foreground` aren't decisions, they're the only correct
+answer, already enforced by `no-raw-colors` and already correct in any installed `@ja3dan`
+component. Capturing them again would be a registry that agrees with the linter and says
+nothing `TOKENS.md` doesn't already say.
+
+What's actually project-specific, and un-owned by anything else: how this project
+*composes* registry primitives into its own sections (a page header's icon-plus-heading
+arrangement, a specific empty-state pattern), and any genuinely custom component the
+project builds beyond the registry. That's the real drift risk `imprint` should guard
+against — not re-litigating token choices the contract already settled.
+
+**Done when:** `skills/imprint/SKILL.md` exists, installed by `kit init` alongside the
+other 6 (`kit doctor`'s `"kickoff"` bucket and `apps/registry`'s `kit.ts` both updated to
+know about a 7th skill), `ui-registry.md` is back in `templates/next16-insforge/`, and a
+real run of `/imprint` against a genuinely composed (non-registry-primitive) piece of UI in
+the throwaway project produces an entry that would actually help the next session build a
+matching one — not a restatement of a contract token.
+
 ---
 
 ## Later
 
-- **`imprint`, and `ui-registry.md` with it.** jobpilot kept a living UI registry current
-  with `imprint` (installed from `JavaScript-Mastery-Pro/jsm-agent-skill`, per its
-  `skills-lock.json`); groundwork has no equivalent, so 06 ships no registry file. The file
-  comes back when something maintains it.
 - GitHub Action opening update PRs when a version is published
 - Visual regression screenshots per item and theme in CI
 - A Vite preset (sensory-safari, wyatt); more themes

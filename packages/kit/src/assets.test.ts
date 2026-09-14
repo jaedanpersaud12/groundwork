@@ -12,9 +12,17 @@ describe("resolveAssetsRoot", () => {
 });
 
 describe("readSkills", () => {
-  test("reads exactly the 6 lifecycle skills, each with real SKILL.md content", () => {
+  test("reads exactly the 7 lifecycle skills, each with real SKILL.md content", () => {
     const skills = readSkills();
-    expect(skills.map((skill) => skill.name)).toEqual(["architect", "feature", "harvest", "recover", "remember", "review"]);
+    expect(skills.map((skill) => skill.name)).toEqual([
+      "architect",
+      "feature",
+      "harvest",
+      "imprint",
+      "recover",
+      "remember",
+      "review",
+    ]);
     for (const skill of skills) {
       expect(skill.content).toContain("---");
       expect(skill.content.length).toBeGreaterThan(100);
@@ -30,6 +38,7 @@ describe("readTemplate", () => {
       "features/README.md",
       "library-docs.md",
       "progress.md",
+      "ui-registry.md",
       "ui-rules.md",
     ]);
   });
