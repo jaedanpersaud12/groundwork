@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { CONTEXT_TREE } from "../../_site/kit";
 import { DocPage, Section, Tree } from "../../_site/prose";
+import { TEXT_LINK } from "../../_site/styles";
 import type { TocEntry } from "../../_site/toc";
 
 export const metadata: Metadata = {
@@ -30,6 +32,17 @@ export default function ContextPage() {
         <div className="rounded-md border border-border bg-card p-5">
           <Tree nodes={CONTEXT_TREE} />
         </div>
+        <p className="max-w-prose text-sm text-muted-foreground">
+          This is groundwork&apos;s own <code className="font-mono">context/</code> — the folder this page
+          describes is the one you&apos;re reading it from. A project bootstrapped by kickoff gets a related but
+          different shape (<code className="font-mono">project-overview.md</code>,{" "}
+          <code className="font-mono">architecture.md</code>, and a <code className="font-mono">build-plan.md</code>{" "}
+          the same three prompts wrote) — see{" "}
+          <Link href="/docs/kickoff" className={TEXT_LINK}>
+            kickoff
+          </Link>{" "}
+          for that tree.
+        </p>
       </Section>
 
       <Section id="why-folders" title="Why a folder per feature">

@@ -1,9 +1,9 @@
 # Progress
 
-**Stage:** 05 — kit check and doctor
-**Last completed:** 05 — kit check and doctor
+**Stage:** 06 — `/kickoff` prompts, and `templates/`
+**Last completed:** 06 — `/kickoff` prompts, and `templates/`
 **Active feature:** none
-**Next:** 06 or 09
+**Next:** 09
 **Blocker:** none
 
 Keep this short. Detail belongs in the feature's own folder — `spec.md`, `plan.md`,
@@ -20,16 +20,13 @@ version of it that grew to 450 lines is the reason the feature folders exist.
       `context/features/03-jobpilot-consumer/log.md`*
 - [x] **04** `packages/kit`: sync engine
 - [x] **05** `packages/kit`: check and doctor
-- [ ] **06** `templates/`, `presets/`, `/kickoff`
+- [x] **06** `/kickoff` prompts, and `templates/`
 - [ ] **07** `apps/site` — *on hold; 08 may have absorbed it, see build-plan*
 - [x] **08** Groundwork site
 - [ ] **09** `packages/kit`: `kit init` — *after 04 and 06*
 
 ## Notes
 
-- `feat/06-kickoff` carries 06's spec and plan and is not merged. It is behind `main` and
-  will conflict on this file's status block and on `build-plan.md`; rebase it before
-  picking it up.
 - First commit landed and pushed to `origin/main`; all 18 skill symlinks stored as
   symlinks (mode 120000), 24 merge bases and the hook executable bits survived.
 - The `better-*` vendored skills carry no licence file, so they are installed in

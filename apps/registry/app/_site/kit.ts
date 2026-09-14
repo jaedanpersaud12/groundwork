@@ -1,4 +1,4 @@
-import { contextFiles, featureFolder, readSkill, skillNames, skillSection } from "./repo";
+import { contextFiles, featureFolder, promptFiles, readSkill, skillNames, skillSection, templateFiles } from "./repo";
 
 /**
  * The agent-kit half of groundwork, as the site describes it. The words come from the
@@ -123,6 +123,62 @@ const CONTEXT_TREE: TreeNode[] = [
   },
 ];
 
+/** The three kickoff prompts, source shown in full — read once, in run order. */
+const PROMPT_FILES = promptFiles();
+
+/** One line each, same discipline as `CONTEXT_NOTES`: a stage without one fails the build. */
+const PROMPT_NOTES: Record<string, string> = {
+  "01-interview.md": "Turns a person's answers into project-overview.md — what it is, who it's for, what it deliberately won't do.",
+  "02-architecture.md": "Turns the overview into architecture.md — the stack, the schema, the data flow.",
+  "03-build-plan.md": "Turns both into build-plan.md — numbered features, ordered by what depends on what.",
+};
+
+{
+  const onDisk = PROMPT_FILES.map((prompt) => prompt.file);
+  const unnoted = onDisk.filter((name) => !(name in PROMPT_NOTES));
+  const stale = Object.keys(PROMPT_NOTES).filter((name) => !onDisk.includes(name));
+  if (unnoted.length || stale.length) {
+    throw new Error(`PROMPT_NOTES in app/_site/kit.ts is out of step with prompts/: ${[...unnoted, ...stale].join(", ")}.`);
+  }
+}
+
+/**
+ * One line each for the `next16-insforge` template. The file list is read from disk; only
+ * the notes are written here, and a file without one fails the build — same discipline as
+ * `CONTEXT_NOTES` below, because this tree makes the same claim: what's here is what
+ * `kit init` will actually copy, not a description of it.
+ */
+const TEMPLATE_NOTES: Record<string, string> = {
+  "code-standards.md": "implementation rules — copied with blanks for the project's own dependencies and tracked events",
+  "ui-rules.md": "layout and component conventions, in terms of the token contract rather than hardcoded values",
+  "library-docs.md": "the discipline header only — a pattern is added the first time the project actually uses a library",
+  "progress.md": "the same status-block-and-checklist shape as this repo's own, seeded empty",
+  "features/README.md": "the feature-folder shape, unchanged from this repo's own copy",
+};
+
+{
+  const onDisk = templateFiles("next16-insforge");
+  const unnoted = onDisk.filter((name) => !(name in TEMPLATE_NOTES));
+  const stale = Object.keys(TEMPLATE_NOTES).filter((name) => !onDisk.includes(name));
+  if (unnoted.length || stale.length) {
+    throw new Error(
+      `TEMPLATE_NOTES in app/_site/kit.ts is out of step with templates/next16-insforge/: ${[...unnoted, ...stale].join(", ")}.`,
+    );
+  }
+}
+
+const TEMPLATE_TREE: TreeNode[] = [
+  {
+    name: "templates/next16-insforge/",
+    children: [
+      ...Object.entries(TEMPLATE_NOTES)
+        .filter(([name]) => !name.includes("/"))
+        .map(([name, note]) => ({ name, note })),
+      { name: "features/", children: [{ name: "README.md", note: TEMPLATE_NOTES["features/README.md"] }] },
+    ],
+  },
+];
+
 const HALVES = [
   {
     title: "The agent kit",
@@ -152,4 +208,15 @@ const HALVES = [
   },
 ];
 
-export { CONTEXT_TREE, HALVES, LOOP, OUT_OF_BAND, SKILLS, type Stage, type TreeNode };
+export {
+  CONTEXT_TREE,
+  HALVES,
+  LOOP,
+  OUT_OF_BAND,
+  PROMPT_FILES,
+  PROMPT_NOTES,
+  SKILLS,
+  TEMPLATE_TREE,
+  type Stage,
+  type TreeNode,
+};
