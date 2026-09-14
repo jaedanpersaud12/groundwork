@@ -3,6 +3,8 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 
 import pkg from "../package.json" with { type: "json" };
+import { check } from "./commands/check";
+import { doctor, doctorFailed } from "./commands/doctor";
 import { link, type LinkResult, unlink } from "./commands/link";
 import { lock, type LockedItem } from "./commands/lock";
 import { status, type ItemStatus } from "./commands/status";
@@ -19,6 +21,8 @@ Usage:
     [--accept-major]        merge a major update after reading its migration notes
   kit link [--url <url>]    point @ja3dan at a local registry (default http://localhost:3100)
     [--off]                 restore the registry URL from the committed components.json
+  kit check                 scan locked files for raw colours and a theme missing required tokens
+  kit doctor                required files, and the same outdated/missing info as sync status
 
 Options:
   --cwd <dir>               the project to act on (default: the current directory)
@@ -131,6 +135,38 @@ async function runLink(cwd: string, off: boolean, url: string | undefined): Prom
   return 0;
 }
 
+async function runCheck(cwd: string): Promise<number> {
+  const { tokenProblems, forbiddenClasses } = await check(cwd);
+  if (tokenProblems.length === 0 && forbiddenClasses.length === 0) {
+    process.stdout.write("kit check: clean.\n");
+    return 0;
+  }
+  for (const problem of tokenProblems) {
+    process.stdout.write(`✗ ${problem.selector} is missing: ${problem.missing.join(", ")}\n`);
+  }
+  for (const problem of forbiddenClasses) {
+    process.stdout.write(`✗ ${problem.file}:${problem.line} ${problem.message}\n`);
+  }
+  return 1;
+}
+
+async function runDoctor(cwd: string): Promise<number> {
+  const result = await doctor(cwd);
+  for (const entry of result.required) {
+    process.stdout.write(`${entry.ok ? "✓" : "✗"} ${entry.ok ? entry.label : entry.detail}\n`);
+  }
+  process.stdout.write(
+    result.kickoffChecks.length
+      ? result.kickoffChecks.map((entry) => `${entry.ok ? "✓" : "✗"} ${entry.ok ? entry.label : entry.detail}\n`).join("")
+      : "○ kickoff-installed files (skills/, context/, hooks) — not checked yet, lands with 06\n",
+  );
+  if (result.items) {
+    const rows = [["item", "installed", "latest", "status"], ...result.items.items.map((item) => [item.name, item.installed, item.latest, describe(item)])];
+    process.stdout.write(`\n${table(rows)}\n`);
+  }
+  return doctorFailed(result) ? 1 : 0;
+}
+
 async function main(argv: string[]): Promise<number> {
   const { values, positionals } = parseArgs({
     args: argv,
@@ -163,6 +199,8 @@ async function main(argv: string[]): Promise<number> {
   if (command === "sync status") return runStatus(cwd);
   if (positionals[0] === "sync" && positionals[1] === "update") return runUpdate(cwd, positionals[2], values.to, values["accept-major"] ?? false);
   if (command === "link") return runLink(cwd, values.off ?? false, values.url);
+  if (command === "check") return runCheck(cwd);
+  if (command === "doctor") return runDoctor(cwd);
 
   process.stderr.write(`kit: \`${command}\` isn't built yet.\n\n${USAGE}`);
   return 1;

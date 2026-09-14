@@ -117,5 +117,13 @@ for (const file of readdirSync(themesDir).filter((f) => f.endsWith(".css"))) {
   else console.log(`✓ themes/${file}`);
 }
 
-console.log(`Generated theme.css and TOKENS.md (${tokenNames.length} tokens, contract v${contractVersion}).`);
+const bundled = await Bun.build({ entrypoints: [join(root, "scripts/validate-entry.ts")], target: "node" });
+if (!bundled.success) {
+  failed = true;
+  for (const message of bundled.logs) console.error(message);
+} else {
+  writeFileSync(join(root, "validate.js"), await bundled.outputs[0].text());
+}
+
+console.log(`Generated theme.css, TOKENS.md and validate.js (${tokenNames.length} tokens, contract v${contractVersion}).`);
 if (failed) process.exit(1);
