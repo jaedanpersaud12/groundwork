@@ -21,8 +21,12 @@ type InputGroupProps = Omit<ComponentProps<"input">, "size"> & {
   icon?: ReactNode;
   /** Trailing content: a clear button, a unit, a keyboard hint. */
   trailing?: ReactNode;
-  /** `sm` for a 32px field beside other 32px controls. */
-  size?: keyof typeof SIZES;
+  /**
+   * `sm` for a 32px field beside other 32px controls. A number is the native `<input>`
+   * `size` (its width in characters) and passes through with the default geometry, so
+   * code written against 1.0.0's plain input props keeps compiling.
+   */
+  size?: keyof typeof SIZES | number;
   /** Classes for the wrapper, which carries the border and focus ring. */
   className?: string;
   inputClassName?: string;
@@ -30,11 +34,12 @@ type InputGroupProps = Omit<ComponentProps<"input">, "size"> & {
 
 /** An input with a leading icon and optional trailing slot. The wrapper is the field. */
 function InputGroup({ icon, trailing, size = "default", className, inputClassName, ...props }: InputGroupProps) {
-  const geometry = SIZES[size];
+  const variant = typeof size === "number" ? "default" : size;
+  const geometry = SIZES[variant];
   return (
     <div
       data-slot="input-group"
-      data-size={size}
+      data-size={variant}
       className={cn(
         "flex min-w-0 items-center rounded-md border border-input bg-card transition-[border-color,box-shadow] duration-150 ease-out focus-within:border-ring focus-within:ring-1 focus-within:ring-ring has-disabled:bg-muted has-aria-invalid:border-destructive has-aria-invalid:ring-1 has-aria-invalid:ring-destructive [&_svg]:shrink-0 [&>svg]:text-subtle-foreground",
         geometry.field,
@@ -49,6 +54,7 @@ function InputGroup({ icon, trailing, size = "default", className, inputClassNam
           geometry.input,
           inputClassName,
         )}
+        size={typeof size === "number" ? size : undefined}
         {...props}
       />
       {trailing}
