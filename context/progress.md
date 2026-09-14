@@ -1,9 +1,9 @@
 # Progress
 
-**Stage:** 09 — `packages/kit`: `kit init`
+**Stage:** 10 — `imprint`, and `ui-registry.md` with it
 **Last completed:** 09 — `packages/kit`: `kit init`
-**Active feature:** none
-**Next:** none — every buildable stage is done; 07 is retired, not built (see build-plan.md)
+**Active feature:** 10 — `imprint`, and `ui-registry.md` with it (`feat/10-imprint`)
+**Next:** none — 10 was the last "Later" item promoted; nothing else is scheduled
 **Blocker:** none
 
 Keep this short. Detail belongs in the feature's own folder — `spec.md`, `plan.md`,
@@ -23,6 +23,8 @@ version of it that grew to 450 lines is the reason the feature folders exist.
 - [x] **06** `/kickoff` prompts, and `templates/`
 - [ ] **07** retired — *not built, not going to be; 08 absorbed its job and no distinct one
       ever turned up, see build-plan*
+- [ ] **10** `imprint`, and `ui-registry.md` with it — *promoted from "Later"; spec on
+      `feat/10-imprint`*
 - [x] **08** Groundwork site
 - [x] **09** `packages/kit`: `kit init` — *proved end to end against a real throwaway
       project: `kit init` → the three kickoff prompts → a real feature 01 built and merged*
