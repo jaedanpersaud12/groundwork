@@ -1,8 +1,8 @@
 "use client";
 
-// Presets beside a range calendar with one
-// sliding thumb, the month grid rolling in from the direction of travel. The range is
-// a draft until both ends are picked, so the first click never applies a one-day range.
+// Presets sit beside a range calendar with one sliding thumb, and the month grid rolls in
+// from the direction of travel. The range is a draft until both ends are picked, so the
+// first click never applies a one-day range.
 
 import { useState, type ReactNode } from "react";
 import { motion, useReducedMotion } from "motion/react";
