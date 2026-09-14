@@ -10,6 +10,7 @@ const NAV = [
   { href: "/docs/loop", label: "The loop" },
   { href: "/docs/context", label: "Context" },
   { href: "/docs/knowledge", label: "Knowledge" },
+  { href: "/docs/kickoff", label: "Kickoff" },
   { href: "/docs/tokens", label: "Tokens" },
 ];
 

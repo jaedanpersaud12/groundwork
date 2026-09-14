@@ -10,6 +10,7 @@ const sections: SidebarSection[] = [
       { href: "/docs/loop", label: "The loop" },
       { href: "/docs/context", label: "Context" },
       { href: "/docs/knowledge", label: "Knowledge" },
+      { href: "/docs/kickoff", label: "Kickoff" },
     ],
   },
   {

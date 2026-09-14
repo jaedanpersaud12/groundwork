@@ -48,26 +48,47 @@ the product. The registry is the easy half.
 
 ## Done when
 
-- [ ] `prompts/01-interview.md`, run against jobpilot answering as its developer would,
+- [x] `prompts/01-interview.md`, run against jobpilot answering as its developer would,
       produces a `project-overview.md` that a line-by-line diff against the real file shows
       to contain: all 6 pages, the profile-vs-research data-ownership rule, all 4 PostHog
-      events, a features-out-of-scope list of at least 15 items, and success criteria
-- [ ] `prompts/02-architecture.md`, given jobpilot's **real** `project-overview.md`,
+      events, a features-out-of-scope list of at least 15 items, and success criteria —
+      *see `log.md`, 2026-09-14. Tested harder than the spec asked: the simulated developer
+      gave a deliberately vague first out-of-scope answer, and the prompt's rule pushed
+      back and reached 18 items.*
+- [x] `prompts/02-architecture.md`, given jobpilot's **real** `project-overview.md`,
       produces an `architecture.md` containing a stack table, folder structure with
       per-folder ownership, at least 3 data-flow diagrams, a schema with per-column tables,
-      and an invariants list — diffed against the real file
-- [ ] `prompts/03-build-plan.md`, given jobpilot's real overview and architecture, produces
-      numbered features in phases, each with the UI/Logic split
-- [ ] The three run **end to end** from a cold start on jobpilot, and the compounding drift
-      is written down — where stage 3's output degrades because stage 1's was imperfect
-- [ ] Every interview stage refuses to accept a vague answer: asked "what's out of scope?",
+      and an invariants list — diffed against the real file — *see `log.md`, 2026-09-14.
+      5 data-flow diagrams produced; quality held through the schema section and past it,
+      settling the stage-2 length risk without a split.*
+- [x] `prompts/03-build-plan.md`, given jobpilot's real overview and architecture, produces
+      numbered features in phases, each with the UI/Logic split — *see `log.md`, 2026-09-14.
+      21 features, 3 phases; independently reproduced jobpilot's real one-page-many-features
+      pattern (profile UI/save/extraction/PDF as four separate features) without having
+      seen the real file.*
+- [x] The three run **end to end** from a cold start on jobpilot, and the compounding drift
+      is written down — where stage 3's output degrades because stage 1's was imperfect —
+      *see `log.md`, 2026-09-14. One real, traceable drift found: stage 1's Data Ownership
+      phase doesn't ask about a "recent activity" UI element unless it's named as a data
+      entity, so stage 2 had to guess whether it needs its own table. Recorded as a future
+      fix for `01-interview.md` rather than patched now.*
+- [x] Every interview stage refuses to accept a vague answer: asked "what's out of scope?",
       a reply of "not much" produces another question, not a shrug. Demonstrated in the log
-- [ ] `templates/next16-insforge/` contains the five copied files, with every jobpilot
+      — *see `log.md`, 2026-09-14.*
+- [x] `templates/next16-insforge/` contains the five copied files, with every jobpilot
       specific fact removed — verified by grepping the template for `jobpilot`, `Adzuna`,
-      `InsForge`, `Browserbase` and finding only stack-level mentions
-- [ ] A reader following `/docs` alone can get from nothing to the three prompts and knows
-      what each produces before running it
-- [ ] `bun run check` passes
+      `InsForge`, `Browserbase` and finding only stack-level mentions — *see `log.md`,
+      2026-09-14; grep output has zero hits for the first three terms, every `InsForge` hit
+      is a stack-level pattern.*
+- [x] A reader following `/docs` alone can get from nothing to the three prompts and knows
+      what each produces before running it — *see `log.md`, 2026-09-14. `/docs/kickoff`
+      shows all three prompts' real source (via the same `SourceBlock` component a registry
+      item's source uses) with a one-line note on what each produces, linked from the
+      sidebar, top nav, and `/docs`'s "Where to go next."*
+- [x] `bun run check` passes — *clean: tokens, both packages' tests (58 + 0), lint,
+      registry:build. `next typecheck` on the registry app also clean, and the new page's
+      two build-time consistency checks (`PROMPT_NOTES`, `TEMPLATE_NOTES`) verified not to
+      throw by loading it in a live dev server.*
 
 ## Out of scope
 

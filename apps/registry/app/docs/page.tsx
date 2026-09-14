@@ -23,6 +23,7 @@ const NEXT = [
   { href: "/docs/loop", title: "The loop", body: "The skills a feature passes through, and the one that refuses to close it." },
   { href: "/docs/context", title: "Context", body: "What gets written down before any code exists, and why the tracker is four lines long." },
   { href: "/docs/knowledge", title: "Knowledge", body: "Gotchas that only earn a place when the documentation is silent or wrong." },
+  { href: "/docs/kickoff", title: "Kickoff", body: "The three prompts that write a new project's context/ folder before any code exists." },
   { href: "/docs/tokens", title: "Token contract", body: "Every colour name a component is allowed to use, and what each one is for." },
 ];
 
@@ -89,12 +90,12 @@ export default function DocsHome() {
         <p className="max-w-prose text-sm text-muted-foreground">
           These commands set up the design system and nothing else: <code className="font-mono">shadcn init</code>{" "}
           does not create skills, a <code className="font-mono">context/</code> folder or knowledge files. The agent
-          kit installs separately — <code className="font-mono">/kickoff</code> writes those into the repo. It is
-          still being built; until then the{" "}
-          <Link href="/docs/context" className={TEXT_LINK}>
-            context scaffold
+          kit installs separately — see{" "}
+          <Link href="/docs/kickoff" className={TEXT_LINK}>
+            kickoff
           </Link>{" "}
-          is worth copying by hand.
+          for the three prompts that write one by hand, in any LLM, before the automated half (
+          <code className="font-mono">kit init</code>) exists.
         </p>
       </Section>
 

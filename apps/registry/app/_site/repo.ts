@@ -78,6 +78,31 @@ function contextFiles(): string[] {
     .sort();
 }
 
+type PromptFile = { file: string; title: string; content: string };
+
+/** The kickoff prompts, in run order (the filename numbers), with their own `# Title` as the label. */
+function promptFiles(): PromptFile[] {
+  return readdirSync(path.join(ROOT, "prompts"))
+    .filter((entry) => entry.endsWith(".md"))
+    .sort()
+    .map((file) => {
+      const content = read("prompts", file);
+      const title = /^#\s+(.+)$/m.exec(content)?.[1] ?? file;
+      return { file, title, content };
+    });
+}
+
+/** Every file the `next16-insforge` template copies into a new project, relative to its own root. */
+function templateFiles(preset: string): string[] {
+  const root = path.join(ROOT, "templates", preset);
+  const walk = (dir: string): string[] =>
+    readdirSync(path.join(root, dir), { withFileTypes: true }).flatMap((entry) => {
+      const rel = dir ? `${dir}/${entry.name}` : entry.name;
+      return entry.isDirectory() ? walk(rel) : [rel];
+    });
+  return walk("").sort();
+}
+
 type KnowledgeFile = {
   file: string;
   title: string;
@@ -116,10 +141,13 @@ export {
   contextFiles,
   featureFolder,
   knowledgeFiles,
+  promptFiles,
   readSkill,
   skillNames,
   skillSection,
+  templateFiles,
   type FeatureFile,
   type KnowledgeFile,
+  type PromptFile,
   type Skill,
 };
