@@ -42,10 +42,10 @@ says so explicitly. jobpilot is the kit's first real consumer, and the only way 
 - [x] jobpilot's `components.json` has a real `registries.@ja3dan` entry pointing at the
       groundwork registry (via `kit link` or the deployed registry URL)
 - [x] `kit lock` run against jobpilot writes `kit.lock.json` listing all 8 installed items
-      with `version`, `hash` and `track`, matching `public/r/versions.json`
+      with `version`, `computedHash` and `track`, matching `public/r/versions.json`
 - [x] Each of the 8 local UI copies (`button`, `calendar`, `checkbox`, `input`, `label`,
       `popover`, `table`, `textarea`) is replaced by the kit-installed version
-- [x] Homepage screenshot matches before and after the swap — *met.* Profile and find-jobs:
+- [ ] Homepage screenshot matches before and after the swap — *met.* Profile and find-jobs:
       **not verified against the real routes** — both are behind real auth and no login was
       available this session; verified instead via a temporary unauthenticated route
       exercising the same component usages. See `log.md`.

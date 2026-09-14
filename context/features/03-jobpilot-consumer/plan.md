@@ -78,7 +78,7 @@ written by the real `packages/kit` CLI — the first time any of `kit lock` / `s
 7. In jobpilot: `bunx shadcn add @ja3dan/button @ja3dan/calendar @ja3dan/checkbox
    @ja3dan/input @ja3dan/label @ja3dan/popover @ja3dan/table @ja3dan/textarea --overwrite`.
 8. From groundwork: `node packages/kit/dist/kit.js lock --cwd ~/Projects/jobpilot`; confirm
-   `kit.lock.json` lists all 8 items with `version`/`hash`/`track`.
+   `kit.lock.json` lists all 8 items with `version`/`computedHash`/`track`.
 9. In jobpilot: screenshot the same three pages again; diff against the "before" set.
 10. In jobpilot: `bun run lint` and `bunx tsc --noEmit`; fix anything the swap surfaced.
 11. Record each "done when" criterion's evidence in `log.md` as it's checked.
