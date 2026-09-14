@@ -262,13 +262,13 @@ export default function Home() {
 
             <div className={`${PANEL} mt-4 grid gap-8 p-6 sm:p-8 lg:grid-cols-12 lg:gap-4`}>
               {primitives ? (
-                <div className="grid content-start gap-3 lg:col-span-6">
+                <div id={primitives.tier} className="grid scroll-mt-24 content-start gap-3 lg:col-span-6">
                   <IndexHeading title={primitives.title} count={primitives.items.length} />
                   <IndexList names={primitives.items.map((item) => item.name)} columns />
                 </div>
               ) : null}
               {patterns ? (
-                <div className="grid content-start gap-3 lg:col-span-3">
+                <div id={patterns.tier} className="grid scroll-mt-24 content-start gap-3 lg:col-span-3">
                   <IndexHeading title={patterns.title} count={patterns.items.length} />
                   <IndexList names={patterns.items.map((item) => item.name)} />
                 </div>
@@ -276,7 +276,7 @@ export default function Home() {
               <div className="grid content-start gap-6 lg:col-span-3">
                 {smaller.map((group) =>
                   group ? (
-                    <div key={group.tier} className="grid content-start gap-3">
+                    <div key={group.tier} id={group.tier} className="grid scroll-mt-24 content-start gap-3">
                       <IndexHeading title={group.title} count={group.items.length} />
                       <IndexList names={group.items.map((item) => item.name)} />
                     </div>

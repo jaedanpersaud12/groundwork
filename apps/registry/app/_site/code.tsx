@@ -2,16 +2,26 @@ import { cn } from "@/lib/utils";
 
 import { CopyButton } from "./copy-button";
 
-/** A command to run, presented as the one line you paste. */
-function Command({ value, className }: { value: string; className?: string }) {
+/**
+ * A command to run, presented as the one line you paste. `wrap` lets a long command break
+ * across lines instead of scrolling, for pages where every flag has to be visible at once;
+ * the copy button always copies it whole.
+ */
+function Command({ value, className, wrap = false }: { value: string; className?: string; wrap?: boolean }) {
   return (
     <div
       className={cn(
-        "flex items-center gap-2 rounded-md border border-border bg-card ps-3 pe-1.5 py-1.5",
+        "flex gap-2 rounded-md border border-border bg-card ps-3 pe-2 py-2",
+        wrap ? "items-start" : "items-center",
         className,
       )}
     >
-      <code className="scroll-slim min-w-0 flex-1 overflow-x-auto py-1 font-mono text-xs whitespace-nowrap text-card-foreground">
+      <code
+        className={cn(
+          "min-w-0 flex-1 py-1 font-mono text-xs text-card-foreground",
+          wrap ? "break-words whitespace-pre-wrap" : "scroll-slim overflow-x-auto whitespace-nowrap",
+        )}
+      >
         {value}
       </code>
       <CopyButton value={value} label="command" />

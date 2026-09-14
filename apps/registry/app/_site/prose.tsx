@@ -28,11 +28,11 @@ function DocPage({
   children: ReactNode;
 }) {
   return (
-    <div className="grid grid-cols-1 gap-10 xl:grid-cols-[minmax(0,1fr)_11rem] xl:gap-12">
+    <div className="grid grid-cols-1 gap-12 xl:grid-cols-[minmax(0,1fr)_13rem] xl:gap-16">
       <article className="grid min-w-0 grid-cols-1 content-start">
         {eyebrow ? <div className="mb-3 text-sm text-muted-foreground">{eyebrow}</div> : null}
-        <h1 className="type-display text-4xl text-foreground">{title}</h1>
-        <p className="mt-4 max-w-prose text-lg text-muted-foreground">{lead}</p>
+        <h1 className="type-display text-4xl text-foreground sm:text-5xl">{title}</h1>
+        <p className="mt-4 max-w-2xl text-lg text-pretty text-muted-foreground">{lead}</p>
         {aside ? <div className="mt-6">{aside}</div> : null}
         {children}
       </article>
@@ -53,12 +53,12 @@ function Section({
   children: ReactNode;
 }) {
   return (
-    <section className="mt-10 grid min-w-0 grid-cols-1 gap-4 border-t border-border pt-10">
+    <section className="mt-16 grid min-w-0 grid-cols-1 gap-6">
       <div className="grid gap-2">
-        <h2 id={id} className="type-section scroll-mt-24 text-xl text-foreground">
+        <h2 id={id} className="type-section scroll-mt-24 text-2xl text-foreground">
           {title}
         </h2>
-        {lead ? <p className="max-w-prose text-muted-foreground">{lead}</p> : null}
+        {lead ? <p className="max-w-2xl text-pretty text-muted-foreground">{lead}</p> : null}
       </div>
       {children}
     </section>
@@ -91,7 +91,7 @@ type TreeNodeLike = { name: string; note?: string; children?: TreeNodeLike[] };
 /** A file tree, indented by nesting rather than by drawn rules. */
 function Tree({ nodes, depth = 0 }: { nodes: TreeNodeLike[]; depth?: number }) {
   return (
-    <ul className={depth === 0 ? "grid gap-1" : "mt-1 grid gap-1 border-s border-border ps-4"}>
+    <ul className={depth === 0 ? "grid gap-1" : "mt-1 grid gap-1 ps-6"}>
       {nodes.map((node) => (
         <li key={node.name}>
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">

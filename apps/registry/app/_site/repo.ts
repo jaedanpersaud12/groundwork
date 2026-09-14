@@ -109,6 +109,27 @@ function kitLockFile(): string {
   return name;
 }
 
+/**
+ * The two lines `kit init` adds to eslint.config.mjs, read out of init.ts so the docs show
+ * what the command really writes. Throws if either stops being findable.
+ */
+function kitEslintWiring(): { importLine: string; entry: string } {
+  const source = read("packages", "kit", "src", "commands", "init.ts");
+  const importLine = /`\$\{content\.slice\(0, importEnd\)\}(import [^\\`]+?);\\n/.exec(source)?.[1];
+  const entry = /const entry = '\s*(\{[^']+\}),\\n';/.exec(source)?.[1];
+  if (!importLine || !entry) throw new Error("packages/kit/src/commands/init.ts no longer writes the eslint wiring the docs quote.");
+  return { importLine, entry: `${entry},` };
+}
+
+/** One command's description from the kit CLI's own usage text, e.g. "sync status". */
+function kitUsage(command: string): string {
+  const usage = read("packages", "kit", "src", "cli.ts");
+  const line = usage.split("\n").find((row) => row.trimStart().startsWith(`kit ${command}`));
+  const description = line?.replace(/^\s*kit \S+(?: \S+)*?\s{2,}/, "").trim();
+  if (!description) throw new Error(`packages/kit/src/cli.ts usage no longer describes "kit ${command}".`);
+  return description;
+}
+
 /** The themes the contract ships, read off disk — never counted by hand. */
 function themeNames(): string[] {
   return readdirSync(path.join(ROOT, "packages", "tokens", "themes"))
@@ -222,7 +243,9 @@ export {
   contextFiles,
   featureFolder,
   featureFolders,
+  kitEslintWiring,
   kitLockFile,
+  kitUsage,
   knowledgeFiles,
   lintMessage,
   promptFiles,

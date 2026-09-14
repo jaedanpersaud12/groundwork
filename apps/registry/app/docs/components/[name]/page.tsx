@@ -78,7 +78,7 @@ export default async function ItemPage({ params }: PageProps<"/docs/components/[
         <p className="max-w-prose text-sm text-muted-foreground">
           Needs a project already initialised on the contract, which is what registers the{" "}
           <code className="font-mono">@ja3dan</code> prefix. If yours isn&apos;t,{" "}
-          <Link href="/docs#setup" className={TEXT_LINK}>
+          <Link href="/docs#design-system" className={TEXT_LINK}>
             run the setup command first
           </Link>
           .

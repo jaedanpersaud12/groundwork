@@ -4,7 +4,9 @@ import {
   contextFiles,
   featureFolder,
   featureFolders,
+  kitEslintWiring,
   kitLockFile,
+  kitUsage,
   knowledgeFiles,
   lintMessage,
   promptFiles,
@@ -376,6 +378,18 @@ const PROJECT_STEPS = [
   },
 ];
 
+/** The setup guide's facts about the kit CLI, all read from the kit's own source. */
+const KIT_DOCS = {
+  preset: PRESET,
+  eslint: kitEslintWiring(),
+  usage: {
+    doctor: kitUsage("doctor"),
+    check: kitUsage("check"),
+    syncStatus: kitUsage("sync status"),
+    syncUpdate: kitUsage("sync update"),
+  },
+};
+
 const HALVES = [
   {
     title: "The agent kit",
@@ -410,6 +424,7 @@ export {
   EVIDENCE,
   HALVES,
   KICKOFF,
+  KIT_DOCS,
   KIT_INIT,
   PROJECT_STEPS,
   PROJECT_TREE,

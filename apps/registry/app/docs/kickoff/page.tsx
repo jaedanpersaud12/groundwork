@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { SourceBlock } from "../../_site/code";
 import { PROMPT_FILES, PROMPT_NOTES, TEMPLATE_TREE } from "../../_site/kit";
 import { DocPage, Section, Tree } from "../../_site/prose";
+import { TEXT_LINK } from "../../_site/styles";
 import type { TocEntry } from "../../_site/toc";
 
 export const metadata: Metadata = {
@@ -13,7 +15,7 @@ export const metadata: Metadata = {
 const TOC: TocEntry[] = [
   { id: "prompts", label: "The three prompts" },
   { id: "template", label: "What gets copied" },
-  { id: "next", label: "What this doesn't do yet" },
+  { id: "next", label: "Where kit init comes in" },
 ];
 
 export default function KickoffPage() {
@@ -51,12 +53,15 @@ export default function KickoffPage() {
         </div>
       </Section>
 
-      <Section id="next" title="What this doesn't do yet">
-        <p className="max-w-prose text-muted-foreground">
-          Copying the template and running the three prompts by hand is deliberate — it works for anyone, in any
-          LLM, with no kit installed. Automating that copy step, installing the lifecycle skills, and running{" "}
-          <code className="font-mono">shadcn init</code> against the setup item is <code className="font-mono">kit init</code>,
-          a separate command still being built.
+      <Section id="next" title="Where kit init comes in">
+        <p className="max-w-2xl text-pretty text-muted-foreground">
+          <code className="font-mono">kit init</code> copies this template into <code className="font-mono">context/</code>,
+          installs the lifecycle skills and sets up the design system, so the only manual part left is these three
+          prompts. They stay manual on purpose: they work in any LLM chat, with nothing installed.{" "}
+          <Link href="/docs#whole-kit" className={TEXT_LINK}>
+            See the setup steps
+          </Link>
+          .
         </p>
       </Section>
     </DocPage>
