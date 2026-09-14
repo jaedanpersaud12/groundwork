@@ -1,8 +1,8 @@
 # Progress
 
-**Stage:** 11 — Show, don't tell: the landing page
+**Stage:** 12 — Docs refresh, starting with setup
 **Last completed:** 11 — Show, don't tell: the landing page
-**Active feature:** none
+**Active feature:** 12 — `feat/12-docs-setup`
 **Next:** the `/docs` pass — `kit init` is described there as not existing (false since 09), and `/docs` still renders the `HALVES` prose the landing page replaced
 **Blocker:** none
 
@@ -30,6 +30,7 @@ version of it that grew to 450 lines is the reason the feature folders exist.
       against a real composition that a registry item's own source leaves open*
 - [x] **11** Show, don't tell — the landing page — *narrowed mid-build to `/` only; `/docs` is a
       separate pass, with its two findings held in the feature's spec*
+- [ ] **12** Docs refresh, starting with setup
 
 ## Notes
 

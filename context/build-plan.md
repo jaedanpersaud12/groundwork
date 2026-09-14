@@ -171,6 +171,17 @@ scroll entry and sit fully visible under `prefers-reduced-motion`, with JavaScri
 when the page's own JavaScript fails to run; and the diff touches no token, font, icon
 library or colour.
 
+## 12 — Docs refresh, starting with setup
+
+The landing page now sends people to `/docs`, which still opens with a wall of prose, only
+sets up the design system, and says `kit init` does not exist. This rebuilds the docs shell
+and turns `/docs` into the setup guide: the whole kit (`create-next-app`, `kit init`, the
+kickoff prompts, the checks, the first feature) or only the design system.
+
+**Done when:** `/docs` documents both paths with every command in run order, sourced from the
+kit's CLI and init.ts; no docs page calls `kit init` unbuilt; the shared docs shell is rebuilt;
+no overflow from 320 to 1920px; checks pass.
+
 ---
 
 ## Later
