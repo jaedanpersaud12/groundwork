@@ -9,7 +9,8 @@
     "theme.css",
     "base.css",
     "themes",
-    "TOKENS.md"
+    "TOKENS.md",
+    "validate.js"
   ],
   "exports": {
     "./contract.json": "./contract.json",
@@ -25,7 +26,8 @@
       "style": "./themes/*",
       "default": "./themes/*"
     },
-    "./TOKENS.md": "./TOKENS.md"
+    "./TOKENS.md": "./TOKENS.md",
+    "./validate": "./validate.js"
   },
   "scripts": {
     "build": "bun scripts/build.ts",

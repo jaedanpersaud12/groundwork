@@ -118,6 +118,7 @@ export {
   itemRef,
   loadRegistry,
   NAMESPACE,
+  readTemplate,
   versionUrl,
   type Registry,
   type RegistryFile,

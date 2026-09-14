@@ -1,9 +1,9 @@
 # Progress
 
 **Stage:** 05 — kit check and doctor
-**Last completed:** 03 — jobpilot becomes the first consumer
+**Last completed:** 05 — kit check and doctor
 **Active feature:** none
-**Next:** 05 (`packages/kit`: check and doctor)
+**Next:** 06 or 09
 **Blocker:** none
 
 Keep this short. Detail belongs in the feature's own folder — `spec.md`, `plan.md`,
@@ -19,7 +19,7 @@ version of it that grew to 450 lines is the reason the feature folders exist.
       verified against the real auth'd pages (no login available this session); see
       `context/features/03-jobpilot-consumer/log.md`*
 - [x] **04** `packages/kit`: sync engine
-- [ ] **05** `packages/kit`: check and doctor
+- [x] **05** `packages/kit`: check and doctor
 - [ ] **06** `templates/`, `presets/`, `/kickoff`
 - [ ] **07** `apps/site` — *on hold; 08 may have absorbed it, see build-plan*
 - [x] **08** Groundwork site
