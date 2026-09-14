@@ -25,7 +25,7 @@ function SiteHeader({ variant }: { variant: "plate" | "solid" }) {
 
   if (plate) {
     return (
-      <header className="absolute inset-x-0 top-0 z-30">
+      <header className="relative z-30">
         <div className="mx-auto flex w-full max-w-6xl items-center gap-10 px-4 py-6 sm:px-6">
           <Link href="/" className={cn("type-display shrink-0 rounded-sm text-lg text-foreground", FOCUS_RING)}>
             groundwork

@@ -99,6 +99,16 @@ function featureFolders(): FeatureRecord[] {
     });
 }
 
+/**
+ * The lock file `kit init` writes, read from the kit's own source so the landing page names
+ * the file the command really produces.
+ */
+function kitLockFile(): string {
+  const name = /const LOCK_FILE = "([^"]+)"/.exec(read("packages", "kit", "src", "lockfile.ts"))?.[1];
+  if (!name) throw new Error("packages/kit/src/lockfile.ts no longer declares LOCK_FILE.");
+  return name;
+}
+
 /** The themes the contract ships, read off disk — never counted by hand. */
 function themeNames(): string[] {
   return readdirSync(path.join(ROOT, "packages", "tokens", "themes"))
@@ -207,6 +217,7 @@ export {
   contextFiles,
   featureFolder,
   featureFolders,
+  kitLockFile,
   knowledgeFiles,
   lintMessage,
   promptFiles,

@@ -66,7 +66,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           * observer never runs, so hand the content back unconditionally.
           */}
         <noscript>
-          <style>{`.reveal{opacity:1 !important;transform:none !important}`}</style>
+          <style>{`.reveal{opacity:1 !important;transform:none !important;filter:none !important}`}</style>
         </noscript>
       </head>
       <body className="min-h-full">

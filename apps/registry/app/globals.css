@@ -105,17 +105,21 @@
  * `layout.tsx` carries the matching <noscript> rule for motion-allowed, JavaScript-off.
  */
 @media (prefers-reduced-motion: no-preference) {
+  /* A heavy rise: 4rem, through a blur, over 800ms on a spring-like curve. */
   .reveal[data-shown="false"] {
     opacity: 0;
-    transform: translateY(0.75rem);
+    transform: translateY(4rem);
+    filter: blur(12px);
   }
 
   .reveal {
     opacity: 1;
     transform: none;
+    filter: none;
     transition:
-      opacity 600ms cubic-bezier(0.23, 1, 0.32, 1),
-      transform 600ms cubic-bezier(0.23, 1, 0.32, 1);
+      opacity 800ms cubic-bezier(0.32, 0.72, 0, 1),
+      transform 800ms cubic-bezier(0.32, 0.72, 0, 1),
+      filter 800ms cubic-bezier(0.32, 0.72, 0, 1);
   }
 
   /*
@@ -126,6 +130,7 @@
   :root[data-reveal-failsafe="on"] .reveal {
     opacity: 1;
     transform: none;
+    filter: none;
   }
 
   /* Print never scrolls, so the observer never fires and every section would print blank. */
@@ -134,6 +139,7 @@
     .reveal[data-shown="false"] {
       opacity: 1;
       transform: none;
+      filter: none;
     }
   }
 }

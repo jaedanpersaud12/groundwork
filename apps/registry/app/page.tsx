@@ -10,7 +10,7 @@ import { StatusPill } from "@/registry/groundwork/ui/status-pill";
 
 import { Command } from "./_site/code";
 import { SiteHeader } from "./_site/header";
-import { EVIDENCE, LOOP, STATS } from "./_site/kit";
+import { EVIDENCE, KICKOFF, KIT_INIT, LOOP, STATS } from "./_site/kit";
 import { FeatureTable } from "./_site/landing/feature-table";
 import { FilterChipDemo, ViewToggleDemo } from "./_site/landing/specimen";
 import { groups, items, setupCommand } from "./_site/registry";
@@ -24,13 +24,15 @@ import { FOCUS_RING, TEXT_LINK } from "./_site/styles";
  * Edges. Two vertical edges only: the leading margin, and the halfway line. Two-up layouts
  *   are `lg:grid-cols-2 gap-4`, so the second column always starts on the same x.
  * Openings. Every section after the hero opens with <SectionHead>: a heading over one
- *   sentence, then 56px to the content.
+ *   sentence, then 48px to the content.
  * Surfaces. A panel is the contract's raised surface (`bg-card shadow-border`), the same one
  *   the registry's own TableCard uses. Code inside a panel sits on `bg-muted`.
  * Rows. Panels side by side share their rows through `grid-rows-subgrid`, so titles,
  *   artefacts and links line up across the pair however long either one's copy runs.
  * Spacing. 8px inside a group, 24px between groups in a panel, 16px between panels,
- *   56px from a section's opening to its content, 112-128px between sections (2x that).
+ *   48px from a section's opening to its content, 96-128px between sections (2x that).
+ *   Only values from the spacing table (0 2 4 8 12 16 24 32 40 48 64 80 96px) and
+ *   Tailwind's type scale; no arbitrary sizes.
  */
 
 const PANEL = "rounded-2xl bg-card text-card-foreground shadow-border";
@@ -42,7 +44,7 @@ const [KIT, DESIGN] = EVIDENCE;
 function SectionHead({ title, lead }: { title: string; lead: string }) {
   return (
     <div className="grid max-w-2xl gap-3">
-      <h2 className="type-display text-[clamp(1.875rem,3vw,2.5rem)] text-foreground">{title}</h2>
+      <h2 className="type-display text-3xl lg:text-4xl text-foreground">{title}</h2>
       <p className="text-lg text-pretty text-muted-foreground">{lead}</p>
     </div>
   );
@@ -50,7 +52,7 @@ function SectionHead({ title, lead }: { title: string; lead: string }) {
 
 function More({ href, children }: { href: string; children: string }) {
   return (
-    <Link href={href} className={`inline-flex shrink-0 items-center gap-1.5 text-sm ${TEXT_LINK}`}>
+    <Link href={href} className={`inline-flex shrink-0 items-center gap-2 text-sm ${TEXT_LINK}`}>
       {children}
       <ArrowRightIcon aria-hidden className="size-3.5 rtl:-scale-x-100" />
     </Link>
@@ -60,9 +62,9 @@ function More({ href, children }: { href: string; children: string }) {
 /** A file, shown as a file: its path above, its contents on the muted ground. */
 function FilePanel({ path, children }: { path: string; children: React.ReactNode }) {
   return (
-    <figure className="grid min-w-0 content-start overflow-hidden rounded-lg bg-muted">
-      <figcaption className="border-b border-border px-4 py-2.5 font-mono text-xs text-muted-foreground">{path}</figcaption>
-      <div className="scroll-slim overflow-x-auto px-4 py-4 font-mono text-[13px] leading-6">{children}</div>
+    <figure className="grid min-w-0 grid-cols-1 content-start overflow-hidden rounded-lg bg-muted">
+      <figcaption className="border-b border-border px-4 py-2 font-mono text-xs text-muted-foreground">{path}</figcaption>
+      <div className="scroll-slim overflow-x-auto px-4 py-4 font-mono text-xs">{children}</div>
     </figure>
   );
 }
@@ -81,8 +83,8 @@ export default function Home() {
       <SiteHeader variant="plate" />
       <main id="content">
         {/* Hero */}
-        <section className="mx-auto w-full max-w-6xl px-4 pt-36 pb-14 sm:px-6 lg:pt-44 lg:pb-16">
-          <h1 className="animate-in type-display text-[clamp(2.75rem,6.2vw,5.5rem)] text-foreground duration-700 ease-out fade-in slide-in-from-bottom-3">
+        <section className="mx-auto w-full max-w-6xl px-4 pt-16 pb-12 sm:px-6 lg:pt-24 lg:pb-16">
+          <h1 className="animate-in type-display text-5xl sm:text-6xl lg:text-7xl text-foreground duration-700 ease-out fade-in slide-in-from-bottom-3">
             Start where the last project finished.
           </h1>
           <div className="mt-12 grid animate-in grid-cols-1 gap-6 delay-100 duration-700 ease-out fade-in lg:grid-cols-2 lg:items-end lg:gap-4">
@@ -90,8 +92,8 @@ export default function Home() {
               Agent skills, project context and a token contract, in your repo before the first line of code.
             </p>
             <div className="grid min-w-0 grid-cols-1 gap-2">
-              <Command value={setupCommand} />
-              <a href="#registry" className={`inline-flex items-center gap-1.5 justify-self-start text-sm ${TEXT_LINK}`}>
+              <Command value={KIT_INIT.command} />
+              <a href="#registry" className={`inline-flex items-center gap-2 justify-self-start text-sm ${TEXT_LINK}`}>
                 Browse components
                 <ArrowRightIcon aria-hidden className="size-3.5 rtl:-scale-x-100" />
               </a>
@@ -113,10 +115,10 @@ export default function Home() {
 
         {/* The two halves: one panel each, identical anatomy, rows shared. */}
         <Reveal>
-          <section className="mx-auto w-full max-w-6xl px-4 pt-20 pb-14 sm:px-6 lg:pt-28 lg:pb-16">
+          <section className="mx-auto w-full max-w-6xl px-4 pt-20 pb-12 sm:px-6 lg:pt-24 lg:pb-16">
             <SectionHead title="Two halves" lead="Take either one on its own. Most projects take both." />
 
-            <div className="mt-14 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:grid-rows-[auto_1fr_auto]">
+            <div className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:grid-rows-[auto_1fr_auto]">
               <article className={`${PANEL} grid min-w-0 grid-cols-1 gap-6 p-6 sm:p-8 lg:row-span-3 lg:grid-rows-subgrid`}>
                 <div className="grid content-start gap-2">
                   <h3 className="type-section text-lg">The agent kit</h3>
@@ -150,7 +152,7 @@ export default function Home() {
                     <p className="whitespace-pre text-muted-foreground">
                       <span className="sr-only">Fails: </span>
                       {before}
-                      <span className="text-foreground underline decoration-destructive decoration-wavy decoration-1 underline-offset-[5px]">
+                      <span className="text-foreground underline decoration-destructive decoration-wavy decoration-1 underline-offset-4">
                         {lint.offending}
                       </span>
                       {after}
@@ -173,15 +175,74 @@ export default function Home() {
           </section>
         </Reveal>
 
+        {/* How a project starts: the kit installs, then kickoff writes the project's own context. */}
+        <Reveal>
+          <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:py-16">
+            <SectionHead
+              title="How a project starts"
+              lead="One command installs the kit. Three prompts write the project's own context. Then every feature takes the loop."
+            />
+
+            <ol className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:grid-rows-[auto_1fr_auto]">
+              <li className={`${PANEL} grid min-w-0 grid-cols-1 gap-6 p-6 sm:p-8 lg:row-span-3 lg:grid-rows-subgrid`}>
+                <StepHead step={1} title="Run kit init">
+                  Installs the skills, the house style and the design system into an empty repo, then locks what it
+                  installed.
+                </StepHead>
+                <div className="grid min-w-0 grid-cols-1 content-start gap-3">
+                  <Command value={KIT_INIT.command} />
+                  <FilePanel path="what it writes">
+                    <dl className="grid grid-cols-[max-content_minmax(0,1fr)] gap-x-6 gap-y-2">
+                      {KIT_INIT.writes.map((entry) => (
+                        <div key={entry.name} className="contents">
+                          <dt className="text-foreground">{entry.name}</dt>
+                          <dd className="font-sans text-sm text-muted-foreground">{entry.note}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </FilePanel>
+                </div>
+                <div className="flex flex-wrap items-center justify-end gap-x-6 gap-y-2">
+                  <More href="/docs">Read the setup guide</More>
+                </div>
+              </li>
+
+              <li className={`${PANEL} grid min-w-0 grid-cols-1 gap-6 p-6 sm:p-8 lg:row-span-3 lg:grid-rows-subgrid`}>
+                <StepHead step={2} title="Run the kickoff prompts">
+                  Paste them into any LLM chat, in order. Each answer feeds the next prompt, and all three land in
+                  context/ before any code exists.
+                </StepHead>
+                <FilePanel path="prompts/ → context/">
+                  <ol className="grid gap-6">
+                    {KICKOFF.map((entry) => (
+                      <li key={entry.prompt} className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-3 gap-y-1">
+                        <span className="truncate text-muted-foreground">{entry.prompt}</span>
+                        <ArrowRightIcon aria-hidden className="size-3.5 text-subtle-foreground rtl:-scale-x-100" />
+                        <span className="truncate text-foreground">{entry.output}</span>
+                        <span className="col-start-3 font-sans text-sm text-pretty text-muted-foreground first-letter:uppercase">
+                          {entry.holds}
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
+                </FilePanel>
+                <div className="flex flex-wrap items-center justify-end gap-x-6 gap-y-2">
+                  <More href="/docs/kickoff">Read the prompts</More>
+                </div>
+              </li>
+            </ol>
+          </section>
+        </Reveal>
+
         {/* The loop: one panel, five columns, the same three rows in each. */}
         <Reveal>
-          <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 lg:py-16">
+          <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:py-16">
             <SectionHead
-              title="Every feature takes the same path"
+              title="Then every feature takes the same path"
               lead="Most steps leave a file in the feature's folder. The last one will not close while a criterion lacks evidence."
             />
 
-            <div className="mt-14 grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <div className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-2">
               <Plate
                 src={nightCove}
                 alt="A figure walking a moonlit cove, palms silhouetted in blue with gold edges"
@@ -189,7 +250,7 @@ export default function Home() {
               />
               <ol className={`${PANEL} grid min-w-0 divide-y divide-border`}>
                 {LOOP.map((stage) => (
-                  <li key={stage.title} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-6 gap-y-1 px-6 py-5 sm:px-8">
+                  <li key={stage.title} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-6 gap-y-1 px-6 py-4 sm:px-8">
                     <h3 className="type-section text-lg text-foreground">{stage.title}</h3>
                     <p className="row-span-2 self-center font-mono text-xs text-subtle-foreground">
                       {stage.writes.length ? stage.writes.join(", ") : "opens the PR"}
@@ -208,13 +269,13 @@ export default function Home() {
 
         {/* The registry: two working panels, then the full index in one panel. */}
         <Reveal>
-          <section id="registry" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-14 sm:px-6 lg:py-16">
+          <section id="registry" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-12 sm:px-6 lg:py-16">
             <SectionHead
               title={`${items.length} components, yours to edit`}
               lead="Copied in by shadcn and versioned, so a later update can merge with your edits."
             />
 
-            <ul className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <Block name="data-table" tier="Block" wide>
                 <FeatureTable rows={3} className="w-full" />
               </Block>
@@ -269,24 +330,24 @@ export default function Home() {
 
         {/* Close: the two commands, as a pair of panels on the same rows. */}
         <Reveal>
-          <section id="start" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-14 sm:px-6 lg:py-16">
-            <SectionHead title="Two commands to start" lead="Initialise a project on the contract, then add what you need." />
+          <section id="start" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-12 sm:px-6 lg:py-16">
+            <SectionHead title="Start a project" lead="The whole kit in one command, or the design system on its own." />
 
-            <div className="mt-14 grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <div className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-2">
               <ol className="grid min-w-0 grid-cols-1 gap-4">
                 <li className={`${PANEL} grid min-w-0 grid-cols-1 content-between gap-6 p-6 sm:p-8`}>
                   <div className="grid content-start gap-2">
-                    <h3 className="type-section text-lg">Initialise on the contract</h3>
-                    <p className="text-muted-foreground">Sets up the tokens, the theme and the lint rule.</p>
+                    <h3 className="type-section text-lg">The whole kit</h3>
+                    <p className="text-muted-foreground">Skills, context and the design system, installed and locked.</p>
                   </div>
-                  <Command value={setupCommand} />
+                  <Command value={KIT_INIT.command} />
                 </li>
                 <li className={`${PANEL} grid min-w-0 grid-cols-1 content-between gap-6 p-6 sm:p-8`}>
                   <div className="grid content-start gap-2">
-                    <h3 className="type-section text-lg">Add a component</h3>
-                    <p className="text-muted-foreground">Copied into your project, and yours to edit from then on.</p>
+                    <h3 className="type-section text-lg">Only the design system</h3>
+                    <p className="text-muted-foreground">The tokens, the theme and the lint rule, through shadcn.</p>
                   </div>
-                  <Command value="bunx shadcn@latest add @ja3dan/button --overwrite" />
+                  <Command value={setupCommand} />
                 </li>
               </ol>
               <Plate
@@ -348,7 +409,7 @@ function Block({ name, tier, wide = false, children }: { name: string; tier: str
   return (
     <li className={`${PANEL} grid min-w-0 grid-rows-[1fr_auto] overflow-hidden ${wide ? "sm:col-span-2" : ""}`}>
       <div className="grid min-h-64 place-items-center bg-muted p-6 sm:p-8">{children}</div>
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-border px-5 py-4">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-border px-6 py-4">
         <Link
           href={`/docs/components/${name}`}
           className={`min-w-0 rounded-sm font-mono text-sm text-card-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-current ${FOCUS_RING}`}
@@ -358,6 +419,21 @@ function Block({ name, tier, wide = false, children }: { name: string; tier: str
         <span className="text-xs text-subtle-foreground">{tier}</span>
       </div>
     </li>
+  );
+}
+
+/** A numbered step's heading: the number set as a small tile, then the title and one line. */
+function StepHead({ step, title, children }: { step: number; title: string; children: React.ReactNode }) {
+  return (
+    <div className="grid content-start gap-2">
+      <div className="flex items-center gap-3">
+        <span className="grid size-6 shrink-0 place-items-center rounded-md bg-muted font-mono text-xs text-muted-foreground tabular-nums">
+          {step}
+        </span>
+        <h3 className="type-section text-lg text-card-foreground">{title}</h3>
+      </div>
+      <p className="text-pretty text-muted-foreground">{children}</p>
+    </div>
   );
 }
 
@@ -377,7 +453,7 @@ function IndexList({ names, columns = false }: { names: string[]; columns?: bool
         <li key={name}>
           <Link
             href={`/docs/components/${name}`}
-            className={`rounded-sm font-mono text-[13px] text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground hover:decoration-current ${FOCUS_RING}`}
+            className={`rounded-sm font-mono text-xs text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground hover:decoration-current ${FOCUS_RING}`}
           >
             {name}
           </Link>

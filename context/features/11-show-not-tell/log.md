@@ -327,3 +327,30 @@ used.
 A stress re-run caught a regression before commit: the rebuilt command panels had lost
 `grid-cols-1`, and the implicit track grew to the command's width (490px in a 400px
 viewport). Fixed; all nine widths, RTL and pseudo-localised runs are clean again.
+
+## kit init and context generation on the landing page
+
+Developer feedback: the page never explained `kit init` or how a project's context gets
+written. New section "How a project starts", between the two halves and the loop:
+
+- **Run kit init**: the command and what it writes, every line read from source:
+  `context/` (template file count from `templates/next16-insforge`), `.claude/skills/`
+  (skill count), `components.json`, and the lock file name parsed from
+  `packages/kit/src/lockfile.ts`.
+- **Run the kickoff prompts**: each prompt paired with the file it writes and what that file
+  holds, parsed from `PROMPT_NOTES`, so a renamed output fails the build.
+
+The loop section now reads as the step after ("Then every feature takes the same path"),
+the hero's command is `kit init`, and the close offers the whole kit or only the design
+system.
+
+**Not publishable yet:** `@ja3dan/kit` returns 404 on npm. The page's
+`bunx @ja3dan/kit init next16-insforge` will not run for a visitor until the kit is
+published. `/docs/kickoff` also still calls `kit init` unbuilt (docs pass).
+
+Page-wide, values snapped to the landing-page-design skill's scales: arbitrary font sizes to
+Tailwind steps, spacing to its table (56px to 48px, 112px to 96px, 20/10/6px snapped), the
+header moved into the flow so the hero needs no 176px top padding, and the scroll reveal
+became a 4rem rise through a 12px blur over 800ms on cubic-bezier(0.32,0.72,0,1). The five
+reveal states re-verified with the blur (all end visible and sharp). Stress suite clean at
+all nine widths, RTL and pseudo-localised, after fixing two more implicit grid tracks.

@@ -4,6 +4,7 @@ import {
   contextFiles,
   featureFolder,
   featureFolders,
+  kitLockFile,
   knowledgeFiles,
   lintMessage,
   promptFiles,
@@ -284,6 +285,32 @@ const STATS = {
   gotchas: knowledgeFiles().reduce((total, file) => total + file.gotchas, 0),
 };
 
+/** The preset the landing page's kit init command names. It has to exist on disk. */
+const PRESET = "next16-insforge";
+
+/** What `kit init <preset>` leaves in a project, in the order the command writes it. */
+const KIT_INIT = {
+  command: `bunx @ja3dan/kit init ${PRESET}`,
+  writes: [
+    { name: "context/", note: `${templateFiles(PRESET).length} files of house style from the preset` },
+    { name: ".claude/skills/", note: `the ${skillNames().length} lifecycle skills` },
+    { name: "components.json", note: "the design system, through shadcn init" },
+    { name: kitLockFile(), note: "what was installed, hashed" },
+  ],
+};
+
+/**
+ * Each kickoff prompt paired with the file it writes, parsed from its own note ("Turns ...
+ * into project-overview.md"), so a renamed output fails the build instead of the page.
+ */
+const KICKOFF = PROMPT_FILES.map((prompt) => {
+  const output = /into (\S+\.md)/.exec(PROMPT_NOTES[prompt.file] ?? "")?.[1];
+  if (!output) throw new Error(`PROMPT_NOTES for ${prompt.file} no longer names the file it writes.`);
+  // What the output holds: the note's second clause, e.g. "the stack, the schema, the data flow".
+  const holds = (PROMPT_NOTES[prompt.file] ?? "").split(" \u2014 ")[1]?.replace(/\.$/, "") ?? "";
+  return { prompt: prompt.file, output, holds };
+});
+
 const HALVES = [
   {
     title: "The agent kit",
@@ -317,6 +344,8 @@ export {
   CONTEXT_TREE,
   EVIDENCE,
   HALVES,
+  KICKOFF,
+  KIT_INIT,
   LOOP_FILES,
   RECENT_FEATURES,
   STATS,
