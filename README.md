@@ -98,13 +98,13 @@ style is [`context/standards.md`](context/standards.md).
 | --- | --- |
 | ✅ | **01** Design registry, minimal version |
 | ✅ | **02** Agent kit scaffold |
-| ⬜ | **03** jobpilot becomes the first consumer |
-| 🚧 | **04** `packages/kit`: sync engine |
-| ⬜ | **05** `packages/kit`: check and doctor |
-| ⬜ | **06** `/kickoff` prompts, and `templates/` |
-| ⏸️ | **07** `apps/site` — on hold |
+| ✅ | **03** jobpilot becomes the first consumer |
+| ✅ | **04** `packages/kit`: sync engine |
+| ✅ | **05** `packages/kit`: check and doctor |
+| ✅ | **06** `/kickoff` prompts, and `templates/` |
+| 🚫 | **07** retired — `apps/registry`'s landing page (08) absorbed its job |
 | ✅ | **08** The groundwork site |
-| ⬜ | **09** `packages/kit`: `kit init` |
+| ✅ | **09** `packages/kit`: `kit init` |
 
 The copy of record, with every stage's "done when", is
 [`context/build-plan.md`](context/build-plan.md).
