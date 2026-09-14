@@ -109,4 +109,13 @@ async function installItems(cwd: string, items: string[]): Promise<void> {
   await shadcn(cwd, ["add", ...items, "-y", "--overwrite"]);
 }
 
-export { installItems, parsePlan, parseView, planAdd, SHADCN_BIN, viewFile, type PlannedFile };
+/**
+ * Runs `shadcn init` against a `registry:base` item (the `setup` item's URL) inside an
+ * already-scaffolded project. `-y`/`--yes` already defaults to `true` in 4.21.0 (checked
+ * directly against `shadcn init --help`), so nothing else is needed for non-interactive use.
+ */
+async function initProject(cwd: string, url: string): Promise<void> {
+  await shadcn(cwd, ["init", url]);
+}
+
+export { initProject, installItems, parsePlan, parseView, planAdd, SHADCN_BIN, viewFile, type PlannedFile };

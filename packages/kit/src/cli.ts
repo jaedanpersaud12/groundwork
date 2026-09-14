@@ -5,6 +5,7 @@ import { parseArgs } from "node:util";
 import pkg from "../package.json" with { type: "json" };
 import { check } from "./commands/check";
 import { doctor, doctorFailed } from "./commands/doctor";
+import { DEFAULT_REGISTRY, init } from "./commands/init";
 import { link, type LinkResult, unlink } from "./commands/link";
 import { lock, type LockedItem } from "./commands/lock";
 import { status, type ItemStatus } from "./commands/status";
@@ -23,6 +24,8 @@ Usage:
     [--off]                 restore the registry URL from the committed components.json
   kit check                 scan locked files for raw colours and a theme missing required tokens
   kit doctor                required files, and the same outdated/missing info as sync status
+  kit init <preset>         copy a template, install the skills, shadcn init, and lock both
+    [--url <url>]           registry to init against (default ${DEFAULT_REGISTRY})
 
 Options:
   --cwd <dir>               the project to act on (default: the current directory)
@@ -167,6 +170,18 @@ async function runDoctor(cwd: string): Promise<number> {
   return doctorFailed(result) ? 1 : 0;
 }
 
+async function runInit(cwd: string, preset: string | undefined, url: string | undefined): Promise<number> {
+  if (!preset) {
+    process.stderr.write("kit: which preset? `kit init <preset>`, e.g. `kit init next16-insforge`.\n");
+    return 1;
+  }
+  const result = await init(cwd, preset, { url });
+  process.stdout.write(`Copied ${result.templateFiles.length} file${result.templateFiles.length === 1 ? "" : "s"} into context/.\n`);
+  process.stdout.write(`Installed ${result.skills.length} skill${result.skills.length === 1 ? "" : "s"} into .claude/skills/.\n`);
+  process.stdout.write(`Ran shadcn init and wrote ${LOCK_FILE}.\n`);
+  return 0;
+}
+
 async function main(argv: string[]): Promise<number> {
   const { values, positionals } = parseArgs({
     args: argv,
@@ -201,6 +216,7 @@ async function main(argv: string[]): Promise<number> {
   if (command === "link") return runLink(cwd, values.off ?? false, values.url);
   if (command === "check") return runCheck(cwd);
   if (command === "doctor") return runDoctor(cwd);
+  if (positionals[0] === "init") return runInit(cwd, positionals[1], values.url);
 
   process.stderr.write(`kit: \`${command}\` isn't built yet.\n\n${USAGE}`);
   return 1;

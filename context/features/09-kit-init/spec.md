@@ -51,28 +51,39 @@ Neither is obviously wrong; this is `/architect`'s first question.
 
 ## Done when
 
-- [ ] `kit init next16-insforge` run against an empty directory copies every file from
+- [x] `kit init next16-insforge` run against an empty directory copies every file from
       `templates/next16-insforge/` into it, unmodified except where a placeholder is
-      documented to be filled in
-- [ ] The 6 lifecycle skills land in the new project's `.claude/skills/`, each readable and
+      documented to be filled in — *see `log.md`; verified against a real, fresh
+      `create-next-app` scaffold, three times over the course of the build*
+- [x] The 6 lifecycle skills land in the new project's `.claude/skills/`, each readable and
       invocable as a skill (not just files on disk — verified by actually running one, e.g.
-      `/feature start 01`, in the new project)
-- [ ] `shadcn init <registry>/r/setup.json` runs as part of `kit init` and produces a
+      `/feature start 01`, in the new project) — *see `log.md`. Verified harder than asked:
+      a genuinely separate `claude -p` session rooted at the throwaway project correctly
+      loaded the installed `feature` skill and followed its exact refusal logic*
+- [x] `shadcn init <registry>/r/setup.json` runs as part of `kit init` and produces a
       `components.json` with a real `@ja3dan` registry entry and the contract's CSS
-      imports — the same end state 03 reached by hand in jobpilot
-- [ ] `kit init` finishes by writing `kit.lock.json` (via the existing `lock()` in
+      imports — the same end state 03 reached by hand in jobpilot — *see `log.md`. Also
+      found and fixed two rough edges this criterion's own "unmodified" clause above
+      didn't anticipate: leftover `create-next-app` CSS overriding the theme, and
+      `@ja3dan/eslint-plugin` installed but never wired into `eslint.config.mjs`*
+- [x] `kit init` finishes by writing `kit.lock.json` (via the existing `lock()` in
       `commands/lock.ts`), even when it locks zero items, matching `kit lock`'s own
-      documented behavior for an empty install
-- [ ] `kit doctor`'s `"kickoff"` bucket (real but empty since 05) gains real entries for
+      documented behavior for an empty install — *see `log.md`*
+- [x] `kit doctor`'s `"kickoff"` bucket (real but empty since 05) gains real entries for
       what `kit init` just installed, and passes when run immediately after `kit init` on
-      a fresh project
-- [ ] A throwaway project taken from an empty folder through `kit init` plus the 06 prompts
+      a fresh project — *see `log.md`; 13/13 checks pass against the throwaway project*
+- [x] A throwaway project taken from an empty folder through `kit init` plus the 06 prompts
       reaches feature 01 merged, using only the kit and the prompts — carried over from 06's
       spec, which deferred it here. Every rough edge hit along the way is fed back into a
-      change in this feature, not left as a note. If this genuinely can't be completed
-      within this feature, that's a `not verified, because …` in `log.md`, not silence.
-- [ ] Both commands' worth of new behavior is documented in `kit --help`
-- [ ] `bun run check` passes
+      change in this feature, not left as a note. — *done in full, see `log.md`: real
+      `create-next-app` scaffold → `kit init` → the three 06 prompts against a genuinely
+      small fake product ("Ledger") → feature 01 (Homepage UI) built for real, with a real
+      `@ja3dan/button`, passing a clean `bun run check` and `bun run build`, merged into
+      the throwaway project's own `main`. Three rough edges hit along the way, all three
+      fixed in `kit init` itself, not just noted.*
+- [x] Both commands' worth of new behavior is documented in `kit --help` — *confirmed,
+      `kit init <preset> [--url <url>]` listed*
+- [x] `bun run check` passes — *see below*
 
 ## Out of scope
 
