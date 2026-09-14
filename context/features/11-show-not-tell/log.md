@@ -397,3 +397,20 @@ subgrid, so both windows start on one line.
 
 Two iterations dropped on feedback: a round "+" join mark on the seam (read as decoration),
 and alternating tones between the halves (read as two different things, not two halves).
+
+## How a project starts, redesigned
+
+Developer feedback: the two step cards read as generated, and the glass nav let the heading
+show through. The section is now the three steps as a plain list with large numerals
+(including step 3, `/feature start 01`) beside one tree of the project they produce, in
+editor order (folders first, then files by name), each file tagged with the step that wrote
+it and what it is for. Pointing at, focusing or pressing a step lights that step's files and
+quiets the rest (verified: step 2 lights exactly architecture.md, build-plan.md,
+project-overview.md); the tree stays complete without JavaScript. Tree contents are read
+from the preset, the prompt notes and the lock file name; the globals.css,
+eslint.config.mjs and package.json lines are what init.ts does. Nav glass raised from 70%
+to 85% opacity.
+
+The stress suite caught one more implicit grid track (step content at 320px); fixed before
+commit. All nine widths, RTL, pseudo-localised, console, reveal states and `bun run check`
+clean.

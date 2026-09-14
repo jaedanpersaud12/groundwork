@@ -45,7 +45,7 @@ function IslandHeader() {
 
   return (
     <header className="sticky top-0 z-40 px-4 pt-6">
-      <div className="relative z-50 mx-auto flex w-max max-w-full items-center gap-6 rounded-full bg-background/70 py-2 ps-6 pe-2 shadow-border backdrop-blur-xl">
+      <div className="relative z-50 mx-auto flex w-max max-w-full items-center gap-6 rounded-full bg-background/85 py-2 ps-6 pe-2 shadow-border backdrop-blur-xl">
         <Link href="/" className={cn("shrink-0 rounded-sm type-section text-base text-foreground", FOCUS_RING)}>
           groundwork
         </Link>

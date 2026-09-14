@@ -10,8 +10,9 @@ import { StatusPill } from "@/registry/groundwork/ui/status-pill";
 
 import { Command } from "./_site/code";
 import { SiteHeader } from "./_site/header";
-import { EVIDENCE, KICKOFF, KIT_INIT, LOOP, STATS } from "./_site/kit";
+import { EVIDENCE, KICKOFF, KIT_INIT, LOOP, PROJECT_STEPS, PROJECT_TREE, STATS } from "./_site/kit";
 import { FeatureTable } from "./_site/landing/feature-table";
+import { ProjectSteps } from "./_site/landing/project-steps";
 import { FilterChipDemo, ViewToggleDemo } from "./_site/landing/specimen";
 import { Tagline } from "./_site/landing/tagline";
 import { groups, items, setupCommand } from "./_site/registry";
@@ -57,16 +58,6 @@ function More({ href, children }: { href: string; children: string }) {
       {children}
       <ArrowRightIcon aria-hidden className="size-3.5 rtl:-scale-x-100" />
     </Link>
-  );
-}
-
-/** A file, shown as a file: its path above, its contents on the muted ground. */
-function FilePanel({ path, children }: { path: string; children: React.ReactNode }) {
-  return (
-    <figure className="grid min-w-0 grid-cols-1 content-start overflow-hidden rounded-lg bg-muted">
-      <figcaption className="border-b border-border px-4 py-2 font-mono text-xs text-muted-foreground">{path}</figcaption>
-      <div className="scroll-slim overflow-x-auto px-4 py-4 font-mono text-xs">{children}</div>
-    </figure>
   );
 }
 
@@ -189,57 +180,16 @@ export default function Home() {
           <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:py-16">
             <SectionHead
               title="How a project starts"
-              lead="One command installs the kit. Three prompts write the project's own context. Then every feature takes the loop."
+              lead="An empty repo, three steps, and every file each one leaves behind."
             />
 
-            <ol className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:grid-rows-[auto_1fr_auto]">
-              <li className={`${PANEL} grid min-w-0 grid-cols-1 gap-6 p-6 sm:p-8 lg:row-span-3 lg:grid-rows-subgrid`}>
-                <StepHead step={1} title="Run kit init">
-                  Installs the skills, the house style and the design system into an empty repo, then locks what it
-                  installed.
-                </StepHead>
-                <div className="grid min-w-0 grid-cols-1 content-start gap-3">
-                  <Command value={KIT_INIT.command} />
-                  <FilePanel path="what it writes">
-                    <dl className="grid grid-cols-[max-content_minmax(0,1fr)] gap-x-6 gap-y-2">
-                      {KIT_INIT.writes.map((entry) => (
-                        <div key={entry.name} className="contents">
-                          <dt className="text-foreground">{entry.name}</dt>
-                          <dd className="font-sans text-sm text-muted-foreground">{entry.note}</dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </FilePanel>
-                </div>
-                <div className="flex flex-wrap items-center justify-end gap-x-6 gap-y-2">
-                  <More href="/docs">Read the setup guide</More>
-                </div>
-              </li>
-
-              <li className={`${PANEL} grid min-w-0 grid-cols-1 gap-6 p-6 sm:p-8 lg:row-span-3 lg:grid-rows-subgrid`}>
-                <StepHead step={2} title="Run the kickoff prompts">
-                  Paste them into any LLM chat, in order. Each answer feeds the next prompt, and all three land in
-                  context/ before any code exists.
-                </StepHead>
-                <FilePanel path="prompts/ → context/">
-                  <ol className="grid gap-6">
-                    {KICKOFF.map((entry) => (
-                      <li key={entry.prompt} className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-3 gap-y-1">
-                        <span className="truncate text-muted-foreground">{entry.prompt}</span>
-                        <ArrowRightIcon aria-hidden className="size-3.5 text-subtle-foreground rtl:-scale-x-100" />
-                        <span className="truncate text-foreground">{entry.output}</span>
-                        <span className="col-start-3 font-sans text-sm text-pretty text-muted-foreground first-letter:uppercase">
-                          {entry.holds}
-                        </span>
-                      </li>
-                    ))}
-                  </ol>
-                </FilePanel>
-                <div className="flex flex-wrap items-center justify-end gap-x-6 gap-y-2">
-                  <More href="/docs/kickoff">Read the prompts</More>
-                </div>
-              </li>
-            </ol>
+            <div className="mt-12">
+              <ProjectSteps
+                steps={PROJECT_STEPS}
+                tree={PROJECT_TREE}
+                prompts={KICKOFF.map((entry) => entry.prompt)}
+              />
+            </div>
           </section>
         </Reveal>
 
@@ -456,21 +406,6 @@ function Window({ path, children }: { path: string; children: React.ReactNode })
       <figcaption className="border-b border-border px-4 py-3 font-mono text-xs text-muted-foreground">{path}</figcaption>
       <code className="block overflow-hidden p-4 font-mono text-xs leading-6">{children}</code>
     </figure>
-  );
-}
-
-/** A numbered step's heading: the number set as a small tile, then the title and one line. */
-function StepHead({ step, title, children }: { step: number; title: string; children: React.ReactNode }) {
-  return (
-    <div className="grid content-start gap-2">
-      <div className="flex items-center gap-3">
-        <span className="grid size-6 shrink-0 place-items-center rounded-md bg-muted font-mono text-xs text-muted-foreground tabular-nums">
-          {step}
-        </span>
-        <h3 className="type-section text-lg text-card-foreground">{title}</h3>
-      </div>
-      <p className="text-pretty text-muted-foreground">{children}</p>
-    </div>
   );
 }
 

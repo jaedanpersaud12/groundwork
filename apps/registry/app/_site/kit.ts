@@ -313,6 +313,69 @@ const KICKOFF = PROMPT_FILES.map((prompt) => {
   return { prompt: prompt.file, output, holds };
 });
 
+type ProjectLine = { name: string; depth: number; step?: 1 | 2 | 3; note?: string };
+
+/**
+ * A project after the three steps, as one tree, each file tagged with the step that wrote it.
+ * The house style files and the kickoff outputs are read from the preset and the prompt
+ * notes; the edits to globals.css, eslint.config.mjs and package.json are what
+ * `packages/kit/src/commands/init.ts` does (cleanTailwindCss, wireEslintPlugin,
+ * ensureCheckScript).
+ */
+/** Folders first, then files by name: the order an editor's file tree shows them in. */
+function editorOrder(lines: { name: string }[]) {
+  return [...lines].sort((x, y) => {
+    const xDir = x.name.endsWith("/");
+    const yDir = y.name.endsWith("/");
+    return xDir === yDir ? x.name.localeCompare(y.name) : xDir ? -1 : 1;
+  });
+}
+
+const CONTEXT_FILES = editorOrder([
+  ...templateFiles(PRESET)
+    .filter((file) => !file.includes("/"))
+    .map((file) => ({ name: file, step: 1 as const })),
+  ...KICKOFF.map((entry) => ({ name: entry.output, step: 2 as const, note: `from ${entry.prompt}` })),
+]) as { name: string; step: 1 | 2; note?: string }[];
+
+const PROJECT_TREE: ProjectLine[] = [
+  { name: ".claude/skills/", depth: 0, step: 1, note: `${skillNames().length} lifecycle skills` },
+  { name: "app/globals.css", depth: 0, step: 1, note: "imports the contract and a theme" },
+  { name: "context/", depth: 0 },
+  { name: "features/", depth: 1 },
+  { name: "01-slug/", depth: 2, step: 3 },
+  { name: "spec.md", depth: 3, step: 3, note: "from /feature start" },
+  ...templateFiles(PRESET)
+    .filter((file) => file.startsWith("features/"))
+    .map((file) => ({ name: file.slice("features/".length), depth: 2, step: 1 as const })),
+  ...CONTEXT_FILES.map((file) => ({ ...file, depth: 1 })),
+  { name: "components.json", depth: 0, step: 1, note: "points shadcn at the registry" },
+  { name: "eslint.config.mjs", depth: 0, step: 1, note: "no-raw-colors wired in" },
+  { name: kitLockFile(), depth: 0, step: 1, note: "what was installed, hashed" },
+  { name: "package.json", depth: 0, step: 1, note: "adds a check script" },
+];
+
+/** The three steps beside the tree. */
+const PROJECT_STEPS = [
+  {
+    step: 1 as const,
+    title: "Run kit init",
+    body: "Installs the skills, the house style and the design system into an empty repo, then locks what it installed.",
+    command: KIT_INIT.command,
+  },
+  {
+    step: 2 as const,
+    title: "Run the kickoff prompts",
+    body: `Paste ${KICKOFF.length} prompts into any LLM chat, in order. Each answer feeds the next, and all of them land in context/.`,
+  },
+  {
+    step: 3 as const,
+    title: "Start the first feature",
+    body: "The feature skill opens a branch and a folder, and writes the spec before any code.",
+    command: "/feature start 01",
+  },
+];
+
 const HALVES = [
   {
     title: "The agent kit",
@@ -348,6 +411,8 @@ export {
   HALVES,
   KICKOFF,
   KIT_INIT,
+  PROJECT_STEPS,
+  PROJECT_TREE,
   LOOP_FILES,
   RECENT_FEATURES,
   STATS,
@@ -357,6 +422,7 @@ export {
   PROMPT_NOTES,
   SKILLS,
   TEMPLATE_TREE,
+  type ProjectLine,
   type Stage,
   type TreeNode,
 };
