@@ -43,6 +43,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+        {/*
+          * Scroll-reveal sections start hidden only under `prefers-reduced-motion:
+          * no-preference`, and are shown by a client observer. With JavaScript off that
+          * observer never runs, so hand the content back unconditionally.
+          */}
+        <noscript>
+          <style>{`.reveal{opacity:1 !important;transform:none !important}`}</style>
+        </noscript>
       </head>
       <body className="min-h-full">
         {/* First tab stop on every page. Invisible until focused, so it costs sighted readers nothing. */}

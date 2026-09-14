@@ -24,8 +24,19 @@ function Command({ value, className }: { value: string; className?: string }) {
  * pushing the rest of the page down — `scroll-slim` comes from the tokens package, so
  * the scrollbar belongs to the panel instead of the platform.
  */
-function SourceBlock({ path, content }: { path: string; content: string }) {
-  const file = path.split("/").pop() ?? path;
+function SourceBlock({
+  path,
+  content,
+  label,
+  wrap = false,
+}: {
+  path: string;
+  content: string;
+  label?: string;
+  /** Soft-wrap long lines instead of scrolling them. For prose-y sources like frontmatter. */
+  wrap?: boolean;
+}) {
+  const file = label ?? path.split("/").pop() ?? path;
   const lines = content.split("\n").length;
   return (
     <figure className="overflow-hidden rounded-md border border-border bg-card">
@@ -34,9 +45,54 @@ function SourceBlock({ path, content }: { path: string; content: string }) {
         <span className="shrink-0 text-xs text-subtle-foreground">{lines} lines</span>
         <CopyButton value={content} label={file} />
       </figcaption>
-      <pre className="scroll-slim max-h-[30rem] overflow-auto p-4 font-mono text-xs leading-relaxed text-card-foreground">
+      <pre
+        className={cn(
+          "scroll-slim max-h-[30rem] overflow-auto p-4 font-mono text-xs leading-relaxed text-card-foreground",
+          wrap && "whitespace-pre-wrap",
+        )}
+      >
         <code>{content}</code>
       </pre>
+    </figure>
+  );
+}
+
+/**
+ * One real `no-raw-colors` failure: the line as it is written, the line as it should be,
+ * and the rule's own message underneath. The message is passed in from the plugin's rule
+ * metadata rather than quoted, so rewording the rule rewords the page.
+ */
+function LintFailure({
+  path,
+  violation,
+  fix,
+  message,
+}: {
+  path: string;
+  violation: string;
+  fix: string;
+  message: string;
+}) {
+  return (
+    <figure className="overflow-hidden rounded-md border border-border bg-card">
+      <figcaption className="border-b border-border px-3 py-1.5">
+        <span className="font-mono text-xs text-muted-foreground">{path}</span>
+      </figcaption>
+      <pre className="scroll-slim overflow-x-auto p-4 font-mono text-xs leading-relaxed">
+        <code>
+          <span className="block text-destructive">
+            <span aria-hidden="true">- </span>
+            {violation}
+          </span>
+          <span className="block text-success">
+            <span aria-hidden="true">+ </span>
+            {fix}
+          </span>
+        </code>
+      </pre>
+      <p className="border-t border-border bg-destructive-subtle px-3 py-2 font-mono text-xs text-destructive">
+        {message}
+      </p>
     </figure>
   );
 }
@@ -55,4 +111,4 @@ function DataPlate({ cells }: { cells: { label: string; value: string }[] }) {
   );
 }
 
-export { Command, DataPlate, SourceBlock };
+export { Command, DataPlate, LintFailure, SourceBlock };

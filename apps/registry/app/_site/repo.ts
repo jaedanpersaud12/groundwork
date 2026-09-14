@@ -1,6 +1,8 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 
+import plugin from "@ja3dan/eslint-plugin";
+
 /**
  * Reads the agent kit straight out of the repo at build time. The docs describe what
  * `skills/`, `knowledge/` and `context/` actually contain, so a skill rewritten or a
@@ -137,12 +139,46 @@ function knowledgeFiles(): KnowledgeFile[] {
     });
 }
 
+/**
+ * The `no-raw-colors` messages, read off the rule's own metadata rather than copied. A
+ * reworded message reaches the site on the next build; a renamed rule throws here instead
+ * of leaving a stale quotation on the landing page, which is the one thing that section
+ * is there to disprove.
+ */
+function lintMessages(): Record<string, string> {
+  const rule = plugin.rules?.["no-raw-colors"];
+  if (!rule?.meta?.messages) {
+    throw new Error("@ja3dan/eslint-plugin no longer exposes no-raw-colors meta.messages.");
+  }
+  return rule.meta.messages as Record<string, string>;
+}
+
+/** One message with its `{{placeholder}}`s filled in, so the page shows what a developer sees. */
+function lintMessage(id: string, values: Record<string, string>): string {
+  const template = lintMessages()[id];
+  if (!template) throw new Error(`@ja3dan/eslint-plugin has no "${id}" message.`);
+  return template.replace(/\{\{(\w+)\}\}/g, (_, key) => {
+    if (!(key in values)) throw new Error(`The "${id}" message needs a ${key} value.`);
+    return values[key];
+  });
+}
+
+/** A skill's frontmatter block, verbatim — the `---` fences included. */
+function skillFrontmatter(name: string): string {
+  const { raw } = frontmatter(read("skills", name, "SKILL.md"));
+  if (!raw) throw new Error(`skills/${name}/SKILL.md has no frontmatter block.`);
+  return raw;
+}
+
 export {
   contextFiles,
   featureFolder,
   knowledgeFiles,
+  lintMessage,
+  lintMessages,
   promptFiles,
   readSkill,
+  skillFrontmatter,
   skillNames,
   skillSection,
   templateFiles,

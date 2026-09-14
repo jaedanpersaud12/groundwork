@@ -1,4 +1,16 @@
-import { contextFiles, featureFolder, promptFiles, readSkill, skillNames, skillSection, templateFiles } from "./repo";
+import contract from "@ja3dan/tokens/contract.json";
+
+import {
+  contextFiles,
+  featureFolder,
+  lintMessage,
+  promptFiles,
+  readSkill,
+  skillFrontmatter,
+  skillNames,
+  skillSection,
+  templateFiles,
+} from "./repo";
 
 /**
  * The agent-kit half of groundwork, as the site describes it. The words come from the
@@ -181,6 +193,64 @@ const TEMPLATE_TREE: TreeNode[] = [
   },
 ];
 
+
+/**
+ * The two halves as artefacts rather than descriptions, for the landing page. Every string
+ * below is read from the thing it describes: reword `no-raw-colors`, or edit
+ * `skills/feature/SKILL.md`, and this section changes on the next build. That is the claim
+ * the section makes, so it had better be true of the section itself.
+ *
+ * `/docs` still renders the prose `HALVES` below — a "Start here" page has to explain
+ * where a landing page has to convince. Revisit when the docs pass happens.
+ */
+
+/** The specimen skill: first in the loop, and the one whose description has the teeth. */
+const SPECIMEN = "feature";
+
+/*
+ * The offending class is shown inside a whole line of JSX, which is how it appears in real
+ * code — and is also why `no-raw-colors` does not fire on this file. The rule splits on
+ * whitespace, and `className="bg-blue-500">` is not a colour utility; a bare "bg-blue-500"
+ * would be, correctly. The class in the message is sliced out of the line rather than
+ * written twice, so the two can never disagree.
+ */
+const VIOLATION = '<div className="bg-blue-500 p-4">';
+const FIX = '<div className="bg-primary p-4">';
+
+const OFFENDING_CLASS = /"([\w-]+)/.exec(VIOLATION)?.[1];
+if (!OFFENDING_CLASS) throw new Error("The no-raw-colors specimen no longer has a class to quote.");
+
+const THEME_COUNT = 2; // themes/*.css — jobpilot and neutral
+
+const EVIDENCE = [
+  {
+    title: "The agent kit",
+    lead: "A new repo starts with the skills, context and gotchas already in it.",
+    artefact: {
+      kind: "source" as const,
+      path: `skills/${SPECIMEN}/SKILL.md`,
+      content: skillFrontmatter(SPECIMEN),
+    },
+    facts: `${skillNames().length} skills · installed by kit init`,
+    href: "/docs/loop",
+    linkLabel: "Read the loop",
+  },
+  {
+    title: "The design system",
+    lead: "One contract every component obeys, in every project, in both themes.",
+    artefact: {
+      kind: "lint" as const,
+      path: "app/page.tsx",
+      violation: VIOLATION,
+      fix: FIX,
+      message: lintMessage("palette", { className: OFFENDING_CLASS }),
+    },
+    facts: `${Object.keys(contract.tokens).length} tokens · ${THEME_COUNT} themes · fails in the editor and in CI`,
+    href: "/docs/tokens",
+    linkLabel: "Read the contract",
+  },
+];
+
 const HALVES = [
   {
     title: "The agent kit",
@@ -212,6 +282,7 @@ const HALVES = [
 
 export {
   CONTEXT_TREE,
+  EVIDENCE,
   HALVES,
   LOOP,
   OUT_OF_BAND,
