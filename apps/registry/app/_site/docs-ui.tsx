@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { CODE_FRAME } from "./code";
 import { CopyButton } from "./copy-button";
 import { FOCUS_RING } from "./styles";
-import { nodesFromLines } from "./tree-nodes";
+import { nodesFromLines, nodesFromNested, type NestedLike } from "./tree-nodes";
 import { TreeView } from "./tree-view";
 
 /*
@@ -57,6 +57,11 @@ type TreeLine = { name: string; depth: number; note?: string };
 /** What a command leaves behind, as an explorable tree: every folder open, every row keyboard reachable. */
 function FileTree({ root, lines, label }: { root: string; lines: TreeLine[]; label: string }) {
   return <TreeView title={root} label={label} nodes={nodesFromLines(lines)} />;
+}
+
+/** A tree from an already nested shape, framed like every other code surface. */
+function NestedTree({ root, label, nodes }: { root: string; label: string; nodes: NestedLike[] }) {
+  return <TreeView title={root} label={label} nodes={nodesFromNested(nodes)} />;
 }
 
 /** A short aside that matters: something a step leaves undone, or a thing to know first. */
@@ -126,4 +131,76 @@ function CommandList({ items }: { items: { command: string; note: string }[] }) 
   );
 }
 
-export { Code, CommandList, FileTree, LinkCards, Note, Prose, Step, Steps };
+/** Cards that inform rather than link: a title, an optional code label, and a line or two. */
+function InfoCards({ items, columns = 2 }: { items: { title: string; code?: string; body: ReactNode }[]; columns?: 2 | 3 }) {
+  return (
+    <ul className={cn("grid min-w-0 grid-cols-1 gap-4", columns === 3 ? "md:grid-cols-3" : "sm:grid-cols-2")}>
+      {items.map((item) => (
+        <li key={item.title} className={cn(CODE_FRAME, "grid content-start gap-2 p-6")}>
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <h3 className="type-section text-base text-card-foreground">{item.title}</h3>
+            {item.code ? <code className="font-mono text-xs text-primary">{item.code}</code> : null}
+          </div>
+          <p className="text-sm text-pretty text-muted-foreground">{item.body}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** A titled list inside one frame: rules, conventions, anything read top to bottom. */
+function Rows({ items }: { items: { title: string; body: ReactNode }[] }) {
+  return (
+    <dl className={cn(CODE_FRAME, "grid grid-cols-1 divide-y divide-border")}>
+      {items.map((item) => (
+        <div key={item.title} className="grid gap-1 px-6 py-4">
+          <dt className="text-sm font-semibold text-card-foreground">{item.title}</dt>
+          <dd className="max-w-2xl text-sm text-pretty text-muted-foreground">{item.body}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+/** Two side by side: the version that fails a test, and the version that passes it. */
+function Compare({ bad, good }: { bad: { label: string; text: string }; good: { label: string; text: string } }) {
+  return (
+    <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+      {[
+        { ...bad, mark: "✕", tone: "text-destructive" },
+        { ...good, mark: "✓", tone: "text-success" },
+      ].map((side) => (
+        <figure key={side.label} className={cn(CODE_FRAME, "grid content-start gap-2 p-6")}>
+          <figcaption className={cn("flex items-center gap-2 text-xs font-semibold", side.tone)}>
+            <span aria-hidden>{side.mark}</span>
+            {side.label}
+          </figcaption>
+          <p className="text-sm text-card-foreground">{side.text}</p>
+        </figure>
+      ))}
+    </div>
+  );
+}
+
+/** Compact links to other items, for "installs alongside" and "used by". */
+function Chips({ items }: { items: { href: string; label: string }[] }) {
+  return (
+    <ul className="flex flex-wrap gap-2">
+      {items.map((item) => (
+        <li key={item.href}>
+          <Link
+            href={item.href}
+            className={cn(
+              "inline-flex h-8 items-center rounded-md bg-card px-3 font-mono text-xs text-card-foreground shadow-border transition-shadow duration-300 ease-fluid hover:shadow-border-hover",
+              FOCUS_RING,
+            )}
+          >
+            {item.label}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export { Chips, Code, CommandList, Compare, FileTree, InfoCards, LinkCards, NestedTree, Note, Prose, Rows, Step, Steps };

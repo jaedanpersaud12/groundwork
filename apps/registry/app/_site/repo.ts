@@ -178,7 +178,22 @@ type KnowledgeFile = {
   verifiedOn: string;
   gotchas: number;
   frontmatter: string;
+  /** The file's first gotcha, verbatim: the bullet a reader would meet first. */
+  firstGotcha: string;
 };
+
+/** The first `- **claim**` bullet in a body, with the lines it wraps onto, stopping at a blank line or the next bullet. */
+function firstBullet(body: string): string {
+  const lines = body.split("\n");
+  const start = lines.findIndex((line) => /^- \*\*/.test(line));
+  if (start === -1) return "";
+  const out = [lines[start]];
+  for (const line of lines.slice(start + 1)) {
+    if (!line.trim() || /^- /.test(line)) break;
+    out.push(line);
+  }
+  return out.join("\n");
+}
 
 function knowledgeFiles(): KnowledgeFile[] {
   return readdirSync(path.join(ROOT, "knowledge"))
@@ -199,6 +214,7 @@ function knowledgeFiles(): KnowledgeFile[] {
         verifiedOn: data.verified_on ?? "",
         gotchas: body.split("\n").filter((line) => /^- \*\*/.test(line)).length,
         frontmatter: raw,
+        firstGotcha: firstBullet(body),
       };
     });
 }

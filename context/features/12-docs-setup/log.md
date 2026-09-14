@@ -79,3 +79,39 @@ Evidence: all docs routes at their widths with no overflow and no console errors
 stress clean at the page level (the `span.line` entries flagged inside the halves' file
 window are that window's deliberate crop, clipped by its `code` element); 34/34 anchors;
 reveal states; `bun run check` and `build` exit 0.
+
+## The rest of the docs
+
+Developer asked to continue past setup. Every docs page now uses the shared building blocks
+and code-surface spec; each page's claims are read from the repo or kept from the old page.
+
+- **The loop**: the feature folder as a tree (files and the step that writes each, parsed
+  from `context/features/README.md`), the five steps as numbered steps with each skill's own
+  description and command, the four out-of-band skills as cards, the rule with teeth as a note.
+- **Context**: groundwork's own `context/` and a new project's, behind the registry's
+  `view-toggle`; the criteria example as a fails/passes pair.
+- **Knowledge**: the file table is the registry's own `table-card` (stack as status pills);
+  the format section shows a real file's frontmatter and its whole first gotcha (the reader
+  first took only the bullet's first line, which cut the eslint.md gotcha mid-sentence; now it
+  follows continuation lines).
+- **Kickoff**: the three prompts as steps titled from their own `# Stage N` headings, each with
+  the file it writes and its full source; the template as a tree. An invented rationale
+  ("a person reading each answer is the point") was removed; the note now says only what the
+  old page said.
+- **Token contract**: every token with a live swatch reading `var(--token)`, so it follows the
+  theme toggle; the rules as one list; `bun run tokens` as the regenerate command.
+- **Component pages**: related items as chips, packages as inline code, preview frames on
+  the shared surface.
+
+Site-written copy with em dashes rewritten (kit.ts notes, page leads); text quoted from repo
+files (two skill descriptions, prompt sources) left verbatim.
+
+Also: tree rows now truncate the note before the name; markdown sources wrap and drop line
+numbers; highlighted lines render as blocks with a hanging indent so a wrapped line lines up
+under its text. Removed dead code: `HALVES`, the old prose `Tree`, `LintFailure`.
+
+Evidence: all docs routes (8 routes, 44 width and theme combinations) with no page overflow and
+no console errors; every TOC entry has its heading; 33/33 anchors; `bun run check` and
+`build` exit 0. Token spans flagged inside code blocks were checked individually: they
+overflow their line inside a block that scrolls (by design) or are a trailing space at a wrap
+point, so the probe now skips content inside `pre`.

@@ -30,7 +30,9 @@ async function highlight(code: string, lang: Lang): Promise<string> {
   const html = (await load()).codeToHtml(code, { lang, theme: "groundwork" });
   const inner = /<code>([\s\S]*)<\/code>/.exec(html)?.[1];
   if (inner === undefined) throw new Error("Shiki's output no longer wraps its lines in <code>.");
-  return inner;
+  // Each line renders as its own block (see `.syntax .line` in globals.css), so the newlines
+  // between them would add a blank line apiece. The copy button copies the source, not this.
+  return inner.replace(/\n/g, "");
 }
 
 export { highlight, langFor, type Lang };

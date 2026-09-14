@@ -112,7 +112,7 @@ const CONTEXT_NOTES: Record<string, string> = {
   "overview.md": "what this project is, what it is not, and who consumes it",
   "standards.md": "the house style, with a specimen to copy rather than a rule to interpret",
   "build-plan.md": "numbered stages, each with its own “done when”",
-  "progress.md": "a status block and a checklist — nothing else",
+  "progress.md": "a status block and a checklist, nothing else",
 };
 
 {
@@ -148,9 +148,9 @@ const PROMPT_FILES = promptFiles();
 
 /** One line each, same discipline as `CONTEXT_NOTES`: a stage without one fails the build. */
 const PROMPT_NOTES: Record<string, string> = {
-  "01-interview.md": "Turns a person's answers into project-overview.md — what it is, who it's for, what it deliberately won't do.",
-  "02-architecture.md": "Turns the overview into architecture.md — the stack, the schema, the data flow.",
-  "03-build-plan.md": "Turns both into build-plan.md — numbered features, ordered by what depends on what.",
+  "01-interview.md": "Turns a person's answers into project-overview.md: what it is, who it's for, what it deliberately won't do.",
+  "02-architecture.md": "Turns the overview into architecture.md: the stack, the schema, the data flow.",
+  "03-build-plan.md": "Turns both into build-plan.md: numbered features, ordered by what depends on what.",
 };
 
 {
@@ -169,11 +169,11 @@ const PROMPT_NOTES: Record<string, string> = {
  * `kit init` will actually copy, not a description of it.
  */
 const TEMPLATE_NOTES: Record<string, string> = {
-  "code-standards.md": "implementation rules — copied with blanks for the project's own dependencies and tracked events",
+  "code-standards.md": "implementation rules, with blanks for the project's own dependencies and tracked events",
   "ui-rules.md": "layout and component conventions, in terms of the token contract rather than hardcoded values",
-  "library-docs.md": "the discipline header only — a pattern is added the first time the project actually uses a library",
+  "library-docs.md": "the discipline header only; a pattern is added when the project first uses a library",
   "progress.md": "the same status-block-and-checklist shape as this repo's own, seeded empty",
-  "ui-registry.md": "the decisions the contract doesn't make — composition, custom-component token choices — kept current by imprint",
+  "ui-registry.md": "the decisions the contract doesn't make, kept current by imprint",
   "features/README.md": "the feature-folder shape, unchanged from this repo's own copy",
 };
 
@@ -310,8 +310,8 @@ const KIT_INIT = {
 const KICKOFF = PROMPT_FILES.map((prompt) => {
   const output = /into (\S+\.md)/.exec(PROMPT_NOTES[prompt.file] ?? "")?.[1];
   if (!output) throw new Error(`PROMPT_NOTES for ${prompt.file} no longer names the file it writes.`);
-  // What the output holds: the note's second clause, e.g. "the stack, the schema, the data flow".
-  const holds = (PROMPT_NOTES[prompt.file] ?? "").split(" \u2014 ")[1]?.replace(/\.$/, "") ?? "";
+  // What the output holds: the note after its colon, e.g. "the stack, the schema, the data flow".
+  const holds = (PROMPT_NOTES[prompt.file] ?? "").split(": ")[1]?.replace(/\.$/, "") ?? "";
   return { prompt: prompt.file, output, holds };
 });
 
@@ -390,39 +390,13 @@ const KIT_DOCS = {
   },
 };
 
-const HALVES = [
-  {
-    title: "The agent kit",
-    lead: "What makes a new repo start with your context, your guardrails and your loop instead of a blank CLAUDE.md.",
-    href: "/docs/loop",
-    linkLabel: "Read the loop",
-    parts: [
-      {
-        name: "skills/",
-        body: `The ${SKILLS.length} lifecycle skills, installed into the project so the agent has them from day one.`,
-      },
-      { name: "context/", body: "The architecture written down before any code exists — overview, standards, build plan, and a folder per feature." },
-      { name: "knowledge/", body: "Gotchas harvested from projects that already paid for them, tagged by stack and installed to match." },
-      { name: "hooks", body: "The rules that prose could not hold: generated files refuse edits, raw colours fail at edit time." },
-    ],
-  },
-  {
-    title: "The design system",
-    lead: "One contract every component obeys, so the same button works in every project and takes on each project's theme.",
-    href: "/docs/tokens",
-    linkLabel: "Read the contract",
-    parts: [
-      { name: "@ja3dan/tokens", body: "Semantic names and roles. Values live in a theme, once for light and once for dark." },
-      { name: "@ja3dan/eslint-plugin", body: "Fails the build on a hex, an arbitrary colour or a palette class. Runs in the editor too." },
-      { name: "@ja3dan registry", body: "Components copied into the project by shadcn, versioned so a later update can merge with your edits." },
-    ],
-  },
-];
+/** The feature folder, as `context/features/README.md` draws it: each file and the step that writes it. */
+const FEATURE_FILES = folder;
 
 export {
   CONTEXT_TREE,
+  FEATURE_FILES,
   EVIDENCE,
-  HALVES,
   KICKOFF,
   KIT_DOCS,
   KIT_INIT,

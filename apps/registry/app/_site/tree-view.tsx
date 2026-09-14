@@ -201,9 +201,9 @@ function TreeView({
             )}
           >
             {row.branch ? <Caret open={row.open} /> : <span className="size-4 shrink-0" />}
-            <span className={cn("min-w-0 flex-1 truncate font-mono text-xs", selected && "font-medium")}>{node.label}</span>
+            <span className={cn("shrink-0 truncate font-mono text-xs", selected && "font-medium")}>{node.label}</span>
             {node.meta ? (
-              <span className="hidden shrink-0 truncate ps-4 text-xs text-subtle-foreground sm:block">{node.meta}</span>
+              <span className="hidden min-w-0 flex-1 truncate ps-4 text-end text-xs text-subtle-foreground sm:block">{node.meta}</span>
             ) : null}
           </div>
 

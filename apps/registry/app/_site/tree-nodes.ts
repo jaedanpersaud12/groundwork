@@ -27,4 +27,14 @@ function nodesFromLines(lines: { name: string; depth: number; note?: string; ton
   return root;
 }
 
-export { nodesFromLines, type TreeNode };
+type NestedLike = { name: string; note?: string; children?: NestedLike[] };
+
+/** Tree nodes from an already nested shape (the `{ name, note, children }` trees in kit.ts). */
+function nodesFromNested(nodes: NestedLike[], parent = ""): TreeNode[] {
+  return nodes.map((node) => {
+    const id = parent ? `${parent}/${node.name}` : node.name;
+    return { id, label: node.name, meta: node.note, children: node.children ? nodesFromNested(node.children, id) : undefined };
+  });
+}
+
+export { nodesFromLines, nodesFromNested, type NestedLike, type TreeNode };

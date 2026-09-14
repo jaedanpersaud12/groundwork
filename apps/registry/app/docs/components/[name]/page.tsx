@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 import { Command, DataPlate } from "../../../_site/code";
 import { SourceBlock } from "../../../_site/code-block";
+import { Chips, Code, Prose } from "../../../_site/docs-ui";
 import { DocPage, Section } from "../../../_site/prose";
 import {
   dependents,
@@ -72,55 +73,46 @@ export default async function ItemPage({ params }: PageProps<"/docs/components/[
       }
     >
       <Section id="preview" title="Preview">
-        <Examples name={item.name} fallback="No visual preview — this item has no markup of its own." />
+        <Examples name={item.name} fallback="No visual preview: this item has no markup of its own." />
       </Section>
 
       <Section id="install" title="Install">
-        <p className="max-w-prose text-sm text-muted-foreground">
-          Needs a project already initialised on the contract, which is what registers the{" "}
-          <code className="font-mono">@ja3dan</code> prefix. If yours isn&apos;t,{" "}
+        <Prose>
+          In a project already set up on the contract, which is what registers the <Code>@ja3dan</Code> prefix. If
+          yours isn&apos;t,{" "}
           <Link href="/docs#design-system" className={TEXT_LINK}>
-            run the setup command first
+            set it up first
           </Link>
           .
-        </p>
-        <Command value={installCommand(item.name)} />
+        </Prose>
+        <Command value={installCommand(item.name)} wrap />
         {item.packages.length ? (
           <p className="text-sm text-muted-foreground">
-            Pulls in {item.packages.join(", ")} from npm if your project doesn&apos;t have them.
+            Also installs{" "}
+            {item.packages.map((pkg, index) => (
+              <span key={pkg}>
+                <Code>{pkg}</Code>
+                {index < item.packages.length - 1 ? " " : null}
+              </span>
+            ))}{" "}
+            if the project doesn&apos;t have them.
           </p>
         ) : null}
       </Section>
 
       {related ? (
         <Section id="related" title="Related items">
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid min-w-0 grid-cols-1 gap-6 sm:grid-cols-2">
             {item.dependsOn.length ? (
-              <div className="grid content-start gap-2">
-                <p className="text-sm text-foreground">Installs alongside it</p>
-                <ul className="grid gap-1">
-                  {item.dependsOn.map((dep) => (
-                    <li key={dep}>
-                      <Link href={`/docs/components/${dep}`} className={cn("font-mono text-sm", TEXT_LINK)}>
-                        {dep}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+              <div className="grid content-start gap-3">
+                <h3 className="text-sm font-semibold text-foreground">Installs alongside it</h3>
+                <Chips items={item.dependsOn.map((dep) => ({ href: `/docs/components/${dep}`, label: dep }))} />
               </div>
             ) : null}
             {usedBy.length ? (
-              <div className="grid content-start gap-2">
-                <p className="text-sm text-foreground">Used by</p>
-                <ul className="grid gap-1">
-                  {usedBy.map((dep) => (
-                    <li key={dep.name}>
-                      <Link href={`/docs/components/${dep.name}`} className={cn("font-mono text-sm", TEXT_LINK)}>
-                        {dep.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+              <div className="grid content-start gap-3">
+                <h3 className="text-sm font-semibold text-foreground">Used by</h3>
+                <Chips items={usedBy.map((dep) => ({ href: `/docs/components/${dep.name}`, label: dep.name }))} />
               </div>
             ) : null}
           </div>
@@ -131,7 +123,7 @@ export default async function ItemPage({ params }: PageProps<"/docs/components/[
         <Section
           id="source"
           title="Source"
-          lead="What lands in your project, copied from the published item rather than the working tree."
+          lead="What lands in your project, read from the published item rather than the working tree."
         >
           <div className="grid grid-cols-1 gap-4">
             {source.map((file) => (

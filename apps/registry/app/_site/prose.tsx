@@ -86,23 +86,4 @@ function RepoText({ children }: { children: string }) {
   );
 }
 
-type TreeNodeLike = { name: string; note?: string; children?: TreeNodeLike[] };
-
-/** A file tree, indented by nesting rather than by drawn rules. */
-function Tree({ nodes, depth = 0 }: { nodes: TreeNodeLike[]; depth?: number }) {
-  return (
-    <ul className={depth === 0 ? "grid gap-1" : "mt-1 grid gap-1 ps-6"}>
-      {nodes.map((node) => (
-        <li key={node.name}>
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
-            <span className="font-mono text-sm text-foreground">{node.name}</span>
-            {node.note ? <span className="text-sm text-muted-foreground">{node.note}</span> : null}
-          </div>
-          {node.children?.length ? <Tree nodes={node.children} depth={depth + 1} /> : null}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-export { DocPage, RepoText, Section, Tree };
+export { DocPage, RepoText, Section };

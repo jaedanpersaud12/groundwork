@@ -112,9 +112,23 @@
   --shiki-token-deleted: var(--destructive);
 }
 
-/* Line numbers, drawn by a counter so selecting the code never selects them. */
+/* One block per line, so an empty line keeps its height and a wrapped line stays one line. */
+.syntax .line {
+  display: block;
+  min-height: 1.5rem;
+}
+
+/*
+ * Line numbers, drawn by a counter so selecting the code never selects them. The hanging
+ * indent keeps a wrapped line's continuation aligned with its text, not under the number.
+ */
 .syntax[data-line-numbers] {
   counter-reset: line;
+}
+
+.syntax[data-line-numbers] .line {
+  padding-inline-start: 3rem;
+  text-indent: -3rem;
 }
 
 .syntax[data-line-numbers] .line::before {
@@ -123,6 +137,7 @@
   display: inline-block;
   width: 2rem;
   margin-inline-end: 1rem;
+  text-indent: 0;
   text-align: end;
   color: var(--subtle-foreground);
   user-select: none;

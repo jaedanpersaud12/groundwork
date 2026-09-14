@@ -30,5 +30,4 @@ a wall of prose, sets up the design system only, and says `kit init` does not ex
 
 ## Out of scope
 
-- Rewriting the other docs pages beyond the shell they share and the stale kickoff sentence.
 - Publishing `@ja3dan/kit` to npm (the commands assume it; not published yet).

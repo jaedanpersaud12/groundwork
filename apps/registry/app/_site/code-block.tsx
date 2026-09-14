@@ -53,7 +53,11 @@ async function CodeBlock({
 async function SourceBlock({ path, content, label }: { path: string; content: string; label?: string }) {
   const file = label ?? path.split("/").pop() ?? path;
   const lines = content.split("\n").length;
-  return <CodeBlock title={file} code={content} lang={langFor(path)} meta={`${lines} lines`} lineNumbers tall />;
+  const lang = langFor(path);
+  // Markdown is prose: wrap it rather than make a reader scroll sideways through sentences, and
+  // skip line numbers, which point at nothing in prose and cost the width the wrap needs.
+  const prose = lang === "markdown";
+  return <CodeBlock title={file} code={content} lang={lang} meta={`${lines} lines`} lineNumbers={!prose} tall wrap={prose} />;
 }
 
 export { CodeBlock, SourceBlock };
