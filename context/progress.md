@@ -1,9 +1,9 @@
 # Progress
 
-**Stage:** 10 — `imprint`, and `ui-registry.md` with it
+**Stage:** 11 — Show, don't tell: the landing page and the setup docs
 **Last completed:** 10 — `imprint`, and `ui-registry.md` with it
-**Active feature:** none
-**Next:** none — every promoted stage is built; nothing else is scheduled
+**Active feature:** 11 — `feat/11-show-not-tell`
+**Next:** none scheduled after 11
 **Blocker:** none
 
 Keep this short. Detail belongs in the feature's own folder — `spec.md`, `plan.md`,
@@ -28,6 +28,7 @@ version of it that grew to 450 lines is the reason the feature folders exist.
       project: `kit init` → the three kickoff prompts → a real feature 01 built and merged*
 - [x] **10** `imprint`, and `ui-registry.md` with it — *promoted from "Later"; verified
       against a real composition that a registry item's own source leaves open*
+- [ ] **11** Show, don't tell — landing page and setup docs
 
 ## Notes
 

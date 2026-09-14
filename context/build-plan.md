@@ -141,6 +141,30 @@ real run of `/imprint` against a genuinely composed (non-registry-primitive) pie
 the throwaway project produces an entry that would actually help the next session build a
 matching one — not a restatement of a contract token.
 
+## 11 — Show, don't tell: the landing page and the setup docs
+
+Not a redesign. The site's engineering is sound — an audit at 400px across eight routes in
+both themes found no overflow and no theme fault — and the brand is deliberate: dark-first,
+one purple accent, a pill CTA, an illustrated hero with four overlay plates measured against
+the illustration's own pixels. None of that changes.
+
+What is weak is the ratio of description to evidence. `/` already has one section that
+cannot lie: the `context/` tree is generated from the repo at build time. The sections on
+either side of it fall back to bullet lists that any project could have written — "fails the
+build on a hex, an arbitrary colour or a palette class" is a claim where the actual
+`no-raw-colors` message would be proof, and costs more words to be less convincing.
+
+Also fixes a live factual error: `/docs` still tells the reader that the automated half
+(`kit init`) does not exist. It has since 09.
+
+**Done when:** the "Two halves" section on `/` renders real artefacts read off disk at build
+time — frontmatter from a real `skills/*/SKILL.md`, the verbatim message string from
+`packages/eslint-plugin/index.js` — so that changing either source changes the site and
+deleting it fails the build; rendered word counts for `/` and `/docs` are lower than the
+pre-change numbers recorded in the feature log; the `kit init` sentence is corrected;
+below-the-fold sections fade in once on scroll entry and sit fully visible under
+`prefers-reduced-motion`; and the diff touches no token, font, icon library or colour.
+
 ---
 
 ## Later
