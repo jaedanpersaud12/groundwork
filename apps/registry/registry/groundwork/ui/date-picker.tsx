@@ -1,7 +1,7 @@
 "use client";
 
-// Source: jobpilot DatePicker on the flvs calendar. The month grid rolls in from the
-// direction of travel and is held at six-row height, so paging never resizes the popover.
+// The month grid rolls in from the direction of travel and is held at six-row height,
+// so paging never resizes the popover.
 
 import { createContext, useContext, useState, type ComponentProps } from "react";
 import { motion, useReducedMotion } from "motion/react";

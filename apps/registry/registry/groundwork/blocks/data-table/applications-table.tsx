@@ -154,9 +154,10 @@ export function ApplicationsTable({ data = SAMPLE_APPLICATIONS }: { data?: Appli
               aria-label="Filter by company, role or location"
               placeholder="Filter by company, role…"
               icon={<SearchIcon aria-hidden />}
+              size="sm"
               value={table.query}
               onChange={(event) => table.setQuery(event.target.value)}
-              className="h-8 min-w-32 flex-1 rounded-lg"
+              className="min-w-32 flex-1 rounded-lg"
               trailing={
                 table.query ? (
                   <button

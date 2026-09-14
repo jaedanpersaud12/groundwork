@@ -1,6 +1,6 @@
 "use client";
 
-// Source: interior.dev Pagination → flvs → jobpilot. Fixed slot widths so the arrows
+// Source: interior.dev Pagination. Fixed slot widths so the arrows
 // never move under the cursor, one sliding thumb, numbers that roll in from the
 // direction of travel, and a delayed page announcement for screen readers.
 

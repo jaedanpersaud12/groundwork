@@ -1,6 +1,6 @@
 "use client";
 
-// Source: interior.dev Sortable Table → flvs → jobpilot, on table-card's Th. The header affordance only:
+// Source: interior.dev Sortable Table, on table-card's Th. The header affordance only:
 // a clickable column head whose arrow turns with the direction. Sorting itself is
 // the caller's job (useDataTable, or the server).
 

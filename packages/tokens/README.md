@@ -70,7 +70,8 @@ Every token's role is in [`TOKENS.md`](TOKENS.md).
 | Theme | |
 | --- | --- |
 | `themes/neutral.css` | The default: greyscale surfaces, a near-black primary. The one to copy for a new brand. |
-| `themes/jobpilot.css` | jobpilot's brand. Light values match its original CSS; the dark values are new. |
+| `themes/violet.css` | Cool grey surfaces and a violet primary. |
+| `themes/blue.css` | Cool grey surfaces, navy-leaning dark, and an ultramarine primary. What the groundwork site itself uses. |
 
 To make your own, copy `neutral.css` into your project, change the values, and import it
 in place of the shipped theme. A theme must define every required token in **both**

@@ -1,10 +1,13 @@
-import Image, { type StaticImageData } from "next/image";
+import Image, { getImageProps, type StaticImageData } from "next/image";
 import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
 
-import background from "@/public/backgrounds/background.webp";
-import nightCliff from "@/public/HR0LNgXbgAAa7sy.jpeg";
-import nightCove from "@/public/HR0LQMRW8A4qAWP.jpeg";
+import skyDesktop from "@/public/backgrounds/bg-desktop.png";
+import skyMobile from "@/public/backgrounds/bg-mobile.png";
+import wake from "@/public/backgrounds/blue1.jpeg";
+import starlitSail from "@/public/backgrounds/blue2.jpeg";
+import cloudsOverSea from "@/public/backgrounds/blue3.jpeg";
+import lightOnWater from "@/public/backgrounds/blue4.jpeg";
 import { Button } from "@/registry/groundwork/ui/button";
 import { StatusPill } from "@/registry/groundwork/ui/status-pill";
 
@@ -19,10 +22,10 @@ import { FeatureTable } from "./_site/landing/feature-table";
 import { ProjectSteps } from "./_site/landing/project-steps";
 import { FilterChipDemo, ViewToggleDemo } from "./_site/landing/specimen";
 import { Tagline } from "./_site/landing/tagline";
-import { TiltCard } from "./_site/landing/tilt-card";
 import { groups, items, setupCommand } from "./_site/registry";
 import { Reveal } from "./_site/reveal";
 import { Mark } from "./_site/mark";
+import { PixelMark } from "./_site/pixel-mark";
 import { FOCUS_RING, TEXT_LINK } from "./_site/styles";
 
 /*
@@ -80,42 +83,33 @@ export default async function Home() {
     <>
       <SiteHeader variant="plate" />
       <main id="content">
-        {/* Hero */}
-        <section className="mx-auto w-full max-w-6xl px-4 pt-16 pb-12 sm:px-6 lg:pt-24 lg:pb-16">
-          {/*
-            * Capped at 680px and broken after "last", where the thought turns. The gradient is
-            * the contract's own foreground into muted-foreground, left to right, so it follows
-            * the theme; `pb-2` keeps the descenders inside the clipped background.
-            */}
-          <h1 className="max-w-[680px] animate-in bg-linear-to-r from-foreground to-muted-foreground bg-clip-text pb-2 type-display text-5xl text-transparent duration-700 ease-fluid fade-in fill-mode-both slide-in-from-bottom-3 sm:text-6xl">
-            Start where the last <br className="hidden sm:block" />
-            project finished.
-          </h1>
-          <div className="mt-12 grid animate-in grid-cols-1 gap-6 delay-100 duration-700 ease-fluid fade-in fill-mode-both lg:grid-cols-2 lg:items-end lg:gap-4">
-            <p className="max-w-[680px] text-lg text-pretty text-muted-foreground lg:max-w-md">
+        {/*
+          * Hero. One night sky, cropped for the screen: the wide painting opens its clouds either
+          * side of the copy, the tall one stacks them below it. A <picture> sends only the crop
+          * the screen will show. The painting is dark in both themes, so the hero is too
+          * (`dark` scopes the contract's dark tokens to it), and it runs up under the header,
+          * which is transparent at the top of the page.
+          */}
+        <section className="dark relative -mt-16 grid min-h-svh place-items-start justify-items-center overflow-hidden bg-background px-4 pt-[calc(4rem+4svh)] text-foreground sm:place-items-center sm:px-6 sm:pt-16">
+          <HeroSky />
+          {/* On a phone the tall crop's clouds rise behind the lead, so the copy sits higher and on a soft lift of the sky's own dark. */}
+          <div className="relative grid w-full max-w-3xl justify-items-center gap-6 text-center before:absolute before:-inset-x-16 before:-inset-y-16 before:-z-10 before:bg-[radial-gradient(closest-side,var(--background)_45%,transparent)] before:opacity-85 sm:pb-[18svh] sm:before:hidden">
+            <PixelMark className="mb-2 h-14 w-auto sm:h-16" start={100} />
+            <h1 className="animate-in type-display text-5xl text-balance delay-300 duration-700 ease-fluid fade-in fill-mode-both slide-in-from-bottom-3 sm:text-6xl lg:text-7xl">
+              Start where the last project <span className="text-primary">finished.</span>
+            </h1>
+            <p className="max-w-lg animate-in text-lg text-pretty text-muted-foreground delay-500 duration-700 ease-fluid fade-in fill-mode-both">
               Agent skills, project context and a token contract, in your repo before the first line of code.
             </p>
-            <div className="grid min-w-0 grid-cols-1 gap-2">
-              <Command value={KIT_INIT.command} />
-              <a href="#registry" className={`inline-flex items-center gap-2 justify-self-start text-sm ${TEXT_LINK}`}>
+            <div className="mt-4 grid w-full max-w-md animate-in justify-items-center gap-4 delay-700 duration-700 ease-fluid fade-in fill-mode-both">
+              <Command value={KIT_INIT.command} className="w-full bg-card/60 text-start backdrop-blur-md" />
+              <a href="#registry" className={`inline-flex items-center gap-2 text-sm ${TEXT_LINK}`}>
                 Browse components
                 <ArrowRightIcon aria-hidden className="size-3.5 rtl:-scale-x-100" />
               </a>
             </div>
           </div>
         </section>
-
-        <div className="relative h-[clamp(16rem,40vw,34rem)] w-full animate-in overflow-hidden delay-200 duration-1000 ease-fluid fade-in fill-mode-both">
-          <Image
-            src={background}
-            alt="An illustrated valley below snow-capped mountains, a golden tree beside a river"
-            fill
-            priority
-            sizes="100vw"
-            placeholder="blur"
-            className="object-cover object-[center_42%]"
-          />
-        </div>
 
         {/* The two halves: one panel each, identical anatomy, rows shared. */}
         <Reveal>
@@ -174,7 +168,18 @@ export default async function Home() {
 
         {/* The statement, on its own: why the whole thing exists. */}
         <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:py-24">
-          <Tagline lines={["Every project you finish", "makes the next one", "cheaper to start."]} />
+          <div className="dark relative isolate overflow-hidden rounded-2xl bg-background px-6 py-24 text-foreground sm:px-12 lg:py-32">
+            <Image
+              src={cloudsOverSea}
+              alt=""
+              fill
+              sizes="(min-width: 1152px) 1104px, 100vw"
+              placeholder="blur"
+              className="-z-10 object-cover object-[center_18%]"
+            />
+            <div aria-hidden className="absolute inset-0 -z-10 bg-linear-to-r from-background/80 via-background/40 to-transparent" />
+            <Tagline lines={["Every project you finish", "makes the next one", "cheaper to start."]} />
+          </div>
         </section>
 
         {/* How a project starts: the kit installs, then kickoff writes the project's own context. */}
@@ -206,9 +211,9 @@ export default async function Home() {
 
             <div className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-2">
               <Plate
-                src={nightCove}
-                alt="A figure walking a moonlit cove, palms silhouetted in blue with gold edges"
-                focus="object-[center_30%]"
+                src={lightOnWater}
+                alt="A small sailboat on a glittering blue sea, a shaft of light falling from a dark sky"
+                focus="object-[center_48%]"
               />
               <ol className={`${PANEL} grid min-w-0 divide-y divide-border`}>
                 {LOOP.map((stage) => (
@@ -317,9 +322,9 @@ export default async function Home() {
                 </li>
               </ol>
               <Plate
-                src={nightCliff}
-                alt="Palms leaning out from a dark cliff over deep blue water scattered with light, a figure at the shore"
-                focus="object-[center_93%]"
+                src={starlitSail}
+                alt="A sailboat trailing a wake of golden light under a starry sky and tall white clouds"
+                focus="object-[center_62%]"
               />
             </div>
 
@@ -331,12 +336,33 @@ export default async function Home() {
 
       </main>
 
-      <footer>
-        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-10 sm:px-6">
-          <p className="flex items-center gap-2 type-display text-base text-foreground">
-            <Mark className="h-[1.15em] w-auto" />
-            groundwork
-          </p>
+      <footer className="mx-auto w-full max-w-6xl px-4 pb-4 sm:px-6 sm:pb-6">
+        {/* The page closes on the same water it has been sailing: a photograph's wake, dark in both themes. */}
+        <div className="dark relative isolate flex min-h-72 flex-wrap items-end justify-between gap-4 overflow-hidden rounded-2xl bg-background px-6 py-8 text-foreground sm:px-10">
+          <Image
+            src={wake}
+            alt=""
+            fill
+            sizes="(min-width: 1152px) 1104px, 100vw"
+            placeholder="blur"
+            className="-z-10 object-cover object-[center_70%]"
+          />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-linear-to-t from-background/80 to-transparent" />
+          <div className="grid gap-1">
+            <p className="flex items-center gap-2 type-display text-base text-foreground">
+              <Mark className="h-[1.15em] w-auto" />
+              groundwork
+            </p>
+            {/* The only link off this site. It goes last in the reading order and
+                stays in the muted colour, so it reads as a byline rather than a
+                fifth destination competing with the nav beside it. */}
+            <p className="text-sm text-muted-foreground">
+              Built by{" "}
+              <a href="https://www.jaedan.me" className={TEXT_LINK}>
+                Jaedan Persaud
+              </a>
+            </p>
+          </div>
           <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
             <Link href="/docs" className={`rounded-sm hover:text-foreground ${FOCUS_RING}`}>Docs</Link>
             <Link href="/docs/loop" className={`rounded-sm hover:text-foreground ${FOCUS_RING}`}>The loop</Link>
@@ -346,6 +372,19 @@ export default async function Home() {
         </div>
       </footer>
     </>
+  );
+}
+
+/** The hero's night sky: the tall crop below `sm`, the wide one above. Decorative, so no alt. */
+function HeroSky() {
+  const common = { alt: "", fill: true, priority: true, sizes: "100vw" } as const;
+  const { props: wide } = getImageProps({ ...common, src: skyDesktop });
+  const { props: tall } = getImageProps({ ...common, src: skyMobile });
+  return (
+    <picture className="absolute inset-0">
+      <source media="(min-width: 640px)" srcSet={wide.srcSet} sizes={wide.sizes} />
+      <img {...tall} alt="" className="object-cover object-bottom sm:object-[38%_bottom]" />
+    </picture>
   );
 }
 
@@ -374,9 +413,8 @@ function Plate({ src, alt, focus }: { src: StaticImageData; alt: string; focus: 
  * component sits in its middle, and the caption row underneath names it. That is the whole
  * anatomy; nothing else goes in a block.
  *
- * A block narrow enough to read as one card leans toward the pointer and catches a spotlight
- * (`TiltCard`, from Spell UI); the wide data-table block sits still; a grid of numbers tilting
- * in 3D reads as broken, not alive.
+ * The blocks hold still. The components inside them are the thing being shown, and a card
+ * that tilts and catches a spotlight under the pointer competes with its own contents.
  */
 function Block({ name, tier, wide = false, children }: { name: string; tier: string; wide?: boolean; children: React.ReactNode }) {
   const face = `${PANEL} grid min-w-0 grid-rows-[1fr_auto] overflow-hidden`;
@@ -397,13 +435,7 @@ function Block({ name, tier, wide = false, children }: { name: string; tier: str
 
   return (
     <li className={wide ? "sm:col-span-2" : ""}>
-      {wide ? (
-        <div className={face}>{body}</div>
-      ) : (
-        <TiltCard className={face} tiltLimit={8} scale={1.015}>
-          {body}
-        </TiltCard>
-      )}
+      <div className={face}>{body}</div>
     </li>
   );
 }

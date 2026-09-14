@@ -81,7 +81,7 @@
         }
       ],
       "meta": {
-        "version": "1.0.2",
+        "version": "1.0.3",
         "tier": "block",
         "track": "none"
       }
@@ -104,8 +104,7 @@
       "meta": {
         "version": "1.0.0",
         "tier": "primitive",
-        "track": "minor",
-        "source": "jobpilot"
+        "track": "minor"
       }
     },
     {
@@ -125,8 +124,7 @@
       "meta": {
         "version": "1.0.0",
         "tier": "primitive",
-        "track": "minor",
-        "source": "jobpilot"
+        "track": "minor"
       }
     },
     {
@@ -141,7 +139,7 @@
         }
       ],
       "meta": {
-        "version": "1.0.0",
+        "version": "1.1.0",
         "tier": "primitive",
         "track": "minor"
       }
@@ -160,8 +158,7 @@
       "meta": {
         "version": "1.0.0",
         "tier": "primitive",
-        "track": "minor",
-        "source": "jobpilot"
+        "track": "minor"
       }
     },
     {
@@ -178,8 +175,7 @@
       "meta": {
         "version": "1.0.0",
         "tier": "primitive",
-        "track": "minor",
-        "source": "jobpilot"
+        "track": "minor"
       }
     },
     {
@@ -200,8 +196,7 @@
       "meta": {
         "version": "1.0.0",
         "tier": "primitive",
-        "track": "minor",
-        "source": "jobpilot"
+        "track": "minor"
       }
     },
     {
@@ -221,8 +216,7 @@
       "meta": {
         "version": "1.0.0",
         "tier": "primitive",
-        "track": "minor",
-        "source": "jobpilot"
+        "track": "minor"
       }
     },
     {
@@ -239,8 +233,7 @@
       "meta": {
         "version": "1.0.0",
         "tier": "primitive",
-        "track": "minor",
-        "source": "flvs"
+        "track": "minor"
       }
     },
     {
@@ -257,8 +250,7 @@
       "meta": {
         "version": "1.0.0",
         "tier": "primitive",
-        "track": "minor",
-        "source": "flvs"
+        "track": "minor"
       }
     },
     {
@@ -275,8 +267,7 @@
       "meta": {
         "version": "1.0.1",
         "tier": "primitive",
-        "track": "minor",
-        "source": "flvs"
+        "track": "minor"
       }
     },
     {
@@ -293,8 +284,7 @@
       "meta": {
         "version": "1.0.1",
         "tier": "primitive",
-        "track": "minor",
-        "source": "flvs"
+        "track": "minor"
       }
     },
     {
@@ -311,8 +301,7 @@
       "meta": {
         "version": "1.0.1",
         "tier": "primitive",
-        "track": "minor",
-        "source": "jobpilot"
+        "track": "minor"
       }
     },
     {
@@ -338,7 +327,7 @@
         "version": "1.0.0",
         "tier": "pattern",
         "track": "patch",
-        "source": "interior.dev \u2192 flvs \u2192 jobpilot"
+        "source": "interior.dev"
       }
     },
     {
@@ -362,7 +351,7 @@
         "version": "1.0.0",
         "tier": "pattern",
         "track": "patch",
-        "source": "interior.dev \u2192 flvs \u2192 jobpilot"
+        "source": "interior.dev"
       }
     },
     {
@@ -383,8 +372,7 @@
       "meta": {
         "version": "1.0.1",
         "tier": "pattern",
-        "track": "patch",
-        "source": "flvs \u2192 jobpilot"
+        "track": "patch"
       }
     },
     {
@@ -401,8 +389,7 @@
       "meta": {
         "version": "1.0.1",
         "tier": "primitive",
-        "track": "minor",
-        "source": "jobpilot"
+        "track": "minor"
       }
     },
     {
@@ -426,8 +413,7 @@
       "meta": {
         "version": "1.0.0",
         "tier": "primitive",
-        "track": "minor",
-        "source": "jobpilot (from flvs)"
+        "track": "minor"
       }
     },
     {
@@ -455,8 +441,7 @@
       "meta": {
         "version": "1.0.0",
         "tier": "pattern",
-        "track": "patch",
-        "source": "jobpilot"
+        "track": "patch"
       }
     },
     {
@@ -486,8 +471,7 @@
       "meta": {
         "version": "1.0.0",
         "tier": "pattern",
-        "track": "patch",
-        "source": "flvs \u2192 jobpilot"
+        "track": "patch"
       }
     },
     {
@@ -541,8 +525,7 @@
       "meta": {
         "version": "1.0.0",
         "tier": "lib",
-        "track": "minor",
-        "source": "flvs \u2192 jobpilot"
+        "track": "minor"
       }
     }
   ]

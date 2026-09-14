@@ -12,8 +12,8 @@ type RequiredCheck = { label: string; reason: string; scope: "always" | "kickoff
 const KICKOFF_PRESET = "next16-insforge";
 
 /**
- * The bootstrapped project — `/kickoff` + `kit init` — is the design center, not jobpilot:
- * see context/features/05-kit-check-doctor/plan.md. Generated from kit's own bundled assets
+ * The bootstrapped project — `/kickoff` + `kit init` — is the design center, not an existing
+ * project migrated onto the registry. Generated from kit's own bundled assets
  * (09) rather than hand-typed, so it can't drift from what `kit init` actually installs.
  */
 function kickoffChecks(): RequiredCheck[] {

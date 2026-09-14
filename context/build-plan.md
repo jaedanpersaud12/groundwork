@@ -27,26 +27,25 @@ Groundwork set up the way the kit will set up every project: `skills/`, `.agents
 - [x] `bun run check` still passes
 - [ ] A feature has actually been run through `/feature start` → `/feature finish`
 
-## 03 — jobpilot becomes the first consumer
+## 03 — A first consuming project
 
-Swap jobpilot's local copies for installed registry items; write its `kit.lock.json`.
+Swap an existing app's local copies for installed registry items; write its `kit.lock.json`.
 
-*Already in jobpilot, and relevant here:* a `skills-lock.json` (`version: 1`; per skill
+*Already in that app, and relevant here:* a `skills-lock.json` (`version: 1`; per skill
 `source`, `sourceType: "github"`, `skillPath`, `computedHash`) from installing skills out of
 `JavaScript-Mastery-Pro/jsm-agent-skill` and `jakubkrehel/skills`. 04 decides whether
 `kit.lock.json` absorbs it or sits beside it; 03 lives with the result, and 09 installs
 skills against it. And its 426-line
-`ui-tokens.md` is what the token contract replaces — measured in
-`context/features/06-kickoff/plan.md`.
+`ui-tokens.md` is what the token contract replaces.
 
-**Done when:** the homepage, profile and find-jobs screenshots match before and after, and
-jobpilot's typecheck and lint are clean.
+**Done when:** the app's key screens match in screenshots before and after, and its
+typecheck and lint are clean.
 
 ## 04 — `packages/kit`: sync engine
 
 `kit sync status | update`, `kit link`. The 3-way merge against `public/r/v/*`.
 
-*Before fixing the `kit.lock.json` schema:* jobpilot already has a lock of the same shape for
+*Before fixing the `kit.lock.json` schema:* the 03 app already has a lock of the same shape for
 skills (see 03), and 09 (`kit init`) will install skills. Decide whether one lock covers
 registry items and skills, or two locks share a format — deciding after both exist means
 migrating one of them.
@@ -61,7 +60,7 @@ migration note; and each project gets its own PR.
 stale library notes). Largely the logic now living in `packages/tokens/scripts/build.ts`
 and the three hooks, lifted into a command that runs outside this repo.
 
-**Done when:** `kit doctor` passes on jobpilot, and `kit check` fails a deliberately
+**Done when:** `kit doctor` passes on the 03 app, and `kit check` fails a deliberately
 introduced raw colour in a consumer project.
 
 ## 06 — `/kickoff` prompts, and `templates/`
@@ -69,17 +68,16 @@ introduced raw colour in a consumer project.
 Three plain-markdown prompts that interview someone and write `project-overview.md`,
 `architecture.md` and `build-plan.md`, plus the template files a new project copies. No
 tool access assumed — they work in any LLM, which is what keeps the kit's value from being
-locked behind installing the kit. First preset: `next16-insforge`, from jobpilot.
+locked behind installing the kit. First preset: `next16-insforge`, from an existing app.
 
-**Done when:** running the three prompts against jobpilot, answering as its developer
-would, produces context that survives a line-by-line diff against jobpilot's real files on
+**Done when:** running the three prompts against an existing app, answering as its developer
+would, produces context that survives a line-by-line diff against that app's real files on
 the checks in `context/features/06-kickoff/spec.md`.
 
-The measurement this rests on: jobpilot's `context/` is 3,774 lines, of which about 1,300
+The measurement this rests on: that app's `context/` is 3,774 lines, of which about 1,300
 can be generated at kickoff — the rest is copied, replaced by the token contract, written
 during the build, or read out of installed packages. Settled first, before anything else
-was written: does stage 2 hold its schema section at ~580 lines? It did — see
-`context/features/06-kickoff/log.md`.
+was written: does stage 2 hold its schema section at ~580 lines? It did.
 
 ## 07 — retired
 
@@ -118,10 +116,10 @@ as a change here.
 
 A 7th lifecycle skill, kickoff-installed like the other 6: after building a UI component,
 capture what makes it match the rest of the project, and save it to `ui-registry.md`. Moved
-off the "Later" list — see that section's old note for the jobpilot precedent this adapts.
+off the "Later" list — see that section's old note for the precedent this adapts.
 
-**Not a port.** jobpilot's real `imprint` (from `jsm-agent-skill`) captures raw Tailwind
-classes (`bg-`, `rounded-`, `text-`) because jobpilot had no token contract — every class
+**Not a port.** The upstream `imprint` (from `jsm-agent-skill`) captures raw Tailwind
+classes (`bg-`, `rounded-`, `text-`) because the project it served had no token contract — every class
 choice was a real decision worth recording. A groundwork project has a contract:
 `bg-card`/`rounded-md`/`text-muted-foreground` aren't decisions, they're the only correct
 answer, already enforced by `no-raw-colors` and already correct in any installed `@ja3dan`
@@ -188,7 +186,7 @@ no overflow from 320 to 1920px; checks pass.
 
 - GitHub Action opening update PRs when a version is published
 - Visual regression screenshots per item and theme in CI
-- A Vite preset (sensory-safari, wyatt); more themes
+- A Vite preset; more themes
 - Promote the vendored design skills into `skills/` once their licences are confirmed
   (`frontend-design` is Apache-2.0 and already clear; the `better-*` family carries no
   licence file)

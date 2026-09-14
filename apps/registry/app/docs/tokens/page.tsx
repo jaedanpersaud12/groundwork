@@ -84,7 +84,7 @@ export default function TokensPage() {
               body: (
                 <>
                   If a role can&apos;t be stated without naming a colour, it is a value, not a name.{" "}
-                  <Code>primary</Code> is the brand action, not the violet one.
+                  <Code>primary</Code> is the brand action, not the blue one.
                 </>
               ),
             },

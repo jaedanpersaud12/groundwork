@@ -1,11 +1,11 @@
 /*
- * JobPilot theme. Light values are taken from jobpilot's globals.css so that
- * migrating it onto the registry changes nothing visually. jobpilot never had a
- * real dark mode; the .dark values here are new.
+ * Blue theme. Cool grey surfaces with an ultramarine primary, light and dark; the dark
+ * surfaces lean navy rather than neutral. Written for the groundwork site, whose paintings
+ * are night skies over blue water.
  *
- * Departures from jobpilot's globals.css (status colours must read as small text on
- * a 10% tint of themselves, for status pills):
- * - destructive #ef4444 → #b91c1c (jobpilot's error-dark), warning #ff8904 → #a44a07. Both ≥ 5:1 on their tint.
+ * Status colours must read as small text on a 10% tint of themselves, for status pills:
+ * destructive is #b91c1c and warning #a44a07. Both ≥ 5:1 on their tint. Info moves to sky
+ * (#0369a1, 4.8:1 on its tint) so it can't be mistaken for the primary.
  */
 
 :root {
@@ -21,7 +21,7 @@
   --muted-foreground: #6a7282;
   --subtle-foreground: #99a1af;
 
-  --primary: #7c5cfc;
+  --primary: #2749d8;
   --primary-foreground: #ffffff;
   --secondary: #f9fafb;
   --secondary-foreground: #101828;
@@ -30,7 +30,7 @@
 
   --border: #e7eaf3;
   --input: #e7eaf3;
-  --ring: #7c5cfc;
+  --ring: #2749d8;
 
   --destructive: #b91c1c;
   --destructive-foreground: #ffffff;
@@ -41,15 +41,15 @@
   --warning: #a44a07;
   --warning-foreground: #ffffff;
   --warning-subtle: #fff4e5;
-  --info: #155dfc;
+  --info: #0369a1;
   --info-foreground: #ffffff;
-  --info-subtle: #eff6ff;
+  --info-subtle: #f0f9ff;
 
-  --chart-1: #7c5cfc;
-  --chart-2: #61a8ff;
+  --chart-1: #2749d8;
+  --chart-2: #38bdf8;
   --chart-3: #10b981;
   --chart-4: #ff8904;
-  --chart-5: #f3dbe9;
+  --chart-5: #c7d2fe;
 
   --depth-border:
     0 0 0 1px oklch(0 0 0 / 0.06),
@@ -66,26 +66,26 @@
 }
 
 .dark {
-  --background: #0e1016;
+  --background: #0b0e17;
   --foreground: #eceef5;
-  --card: #161922;
+  --card: #131826;
   --card-foreground: #eceef5;
-  --popover: #1b1f2a;
+  --popover: #182033;
   --popover-foreground: #eceef5;
-  --muted: #1d212c;
-  --muted-foreground: #9aa2b4;
-  --subtle-foreground: #6f778a;
+  --muted: #1a2030;
+  --muted-foreground: #9aa4ba;
+  --subtle-foreground: #6d7790;
 
-  --primary: #9d86ff;
-  --primary-foreground: #120d2b;
-  --secondary: #1f2330;
+  --primary: #7f9dff;
+  --primary-foreground: #0a1330;
+  --secondary: #1c2333;
   --secondary-foreground: #d5d9e4;
-  --accent: #242938;
+  --accent: #222a3d;
   --accent-foreground: #eceef5;
 
-  --border: #272c3a;
-  --input: #2f3545;
-  --ring: #9d86ff;
+  --border: #252d40;
+  --input: #2d3650;
+  --ring: #7f9dff;
 
   --destructive: #f87171;
   --destructive-foreground: #1f0a0a;
@@ -96,15 +96,15 @@
   --warning: #ffab57;
   --warning-foreground: #2b1600;
   --warning-subtle: #2d200f;
-  --info: #72a9ff;
-  --info-foreground: #06152f;
-  --info-subtle: #111e35;
+  --info: #4fc0f5;
+  --info-foreground: #04202e;
+  --info-subtle: #0d2130;
 
-  --chart-1: #9d86ff;
-  --chart-2: #72a9ff;
+  --chart-1: #7f9dff;
+  --chart-2: #4fc0f5;
   --chart-3: #34d399;
   --chart-4: #ffab57;
-  --chart-5: #e9b8d3;
+  --chart-5: #b9c6ff;
 
   /* On a dark ground the lift layers are invisible; one light ring is the whole effect. */
   --depth-border: 0 0 0 1px oklch(1 0 0 / 0.08);

@@ -1,6 +1,6 @@
 "use client";
 
-// Source: flvs date-range-picker → jobpilot. Presets beside a range calendar with one
+// Presets beside a range calendar with one
 // sliding thumb, the month grid rolling in from the direction of travel. The range is
 // a draft until both ends are picked, so the first click never applies a one-day range.
 

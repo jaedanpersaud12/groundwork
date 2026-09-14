@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-// Source: flvs admin data-table. Palette classes replaced with contract status tokens;
+// Palette classes replaced with contract status tokens;
 // every tone's text reads at small size on its own 10% tint.
 
 type PillTone = "success" | "warning" | "danger" | "info" | "neutral" | "solid";

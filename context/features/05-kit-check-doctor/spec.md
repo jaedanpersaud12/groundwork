@@ -12,7 +12,7 @@ this repo, the same way `kit lock`/`sync`/`link` already do.
 
 That validation logic only runs today inside groundwork itself — the theme check in
 `bun run tokens`, the raw-colour check via ESLint wired into `apps/registry`. A consumer
-project like jobpilot has neither: nothing catches a raw hex value creeping into an
+project has neither: nothing catches a raw hex value creeping into an
 installed component, or a project silently missing files `kit` or `kickoff` expect to be
 there. `kit check`/`kit doctor` are that missing outside-the-repo check.
 
@@ -21,11 +21,11 @@ there. `kit check`/`kit doctor` are that missing outside-the-repo check.
 - **Reuses `no-raw-colors`'s logic, not a new implementation.** `checkClass()` in
   `packages/eslint-plugin/index.js` already does exactly this; `kit check` should call it
   (or the same logic) directly rather than re-deriving the regex.
-- **`kit doctor`'s "required files" is designed around the core case, not jobpilot.** Kit
+- **`kit doctor`'s "required files" is designed around the core case, not a migrated app.** Kit
   exists to support a project bootstrapped by a future `/kickoff` + `kit init` — that
   project has `skills/`, `.agents/skills/`, `context/`, and a kit-managed
-  `components.json`/`kit.lock.json`. That bootstrapped shape is the design center; jobpilot
-  (a project migrated onto the contract after the fact, never through kickoff) is the
+  `components.json`/`kit.lock.json`. That bootstrapped shape is the design center; an existing
+  app (a project migrated onto the contract after the fact, never through kickoff) is the
   harder, secondary case, and its gaps are an expected, honest "missing" result — not the
   thing doctor is scoped around. Concretely: the required-files check is a data-driven list
   (path + reason + "always" vs. "kickoff") so 06/09 can extend it without a redesign; only
@@ -35,22 +35,22 @@ there. `kit check`/`kit doctor` are that missing outside-the-repo check.
 
 ## Done when
 
-- [x] `kit check` run against jobpilot passes cleanly — *see `log.md`*
+- [x] `kit check` run against the first consuming app (03) passes cleanly
 - [x] Introducing a raw colour (e.g. a hex value or a Tailwind palette class) into one of
-      jobpilot's kit-installed components makes `kit check` fail, naming the file and the
-      offending class — *see `log.md`*
+      that app's kit-installed components makes `kit check` fail, naming the file and the
+      offending class
 - [x] `kit doctor` run against a hand-assembled fixture shaped like a kickoff-bootstrapped
       project passes its "always" checks and reports the not-yet-implemented "kickoff"
-      checks as skipped, not failed — *see `log.md`*
-- [x] `kit doctor` run against jobpilot passes its "always" checks — `components.json` has
+      checks as skipped, not failed
+- [x] `kit doctor` run against that app passes its "always" checks — `components.json` has
       a valid `@ja3dan` registry entry, `kit.lock.json` exists and every locked item's files
-      are present — *see `log.md`*
+      are present
 - [x] `kit doctor` fails with a clear message when `kit.lock.json` references an item whose
-      installed files are missing (simulate by deleting one) — *see `log.md`*
+      installed files are missing (simulate by deleting one)
 - [x] `kit doctor`'s report includes the same outdated-item information `kit sync status`
-      computes, reusing that logic rather than re-deriving it — *see `log.md`*
+      computes, reusing that logic rather than re-deriving it
 - [x] Both commands are documented in `kit`'s `--help` output, matching the existing
-      `lock`/`sync status`/`sync update`/`link` style — *see `log.md`*
+      `lock`/`sync status`/`sync update`/`link` style
 
 ## Out of scope
 

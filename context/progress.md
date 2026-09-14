@@ -15,9 +15,8 @@ version of it that grew to 450 lines is the reason the feature folders exist.
 - [x] **01** Design registry, minimal version
 - [x] **02** Agent kit scaffold — *08 was the first feature run through the loop end to
       end; `/feature finish` refused it once, on a criterion the branch really did fail*
-- [x] **03** jobpilot becomes the first consumer — *profile and find-jobs screenshots not
-      verified against the real auth'd pages (no login available this session); see
-      `context/features/03-jobpilot-consumer/log.md`*
+- [x] **03** A first consuming project — *the signed-in screens' screenshots not verified
+      against the real auth'd pages (no login available that session)*
 - [x] **04** `packages/kit`: sync engine
 - [x] **05** `packages/kit`: check and doctor
 - [x] **06** `/kickoff` prompts, and `templates/`

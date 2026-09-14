@@ -20,11 +20,8 @@ guardrails and loop rather than a blank `CLAUDE.md`.
 
 ## Who consumes it
 
-| Project | Role |
-| --- | --- |
-| **jobpilot** | First consumer. The registry's first items and the `jobpilot` theme came from it. |
-| **flvs** | Source of the table/filter family and most of the vendored design skills. |
-| **bran** | Second consumer, for testing `kit sync` across more than one project. |
+Real projects built on it. The registry's first items and the `violet` theme came out of
+existing apps, and `kit sync` is tested across more than one project.
 
 Groundwork also consumes itself: its own `.agents/skills/` are the skills it ships, so
 using them here is the test of whether they're worth shipping.
