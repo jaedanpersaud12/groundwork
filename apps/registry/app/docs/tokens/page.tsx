@@ -93,7 +93,9 @@ export default function TokensPage() {
               body: (
                 <>
                   Every theme defines every required token in <Code>:root</Code> and in <Code>.dark</Code>. The build
-                  fails per selector and names what is missing.
+                  fails per selector and names what is missing. A project theme with no dark mode on purpose — a gallery,
+                  a print-first portfolio — says so with the comment <Code>{"/* @ja3dan/tokens light-only */"}</Code>, and{" "}
+                  <Code>kit check</Code> then requires <Code>:root</Code> only.
                 </>
               ),
             },

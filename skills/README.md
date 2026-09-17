@@ -28,6 +28,14 @@ Everything lands in `context/features/NN-slug/`, beside the code it describes.
 | [`/harvest`](harvest/SKILL.md) | A tool behaved differently than documented. Writes it to [`knowledge/`](../knowledge) |
 | [`app-ui`](app-ui/SKILL.md) | Building or reviewing a signed-in app screen — the shell, skeletons, tables, row menus, modals, stat strips. `/architect`, `/review` and `/feature start` point here |
 
+## 🧭 No slash commands?
+
+The commands are Claude Code's way in; the loop is files and a branch. In any other harness, point
+the agent at the skill file for each step: "follow `.claude/skills/feature/SKILL.md`, the start
+section, for feature 03", then `architect`, build while logging evidence in `log.md`, then
+`review` (a fresh session given only the spec, plan, diff and rules if there's no subagent),
+then the finish section of `feature`. Same files, same refusal to close without evidence.
+
 ## The rule with teeth
 
 A criterion closes with a line saying how it was checked — browser, script, SQL, test — or

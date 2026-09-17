@@ -75,6 +75,18 @@ export default function SetupPage() {
               files this creates, so pass the flags rather than relying on saved preferences.
             </Prose>
             <Command value="bunx create-next-app@latest your-app --ts --tailwind --eslint --app --use-bun --yes" wrap />
+            <Note title="Want the app at the root of an existing repo?">
+              create-next-app checks that the target&apos;s <em>parent</em> is writable, so <Code>create-next-app .</Code>{" "}
+              can fail in a sandbox whose writable root is the repo itself. Scaffold into a subfolder and move its
+              contents up, <Code>.gitignore</Code> included.
+            </Note>
+            <Note title="Running inside a sandboxed agent?">
+              <Code>bunx</Code> writes to the system temp and cache directories first; under a file sandbox that fails with{" "}
+              <Code>EPERM</Code> before anything runs. Point them at a writable place first:{" "}
+              <Code>TMPDIR=/tmp BUN_INSTALL_CACHE_DIR=/tmp/bun-cache</Code>. A first{" "}
+              <Code>ConnectionRefused downloading package manifest</Code> that works on an identical retry is the
+              download, not your registry configuration — run it again.
+            </Note>
           </Step>
 
           <Step number={2} title="Run kit init">
@@ -85,6 +97,17 @@ export default function SetupPage() {
             </Prose>
             <Command value={`cd your-app && ${KIT_INIT.command}`} wrap />
             <FileTree root="your-app/" label="Files kit init writes" lines={INIT_TREE} />
+            <Note title="Before the first check: generate route types">
+              Next generates <Code>LayoutProps</Code> and <Code>PageProps</Code> into <Code>.next/types</Code>.
+              create-next-app does it during install — not with <Code>--skip-install</Code> — and moving routes into
+              groups later leaves stale paths behind. Either way <Code>bun run check</Code> fails on types that aren&apos;t
+              yours; <Code>rm -rf .next/types && bunx next typegen</Code> regenerates them.
+            </Note>
+            <Note title="Linking a backend before your first commit?">
+              Some CLIs append a bare <Code>.claude</Code> to <Code>.gitignore</Code> (the InsForge CLI does), which hides
+              the skills kit init just installed from git. <Code>kit doctor</Code> flags it; narrow the rule to{" "}
+              <Code>.claude/settings.local.json</Code>.
+            </Note>
           </Step>
 
           <Step number={3} title="Write the context">
@@ -115,6 +138,7 @@ export default function SetupPage() {
               items={[
                 { command: kit("doctor"), note: KIT_DOCS.usage.doctor },
                 { command: kit("check"), note: KIT_DOCS.usage.check },
+                { command: kit("list"), note: KIT_DOCS.usage.list },
                 { command: "bun run check", note: "typecheck and lint, including no-raw-colors" },
               ]}
             />
@@ -186,12 +210,14 @@ export default function SetupPage() {
       <Section
         id="keep-current"
         title="Keep it current"
-        lead="Installed components are yours to edit. The kit tells you when a newer version exists and merges it with your edits."
+        lead="Installed components and skills are yours to edit. The kit tells you when a newer version exists, merges components with your edits, and leaves an edited skill alone unless you say otherwise."
       >
         <CommandList
           items={[
             { command: kit("sync status"), note: KIT_DOCS.usage.syncStatus },
             { command: kit("sync update <item>"), note: KIT_DOCS.usage.syncUpdate },
+            { command: `bunx @ja3dan/kit@latest skills status`, note: KIT_DOCS.usage.skillsStatus },
+            { command: `bunx @ja3dan/kit@latest skills update`, note: KIT_DOCS.usage.skillsUpdate },
           ]}
         />
       </Section>

@@ -13,6 +13,13 @@ import { planAdd } from "../shadcn";
 
 type TokenProblem = { selector: string; missing: string[]; unknown: string[] };
 
+/**
+ * A theme that deliberately has no dark mode — a gallery, a print-first portfolio — says so with
+ * this comment anywhere in the CSS kit resolves. Without it, a missing `.dark` block is a mistake
+ * (the registry's components all carry `dark:` variants), so the check stays strict by default.
+ */
+const LIGHT_ONLY_MARKER = "@ja3dan/tokens light-only";
+
 type ForbiddenClassProblem = { file: string; line: number; className: string; message: string };
 
 type CheckResult = { tokenProblems: TokenProblem[]; forbiddenClasses: ForbiddenClassProblem[] };
@@ -55,11 +62,15 @@ function tailwindCssPath(cwd: string): string {
   return path.join(cwd, config.tailwind.css);
 }
 
-/** Every required token and required shadow, present in both `:root` and `.dark`, after resolving `@import`s. */
+/**
+ * Every required token and required shadow, present in both `:root` and `.dark`, after resolving
+ * `@import`s — or in `:root` only when the theme carries the light-only marker.
+ */
 function tokensCheck(cwd: string): TokenProblem[] {
   const css = resolveImports(cwd, tailwindCssPath(cwd));
   const problems: TokenProblem[] = [];
-  for (const selector of [":root", ".dark"]) {
+  const selectors = css.includes(LIGHT_ONLY_MARKER) ? [":root"] : [":root", ".dark"];
+  for (const selector of selectors) {
     const declared = declaredIn(css, selector);
     const missing = [
       ...requiredTokens.filter((name) => !declared.has(name)),
@@ -117,4 +128,4 @@ async function check(cwd: string): Promise<CheckResult> {
   return { tokenProblems, forbiddenClasses };
 }
 
-export { check, tailwindCssPath, type CheckResult, type ForbiddenClassProblem, type TokenProblem };
+export { check, LIGHT_ONLY_MARKER, tailwindCssPath, tokensCheck, type CheckResult, type ForbiddenClassProblem, type TokenProblem };

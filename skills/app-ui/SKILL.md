@@ -126,6 +126,20 @@ One frame for every signed-in screen. `@ja3dan/app-shell` (sidebar + header + pa
   Cells truncate; a third line never appears. Two-line cells are `StackedCell`.
 - **Fixed column widths** via `columns={["w-56", "", "w-36", …]}` (one `""` takes the
   rest) and a `minWidth` so phones scroll inside the card, never the page.
+- **Size every column to its content, never bigger.** A column is as wide as its longest
+  realistic value plus cell padding, and no wider — a name column spanning half the table while
+  dates and statuses truncate beside it is the failure. Rules:
+  - **Short, fixed-shape values never truncate:** dates, times, money, counts, refs, status pills
+    and the actions column get a width that fits their longest value (`"Sep 17, 2026"` in mono,
+    the longest status label, `w-14` for a ⋯ menu). Measure the longest one; don't guess.
+  - **The flexible `""` column is the one whose content is genuinely long and variable** (a
+    description, an address, a summary) — not the primary name column by default. Names get a
+    fixed width sized to a realistic long name (`w-56`–`w-64`) and truncate beyond it.
+  - **If no column is genuinely long, don't leave spare width to one column:** let the table
+    end at its content (`w-auto` on the table, or a trailing empty `""` column) rather than
+    stretching a name across the card.
+  - Check at the card's widest real width (desktop, sidebar open *and* collapsed): nothing
+    short is cut off, and no column holds more than ~2× its content's width in empty space.
 - **Fixed page length:** `usePaged(rows, 10)`, render `paged.rows`, then
   `<PadRows count={paged.pad} columns={n} />` so a short page is still ten rows tall (padding
   rows are `aria-hidden`). The **`TablePager` footer always renders** — even on one page —

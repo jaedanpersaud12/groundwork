@@ -388,6 +388,9 @@ const KIT_DOCS = {
     check: kitUsage("check"),
     syncStatus: kitUsage("sync status"),
     syncUpdate: kitUsage("sync update"),
+    list: kitUsage("list"),
+    skillsStatus: kitUsage("skills status"),
+    skillsUpdate: kitUsage("skills update"),
   },
 };
 

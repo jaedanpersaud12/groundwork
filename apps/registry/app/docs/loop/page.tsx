@@ -15,6 +15,7 @@ const TOC: TocEntry[] = [
   { id: "folder", label: "The feature folder" },
   { id: "order", label: "In order" },
   { id: "when-needed", label: "When needed" },
+  { id: "any-agent", label: "Without slash commands" },
   { id: "teeth", label: "The rule with teeth" },
 ];
 
@@ -62,6 +63,49 @@ export default function LoopPage() {
               ) : null}
             </Step>
           ))}
+        </Steps>
+      </Section>
+
+      <Section
+        id="any-agent"
+        title="Without slash commands"
+        lead="The commands are Claude Code's way in. The loop itself is files and a branch, so any agent can run it by reading the skills."
+      >
+        <Prose>
+          In a harness with no slash commands the skills are still installed in <Code>.claude/skills/</Code> — they are
+          instructions, not code. Point the agent at the skill for each step and ask it to follow that file:
+        </Prose>
+        <Steps>
+          <Step number={1} title="Open the feature">
+            <Prose>
+              &ldquo;Follow <Code>.claude/skills/feature/SKILL.md</Code>, the start section, for feature 03.&rdquo; It
+              cuts <Code>feat/03-slug</Code> and writes <Code>context/features/03-slug/spec.md</Code>.
+            </Prose>
+          </Step>
+          <Step number={2} title="Decide before building">
+            <Prose>
+              &ldquo;Follow <Code>.claude/skills/architect/SKILL.md</Code> for feature 03.&rdquo; It writes{" "}
+              <Code>plan.md</Code> and waits for your confirmation.
+            </Prose>
+          </Step>
+          <Step number={3} title="Build, logging evidence">
+            <Prose>
+              Build against the plan, writing decisions and how each done-when criterion was checked into{" "}
+              <Code>log.md</Code> as it happens.
+            </Prose>
+          </Step>
+          <Step number={4} title="Review with fresh eyes">
+            <Prose>
+              &ldquo;Follow <Code>.claude/skills/review/SKILL.md</Code>.&rdquo; If the harness can&apos;t start a subagent,
+              start a new session that is given only the spec, plan, diff and rules.
+            </Prose>
+          </Step>
+          <Step number={5} title="Close it, or don't" last>
+            <Prose>
+              &ldquo;Follow the finish section of <Code>.claude/skills/feature/SKILL.md</Code>.&rdquo; It still refuses a
+              criterion with no evidence line.
+            </Prose>
+          </Step>
         </Steps>
       </Section>
 

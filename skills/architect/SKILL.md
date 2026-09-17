@@ -29,7 +29,7 @@ Before saying anything, take stock of what exists:
 
 - The feature's `spec.md`, if there is one — including its "done when" criteria
 - Root `AGENTS.md` and any folder-scoped `AGENTS.md` for the directories you'll touch
-- `context/overview.md` for scope and precedence
+- `context/project-overview.md` for scope and precedence
 - The actual code the feature will sit next to
 - For any signed-in app screen (admin, dashboard, portal): the `app-ui` skill. Its rules
   are decisions already made — don't put them to the developer as questions; surface only a

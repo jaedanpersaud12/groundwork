@@ -1,4 +1,9 @@
-/* Neutral starter theme: greyscale surfaces, near-black primary. Copy it to start a new brand. */
+/*
+ * Neutral starter theme: greyscale surfaces, near-black primary. Copy it to start a new brand.
+ * A copy defines every required token in :root and in .dark. A brand with no dark mode on purpose
+ * drops .dark and adds the light-only marker comment `kit check` names when .dark is missing.
+ * (The marker text itself isn't written here: every project importing this file would inherit it.)
+ */
 
 :root {
   --radius: 0.5rem;

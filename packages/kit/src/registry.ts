@@ -67,15 +67,37 @@ function readTemplate(cwd: string): string {
   return template;
 }
 
-async function getJson<T>(url: string): Promise<T> {
-  let response: Response;
-  try {
-    response = await fetch(url);
-  } catch (error) {
-    throw new Error(`Couldn't reach ${url}: ${(error as Error).message}`);
+/** Backoff between attempts, in ms. Short enough that a real outage still fails inside ~2s. */
+const RETRY_DELAYS = [250, 750, 1500];
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Registry fetches retry network errors and 5xx responses. A first-run `ConnectionRefused` that
+ * succeeds on an identical second run is common enough (cold DNS, a sandbox proxy warming up) that
+ * failing on it sends people debugging `.npmrc` for nothing. A 4xx is a real answer and isn't retried.
+ */
+async function getJson<T>(url: string, delays: number[] = RETRY_DELAYS): Promise<T> {
+  let lastProblem = "";
+  for (let attempt = 0; attempt <= delays.length; attempt++) {
+    if (attempt > 0) await sleep(delays[attempt - 1]);
+    let response: Response;
+    try {
+      response = await fetch(url);
+    } catch (error) {
+      lastProblem = (error as Error).message;
+      continue;
+    }
+    if (response.status >= 500) {
+      lastProblem = `returned ${response.status}`;
+      continue;
+    }
+    if (!response.ok) throw new Error(`${url} returned ${response.status}.`);
+    return (await response.json()) as T;
   }
-  if (!response.ok) throw new Error(`${url} returned ${response.status}.`);
-  return (await response.json()) as T;
+  throw new Error(
+    `Couldn't reach ${url} after ${delays.length + 1} attempts (${lastProblem}). This is usually transient — run the command again.`,
+  );
 }
 
 /**
@@ -114,6 +136,7 @@ const versionUrl = (registry: Registry, name: string, version: string) => `${reg
 export {
   baseOf,
   bySemver,
+  getJson,
   hashItem,
   itemRef,
   loadRegistry,

@@ -90,7 +90,7 @@
       "name": "button",
       "type": "registry:ui",
       "title": "Button",
-      "description": "Base UI button with default, outline, secondary, ghost, destructive and link variants and optical icon padding.",
+      "description": "Base UI button with default, outline, secondary, ghost, destructive and link variants, icon sizes (icon, icon-sm, icon-xs) and optical icon padding.",
       "dependencies": [
         "@base-ui/react",
         "class-variance-authority"
@@ -102,7 +102,7 @@
         }
       ],
       "meta": {
-        "version": "1.0.1",
+        "version": "1.1.0",
         "tier": "primitive",
         "track": "minor"
       }
@@ -157,6 +157,26 @@
       ],
       "meta": {
         "version": "1.0.1",
+        "tier": "primitive",
+        "track": "minor"
+      }
+    },
+    {
+      "name": "native-select",
+      "type": "registry:ui",
+      "title": "Native select",
+      "description": "A native <select> styled exactly as Input \u2014 same height, border, focus ring and invalid state. The phone-friendly choice for picking one value in a form.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/groundwork/ui/native-select.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "meta": {
+        "version": "1.0.0",
         "tier": "primitive",
         "track": "minor"
       }
@@ -282,7 +302,7 @@
         }
       ],
       "meta": {
-        "version": "1.0.2",
+        "version": "1.0.3",
         "tier": "primitive",
         "track": "minor"
       }

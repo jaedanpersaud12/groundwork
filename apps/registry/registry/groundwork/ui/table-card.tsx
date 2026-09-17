@@ -111,6 +111,11 @@ const ROW_HEIGHTS = {
 type Density = keyof typeof ROW_HEIGHTS;
 
 /**
+ * Size each width to its column's longest realistic value, never bigger: dates, money, statuses and
+ * actions must fit without truncating, and the one `""` column should be the genuinely long, variable
+ * text (a description, an address) — not the name column by default, which otherwise stretches across
+ * the card while short columns beside it cut off.
+ *
  * Pass `columns` for widths that never move — use it for anything paginated, sorted
  * or filtered, where auto layout makes columns jump between pages. One width class
  * per column (`["w-56", "", "w-36"]`); leave one `""` to take the remaining space.
@@ -131,7 +136,10 @@ function DataTable({
   containerClassName?: string;
 }) {
   return (
-    <div data-slot="data-table-container" className={cn("scroll-slim overflow-x-auto", containerClassName)}>
+    // `relative` so absolutely positioned descendants (every `sr-only` label in a cell) are contained by
+    // the scroll box. Without it they escape to the page, which then scrolls sideways to the table's
+    // minWidth on a phone even though the table itself scrolls inside the card.
+    <div data-slot="data-table-container" className={cn("scroll-slim relative overflow-x-auto", containerClassName)}>
       <table
         data-slot="data-table"
         style={minWidth ? { minWidth } : undefined}

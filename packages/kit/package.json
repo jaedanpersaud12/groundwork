@@ -1,6 +1,6 @@
 {
   "name": "@ja3dan/kit",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Bootstrap a project on the @ja3dan registry and keep it current: init, lock, status, update with a 3-way merge, check, doctor, and link to a local registry.",
   "license": "MIT",
   "type": "module",

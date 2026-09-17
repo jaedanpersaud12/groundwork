@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { appendFileSync, existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-import { readLock } from "../lockfile";
+import { readLock, writeLock } from "../lockfile";
 import { commit, createProject, install, startRegistry, type FixtureItem, type Project, type Registry } from "../testing/fixture";
 import { lock } from "./lock";
 
@@ -95,6 +95,18 @@ describe("kit lock", () => {
     const before = readFileSync(path.join(project.dir, "kit.lock.json"), "utf8");
     await lock(project.dir, { force: true });
     expect(readFileSync(path.join(project.dir, "kit.lock.json"), "utf8")).toBe(before);
+  });
+
+  test("--force keeps the skills kit init locked, since the registry can't rediscover them", async () => {
+    registry.publish(chip("1.0.0", "export const Chip = 1;"));
+    await install(project, "@ja3dan/chip");
+    const { lock: first } = await lock(project.dir);
+    const skills = { review: { source: "@ja3dan/kit", sourceType: "kit" as const, version: "0.2.1", computedHash: "abc" } };
+    writeLock(project.dir, { ...first, skills });
+
+    const { lock: rebuilt } = await lock(project.dir, { force: true });
+    expect(rebuilt.skills).toEqual(skills);
+    expect(readLock(project.dir)?.skills).toEqual(skills);
   });
 
   test("explains a project with no @ja3dan registry instead of failing on a fetch", async () => {

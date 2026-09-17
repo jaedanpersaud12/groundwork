@@ -54,7 +54,8 @@ async function identify(cwd: string, registry: Registry, item: RegistryItem, fil
  * to, and silently rewriting it would lose that.
  */
 async function lock(cwd: string, { force = false }: { force?: boolean } = {}): Promise<LockResult> {
-  if (readLock(cwd) && !force) {
+  const existing = readLock(cwd);
+  if (existing && !force) {
     throw new Error(`${LOCK_FILE} already exists. Use \`kit sync status\` to compare against it, or \`kit lock --force\` to rebuild it.`);
   }
 
@@ -87,6 +88,9 @@ async function lock(cwd: string, { force = false }: { force?: boolean } = {}): P
         ];
       }),
     ),
+    // Skills aren't registry items, so rebuilding from the registry can't rediscover them. Dropping
+    // them here once meant a project's next `kit init`-era hash comparison had nothing to compare to.
+    ...(existing?.skills ? { skills: existing.skills } : {}),
   };
   writeLock(cwd, result);
   return { lock: result, items };
