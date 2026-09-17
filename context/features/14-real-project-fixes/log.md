@@ -45,3 +45,18 @@
 - **check** `bun run check` exit 0: 83 kit tests, registry:build 25 items.
 - A stale local `public/r/v/table-card@1.0.3.json` (built before the C1 comment, never committed or
   deployed) blocked `registry:build`; deleted and rebuilt.
+
+## Consumer update — 2026-09-17
+- Consumer project took 0.3.0 through the new commands: `kit skills update` (app-ui, architect →
+  0.3.0, all 8 current); `kit lock --force` locked 11 items and kept 8 skills; `kit sync update button`
+  (1.0.1 → 1.1.0) and `table-card` (1.0.2 → 1.0.3), both "replaced (no local edits)"; installed
+  `native-select`; `kit doctor` green after its context docs gained the kickoff sections.
+- **C1 measured** in the consumer's leads table after resizing to content (dark, headless Chrome):
+  at 1440px sidebar open — Name 288px for 227px content (1.27×), Project 160/115, Area (flexible) 296/233,
+  Received 144/145, Status 176/156, actions 56/48; Received then widened to `w-40` since it had no
+  margin. At 1280px the flexible Area column is the one that truncates; with the sidebar collapsed it
+  takes the spare width (2.16×), as the rule intends. Dates and status pills no longer truncate.
+- A7 on a blank app: `shadcn add @ja3dan/native-select` from the deployed registry → eslint clean,
+  tsc clean, `kit check` clean.
+- Published: `@ja3dan/tokens` 0.2.1, `@ja3dan/kit` 0.3.0 (tarball scanned for private names: none;
+  dependencies resolve to tokens 0.2.1, eslint-plugin 0.1.0). Registry redeployed via push to main.
