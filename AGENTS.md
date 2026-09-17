@@ -10,11 +10,11 @@ This file is an index, not a reading list. Read what the task needs.
 | --- | --- | --- |
 | `packages/tokens` | `contract.json` (source of truth), generated `theme.css` + `TOKENS.md`, `base.css`, `themes/*.css` | npm `@ja3dan/tokens` |
 | `packages/eslint-plugin` | `no-raw-colors` rule; allowlist comes from the contract | npm `@ja3dan/eslint-plugin` |
-| `packages/kit` | CLI a consuming project runs against the registry: `init`, `lock`, `sync status`, `sync update`, `link`, `check`, `doctor` | npm `@ja3dan/kit` |
+| `packages/kit` | CLI a consuming project runs against the registry: `init`, `list`, `lock`, `sync status`, `sync update`, `skills status`, `skills update`, `link`, `check`, `doctor` | npm `@ja3dan/kit` |
 | `apps/registry` | Next 16 site for all of groundwork: landing page, docs for the kit (read from `skills/`, `knowledge/`, `context/`, `prompts/` at build time) and the design system; `registry.json` + `registry/groundwork/**` are the component sources; builds `public/r/*.json` | shadcn registry `@ja3dan` + the site, deployed on Vercel |
 | `skills/` | The lifecycle skills kickoff installs into a new project | agent kit |
 | `knowledge/` | Gotchas tagged by stack, installed into projects by kickoff | agent kit |
-| `prompts/` | The three `/kickoff` prompts — interview, architecture, build plan | agent kit |
+| `prompts/` | The three `/kickoff` prompts — interview, architecture, build plan (outputs `kit doctor` checks) | agent kit |
 | `templates/` | Preset-named folders (`next16-insforge`) of files `kit init` copies as-is | agent kit |
 | `context/` | This repo's own overview, standards, build plan and feature folders | — |
 | `.agents/skills/` | The skills active here: `skills/` symlinked, plus groundwork-only and vendored ones | — |

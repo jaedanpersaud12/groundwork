@@ -91,7 +91,7 @@ export default function SetupPage() {
 
           <Step number={2} title="Run kit init">
             <Prose>
-              Copies the house style into <Code>context/</Code>, installs the lifecycle skills, runs shadcn init against
+              Copies the house style into <Code>context/</Code>, installs the skills, runs shadcn init against
               the registry, removes the leftover CSS that would override the theme, wires the lint rule, adds a check
               script, and locks what it installed.
             </Prose>

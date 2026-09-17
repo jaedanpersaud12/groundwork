@@ -298,7 +298,7 @@ const KIT_INIT = {
   command: `bunx @ja3dan/kit init ${PRESET}`,
   writes: [
     { name: "context/", note: `${templateFiles(PRESET).length} files of house style from the preset` },
-    { name: ".claude/skills/", note: `the ${skillNames().length} lifecycle skills` },
+    { name: ".claude/skills/", note: `the ${skillNames().length} skills` },
     { name: "components.json", note: "the design system, through shadcn init" },
     { name: kitLockFile(), note: "what was installed, hashed" },
   ],
@@ -342,7 +342,7 @@ const CONTEXT_FILES = editorOrder([
 ]) as { name: string; step: 1 | 2; note?: string }[];
 
 const PROJECT_TREE: ProjectLine[] = [
-  { name: ".claude/skills/", depth: 0, step: 1, note: `${skillNames().length} lifecycle skills` },
+  { name: ".claude/skills/", depth: 0, step: 1, note: `${skillNames().length} skills` },
   { name: "app/globals.css", depth: 0, step: 1, note: "imports the contract and a theme" },
   { name: "context/", depth: 0 },
   { name: "features/", depth: 1 },

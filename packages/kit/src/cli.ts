@@ -14,7 +14,7 @@ import { status, type ItemStatus } from "./commands/status";
 import { MajorUpdateNeedsReview, update } from "./commands/update";
 import { LOCK_FILE } from "./lockfile";
 
-const USAGE = `kit ${pkg.version} — keep installed @ja3dan registry items current
+const USAGE = `kit ${pkg.version} — set a project up on groundwork, and keep its components and skills current
 
 Usage:
   kit lock [--force]        write kit.lock.json for the items already installed
@@ -29,7 +29,7 @@ Usage:
   kit skills update [name…]  install this kit's skills over outdated, missing and new ones, and lock them
     [--force]               also overwrite skills edited locally
   kit check                 scan locked files for raw colours and a theme missing required tokens
-  kit doctor                required files, and the same outdated/missing info as sync status
+  kit doctor                required files, kickoff docs, git-ignored kit files, and outdated/missing items
   kit init <preset>         copy a template, install the skills, shadcn init, and lock both
     [--url <url>]           registry to init against (default ${DEFAULT_REGISTRY})
 

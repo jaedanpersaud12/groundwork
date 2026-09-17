@@ -50,7 +50,7 @@
     },
     "packages/kit": {
       "name": "@ja3dan/kit",
-      "version": "0.3.0",
+      "version": "0.3.1",
       "bin": {
         "kit": "./dist/kit.js",
       },
@@ -68,7 +68,7 @@
     },
     "packages/tokens": {
       "name": "@ja3dan/tokens",
-      "version": "0.2.1",
+      "version": "0.2.2",
     },
   },
   "trustedDependencies": [
