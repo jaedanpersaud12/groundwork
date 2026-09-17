@@ -1,7 +1,7 @@
 # Progress
 
 **Stage:** 14 — Tokens: three named radii and nav tints
-**Last completed:** 13 — App UI doctrine, from flvs
+**Last completed:** 13 — App UI doctrine
 **Active feature:** none
 **Next:** 14 — named radii and nav tint tokens (12's `/docs` pass still open)
 **Blocker:** none
@@ -30,7 +30,7 @@ version of it that grew to 450 lines is the reason the feature folders exist.
 - [x] **11** Show, don't tell — the landing page — *narrowed mid-build to `/` only; `/docs` is a
       separate pass, with its two findings held in the feature's spec*
 - [ ] **12** Docs refresh, starting with setup
-- [x] **13** App UI doctrine, from flvs — *published in `@ja3dan/kit` 0.2.0*
+- [x] **13** App UI doctrine — *published in `@ja3dan/kit` 0.2.0*
 - [ ] **14** Tokens: three named radii and nav tints
 - [ ] **15** Dropdown, menu, dialog, alert dialog
 - [ ] **16** App shell

@@ -5,7 +5,7 @@ description: How a groundwork app's signed-in screens look and behave — the si
 
 The token contract fixes which colour is correct. This fixes what an app screen *is*: its
 frame, its furniture, how it moves and how it waits. The reference is a production CMS
-(flvs) where every rule below replaced something that looked fine in isolation and wrong
+where every rule below replaced something that looked fine in isolation and wrong
 across forty screens.
 
 Two failures this exists to stop. **Drift** — three stat tiles, two panel headers and a

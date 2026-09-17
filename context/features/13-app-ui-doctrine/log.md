@@ -1,11 +1,11 @@
-# Log — 13 App UI doctrine, from flvs
+# Log — 13 App UI doctrine
 
 ## 2026-09-17
-- Developer: update groundwork so skill files remember flvs's design — icon row actions in a
+- Developer: update groundwork so skill files remember the reference CMS's design — icon row actions in a
   specific dropdown, sidebar/header styles/animations/spacing, instant page transitions,
   loading skeletons, fixed-width tables and pagination, improved analytics cards, modals for
-  CRUD, clean modal design, "and many more". flvs doesn't use groundwork; it inspires it.
-- Surveyed flvs: `components/admin/{AdminShell,AdminSidebar,nav,ui,skeleton,bones,filters,
+  CRUD, clean modal design, "and many more". That project doesn't use groundwork; it inspires it.
+- Surveyed the reference CMS: `components/admin/{AdminShell,AdminSidebar,nav,ui,skeleton,bones,filters,
   Segmented,TabbedPanel}`, `components/ui/{sidebar,dialog,alert-dialog,data-table,
   table-pagination}`, `components/interior/{dropdown,tabs,loading-button}`, products table,
   ambassador form dialog, dashboard, analytics metric strip, admin error/loading, globals.css.
@@ -20,7 +20,7 @@
   `app-ui`. The failure itself confirmed `readSkills()` picks up the new folder.
 
 ## Evidence — done when
-- **Skill sections + values traceable to flvs** — 33 values grepped in flvs `src/` and
+- **Skill sections + values traceable to the reference CMS** — 33 values grepped in the reference CMS `src/` and
   `app/globals.css`, each found ≥1 time: sidebar 16rem/18rem/3rem and "b" shortcut;
   `duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]`; `tracking-[0.16em]`; nav row
   `h-9 gap-3 rounded-control px-3 text-[13.5px]`; `strokeWidth={active ? 2 : 1.5}`; header
@@ -52,3 +52,13 @@
   `workspace:*` to `@ja3dan/tokens` 0.1.0 and `@ja3dan/eslint-plugin` 0.1.0 (both on npm).
 - `/review` not run for 13 — developer asked to publish directly.
 - Merged to `main` locally, pushed, published.
+- Push rejected: `origin/main` had the privacy scrub (PR #15) that removes names of the owner's
+  other projects from everything shipped. The just-published kit 0.2.0's `app-ui` skill named
+  the reference project. Merged origin/main, scrubbed every mention added by 13 (skill,
+  AGENTS.md, build plan, progress, this folder), `git grep` for the names → none.
+- The scrub bumped `@ja3dan/tokens` to 0.2.0 but it was never published; kit's `workspace:*`
+  dependency would resolve to it, so tokens 0.2.0 is published first. Diff against npm 0.1.0:
+  theme renamed (no private names), scaled letter-spacing in `base.css`, `blue.css`,
+  `validate.js` — all already on main.
+- Kit bumped to 0.2.1; `bun run check` exit 0 (62 kit tests, registry:build 24 items).
+  0.2.0 deprecated in favour of 0.2.1.

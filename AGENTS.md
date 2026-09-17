@@ -56,7 +56,7 @@ The loop, in the order it runs:
 - `/remember save` · `/remember restore` — across sessions, via the feature's `handoff.md`
 - `/recover` — when a problem survives one corrective attempt. Stop prompting, diagnose.
 - `/harvest` — promote a hard-won gotcha into `knowledge/`
-- `app-ui` — how signed-in app screens look and behave (from the flvs CMS). Read before building or reviewing one; `/architect`, `/review` and `/feature start` reference it
+- `app-ui` — how signed-in app screens look and behave (from a production CMS). Read before building or reviewing one; `/architect`, `/review` and `/feature start` reference it
 
 Groundwork-specific: `registry-item` (add or change a registry item), `token-change` (touch the contract or a theme). Design: the vendored `better-*` family, `frontend-design`, `interface-review`, `variant`.
 

@@ -1,10 +1,10 @@
-# Plan — 13 App UI doctrine, from flvs
+# Plan — 13 App UI doctrine
 
 ## Decisions (confirmed by developer 2026-09-17)
 - **Doctrine first, components after** — 13 is the skill and its wiring; 14–18 build items.
-- **Nav tints become contract tokens** (`nav-1…8`, stage 14), not raw hex as in flvs.
+- **Nav tints become contract tokens** (`nav-1…8`, stage 14), not raw hex as in the reference CMS.
 - **Hand-built skeleton kit** reusing real furniture, not boneyard-js.
-- **Adopt flvs's three named radii** (chip/control/surface), stage 14.
+- **Adopt the reference CMS's three named radii** (chip/control/surface), stage 14.
 
 ## Decisions (made while planning)
 - **One skill, not several.** Rules reference each other (the skeleton reuses the table card;

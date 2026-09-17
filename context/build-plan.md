@@ -181,9 +181,9 @@ kit's CLI and init.ts; no docs page calls `kit init` unbuilt; the shared docs sh
 no overflow from 320 to 1920px; checks pass.
 
 
-## 13 — App UI doctrine, from flvs
+## 13 — App UI doctrine
 
-The registry gives a project parts; nothing tells it what an app screen *is*. flvs's CMS
+The registry gives a project parts; nothing tells it what an app screen *is*. A production CMS
 settled that the hard way — sidebar shell, instant navigation into skeletons, fixed-height
 paged tables, icon row menus, CRUD in modals, stat strips — and every new project re-decides
 it worse. This writes the rules down where every project's agent reads them: a shippable
@@ -192,7 +192,7 @@ from the template's `ui-rules.md`.
 
 **Done when:** `skills/app-ui/SKILL.md` covers shell, page header, navigation/loading,
 radii/depth, tables, row actions, modals, loading buttons, stats/panels, value pickers,
-motion and copy, each with concrete values traceable to flvs source; architect, review,
+motion and copy, each with concrete values traceable to the reference CMS's source; architect, review,
 feature and imprint reference it; `kit init` into a throwaway project installs it; the site
 lists it; `bun run check` passes.
 
