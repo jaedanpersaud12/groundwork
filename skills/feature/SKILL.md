@@ -63,6 +63,13 @@ Seed it from the build plan's line for `NN`, then work through the criteria with
 developer. **Write criteria that can be checked by someone else.** "Filtering works" can't
 be. "Selecting a status narrows the table and the count updates" can.
 
+**App screens get the `app-ui` criteria.** If the feature builds a signed-in screen, the
+spec's "done when" includes, in checkable form: the route has a `loading.tsx` skeleton that
+matches the page's layout; tables are fixed-height (declared density, fixed columns, ten
+rows padded, pager always shown); row actions are an icon menu; create/edit happen in a
+modal and deletes confirm in an alert dialog; no element changes size when its state or
+data changes. Drop any that don't apply to this screen, and say which.
+
 **5. Mark it in progress** in `context/progress.md` and stop. Say which file to look at
 and suggest `/architect`.
 

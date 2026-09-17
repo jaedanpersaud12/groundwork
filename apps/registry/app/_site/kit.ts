@@ -82,6 +82,7 @@ const OUT_OF_BAND: (Stage & { skill: string })[] = [
   { ...stage("/recover", "When a fix doesn't take", "recover"), skill: "recover" },
   { ...stage("/harvest", "So it's only paid for once", "harvest"), skill: "harvest", writes: ["knowledge/*.md"] },
   { ...stage("/imprint", "Keep composition consistent", "imprint"), skill: "imprint", writes: ["ui-registry.md"] },
+  { ...stage("app-ui", "How app screens look and behave", "app-ui"), skill: "app-ui", writes: [] },
 ];
 
 const SKILLS = skillNames();

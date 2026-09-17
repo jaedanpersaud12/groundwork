@@ -45,6 +45,10 @@ Which component or section should I capture patterns from?
 already fixes every token choice; recording that `button.tsx` uses `bg-primary` would only
 restate `TOKENS.md`. Skip it and say so rather than writing a no-op entry.
 
+**A composition the `app-ui` skill already specifies** (the shell, a page header, a table
+card with pager and row menu, a CRUD dialog, a stat strip) — nothing to capture unless this
+project departed from it on purpose. Record the departure and its reason, not the rule.
+
 **A composition of registry primitives** (a page header, a card grid, an empty-state
 layout built from `@ja3dan/button`, `@ja3dan/empty-state`, and this project's own spacing)
 — capture the arrangement. See Step 2a.

@@ -26,6 +26,7 @@ Everything lands in `context/features/NN-slug/`, beside the code it describes.
 | [`/remember`](remember/SKILL.md) | A feature spans sessions — `save` at the end, `restore` at the start |
 | [`/recover`](recover/SKILL.md) | A problem survives one fix. Diagnose which kind of failure it is before prompting again |
 | [`/harvest`](harvest/SKILL.md) | A tool behaved differently than documented. Writes it to [`knowledge/`](../knowledge) |
+| [`app-ui`](app-ui/SKILL.md) | Building or reviewing a signed-in app screen — the shell, skeletons, tables, row menus, modals, stat strips. `/architect`, `/review` and `/feature start` point here |
 
 ## The rule with teeth
 

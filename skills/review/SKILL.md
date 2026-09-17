@@ -52,11 +52,17 @@ but breaks a rule the project depends on.
 
 - Architecture boundaries — the right code in the right place
 - Design system — contract tokens only, no raw colours, no hardcoded values
+- App screens — every rule in the `app-ui` skill: shell and page header, `loading.tsx` per
+  dynamic route, fixed-height paged tables, icon row-action menus, CRUD in modals,
+  destructive confirms in an alert dialog, stat strips with a delta or hint. A departure
+  without a reason in `plan.md` is a finding. Give the subagent the skill's path
 - Project invariants — the ones in root and folder-scoped `AGENTS.md`, individually
 - Existing patterns — a new pattern introduced where one already existed
 
 **Layer 3 — Is it production ready?** Error handling, empty and loading states, console
-errors, and anything that would obviously break for a real user.
+errors, and anything that would obviously break for a real user. On app screens: does the
+route show a skeleton on navigation, does anything change size or position when data or
+state changes (rows, buttons, tiles, pages), and does every destructive action confirm?
 
 ## Step 4 — Write review.md
 
