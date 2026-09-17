@@ -41,8 +41,8 @@ session (from its logs and knowledge notes).
 | B7 | shadcn overlays use `bg-black/*`; no contract token fits | Reproduced | **Later** — `scrim` token added to stage 15's scope |
 | B8 | shadcn's `use-mobile` fails `react-hooks/set-state-in-effect` | Reproduced | **Later** — stage 17 ships the sidebar with a `useSyncExternalStore` hook; knowledge note now |
 | B9 | Gotchas learned building the consumer (React 19 form reset and native selects, Base UI `nativeButton` link role, `_folder` isn't a route, InsForge `db query` can't switch roles, npm staged publish 409, `kit init` + create-next-app demo page) | Each verified in its session | **Knowledge** — harvest into `knowledge/` |
-| B10 | Loading skeleton 1px taller than the loaded table | brian2 only | **Later** — stage 19's done-when already measures shift |
-| C1 | Table columns wider than their content: the name column took the spare width while dates and status pills truncated beside it (developer, screenshot of brian2's inbox) | Reproduced: `columns={["", "w-44", "w-40", "w-28", "w-36", "w-14"]}` | **Fix** — a column-sizing rule in `app-ui` §5 and on `DataTable`'s `columns` docs; brian2's tables resized |
+| B10 | Loading skeleton 1px taller than the loaded table | one consumer only | **Later** — stage 19's done-when already measures shift |
+| C1 | Table columns wider than their content: the name column took the spare width while dates and status pills truncated beside it (developer, screenshot of the consumer's inbox) | Reproduced: `columns={["", "w-44", "w-40", "w-28", "w-36", "w-14"]}` | **Fix** — a column-sizing rule in `app-ui` §5 and on `DataTable`'s `columns` docs; the consumer's tables resized |
 
 ## Done when
 
@@ -73,8 +73,8 @@ session (from its logs and knowledge notes).
 - [ ] **B4** no skill, prompt or template refers to `overview.md` except as `project-overview.md`
 - [ ] **B5 B6** `table-card` and `button` published with bumped versions and passing `registry:build`
 - [ ] **B9** knowledge files updated with verified versions and dates
-- [ ] **C1** `app-ui` §5 and `table-card`'s `columns` comment state the sizing rule; brian2's inbox shows full dates and statuses with no column holding more than ~2× its content
-- [ ] `bun run check` passes; kit (and tokens, if touched) published; brian2 updated through
+- [ ] **C1** `app-ui` §5 and `table-card`'s `columns` comment state the sizing rule; the consumer's inbox shows full dates and statuses with no column holding more than ~2× its content
+- [ ] `bun run check` passes; kit (and tokens, if touched) published; the consumer project updated through
       `kit skills update` and `kit sync update`
 
 ## Out of scope

@@ -206,7 +206,7 @@ Triage of every reported issue, with the verdict, is in the feature's spec.
 
 **Done when:** every issue triaged "fix" in `context/features/14-real-project-fixes/spec.md`
 has evidence in its log; `bun run check` passes; `@ja3dan/kit` (and any touched package)
-is published; the brian2 consumer takes the update through the new commands.
+is published; the consumer project takes the update through the new commands.
 
 ## 15 — Tokens: three named radii and nav tints
 

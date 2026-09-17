@@ -2,7 +2,7 @@
 
 ## 2026-09-17
 - Developer: "mark any issues and solve them with the next groundwork update", plus a report from
-  another agent's project, plus "fix: Updating skills" and, mid-build, a screenshot of brian2's inbox
+  another agent's project, plus "fix: Updating skills" and, mid-build, a screenshot of the consumer's inbox
   with the name column far too wide (C1).
 - Triaged every issue against source (spec table). Plan decisions in plan.md; developer's instruction
   taken as the go-ahead.
@@ -14,7 +14,7 @@
   light-only" packages/tokens/themes/*.css` → 0 in every theme (so importers don't inherit it).
 - **A2** `src/commands/doctor.test.ts` (4 kickoff tests): pending before any feature folder; missing
   file fails once `context/features/01-homepage/` exists, naming `01-interview`; missing sections listed;
-  complete outputs (numbered headings included) pass. Real project: `kit doctor` in brian2 reports
+  complete outputs (numbered headings included) pass. Real project: `kit doctor` in the consumer project reports
   missing `project-overview.md` and missing architecture/build-plan sections.
 - **A3** `src/registry.retry.test.ts` (3 tests): 503 twice then success → 3 calls; 404 → 1 call, no
   retry; refused connection → "after 3 attempts … usually transient". `/docs` setup note for the `bunx`
@@ -26,22 +26,22 @@
   `primitives.tsx`; `registry:build` versioned it; `bun run check` lint passes on it. Install into a blank
   app: see Publish below.
 - **A8** `src/commands/list.test.ts` (2 tests): inside a project marks locked items; outside a project
-  against `--url`. Real run: `kit list` in brian2 prints the registry with tier/latest/installed.
+  against `--url`. Real run: `kit list` in the consumer project prints the registry with tier/latest/installed.
 - **A9** `doctor.test.ts`: no rule → pass; bare `.claude` committed → fails naming
-  `.claude/skills/review/SKILL.md` and `git check-ignore -v`, not `kit.lock.json`. brian2: "✓ kit's
+  `.claude/skills/review/SKILL.md` and `git check-ignore -v`, not `kit.lock.json`. consumer project: "✓ kit's
   files aren't git-ignored".
 - **A10** `/docs/loop` "Without slash commands" section (5 steps) and `skills/README.md` section.
 - **B1** `lock.test.ts`: `--force keeps the skills kit init locked` passes.
 - **B2** `src/commands/skills.test.ts` (4 tests): status sorts outdated/edited/missing/new/retired;
   update installs outdated+missing+new, skips edited, re-locks; `--force` + names; refuses without lock
-  or unknown name. Real run in brian2: `kit skills status` → app-ui and architect "update available".
+  or unknown name. Real run in the consumer project: `kit skills status` → app-ui and architect "update available".
 - **B3** `src/commands/init.test.ts`: empty dir → throws "create-next-app", no `context/` or
   `.claude/` written.
 - **B4** `grep -rn "overview.md" skills prompts templates | grep -v project-overview.md` → nothing.
 - **B5 B6** `table-card` 1.0.3 (`relative` container + sizing comment), `button` 1.1.0 (`icon-sm`,
   `icon-xs`, link guidance); `registry:build` "Versioned 25 items".
 - **B9** `knowledge/{nextjs-app-router,shadcn-registry,bun}.md` appended, new `insforge.md`, README table.
-- **C1** `app-ui` §5 column-sizing rule; `DataTable` `columns` comment. brian2 resize: see its log.
+- **C1** `app-ui` §5 column-sizing rule; `DataTable` `columns` comment. Consumer resize: see its log.
 - **check** `bun run check` exit 0: 83 kit tests, registry:build 25 items.
 - A stale local `public/r/v/table-card@1.0.3.json` (built before the C1 comment, never committed or
   deployed) blocked `registry:build`; deleted and rebuilt.

@@ -1,8 +1,8 @@
 # Progress
 
-**Stage:** 14 — Fixes from real projects
-**Last completed:** 13 — App UI doctrine
-**Active feature:** 14 — `feat/14-real-project-fixes`
+**Stage:** 15 — Tokens: three named radii, nav tints and scrim
+**Last completed:** 14 — Fixes from real projects
+**Active feature:** none
 **Next:** 15 — named radii, nav tints and scrim tokens
 **Blocker:** none
 
@@ -31,7 +31,7 @@ version of it that grew to 450 lines is the reason the feature folders exist.
       separate pass, with its two findings held in the feature's spec*
 - [ ] **12** Docs refresh, starting with setup
 - [x] **13** App UI doctrine — *published in `@ja3dan/kit` 0.2.0*
-- [ ] **14** Fixes from real projects
+- [x] **14** Fixes from real projects — *kit 0.3.0, tokens 0.2.1*
 - [ ] **15** Tokens: three named radii and nav tints
 - [ ] **16** Dropdown, menu, dialog, alert dialog
 - [ ] **17** App shell
