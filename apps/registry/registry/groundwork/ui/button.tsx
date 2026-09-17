@@ -21,6 +21,9 @@ const buttonVariants = cva(
         sm: "px-3 py-2 text-xs has-data-[icon=inline-end]:pe-2.5 has-data-[icon=inline-start]:ps-2.5",
         lg: "px-6 py-3 has-data-[icon=inline-end]:pe-5.5 has-data-[icon=inline-start]:ps-5.5",
         icon: "size-9",
+        /** Row actions and dialog close buttons — the sizes shadcn's own dialog, sheet and sidebar reach for. */
+        "icon-sm": "size-8",
+        "icon-xs": "size-6 rounded-sm [&_svg:not([class*='size-'])]:size-3.5",
       },
     },
     defaultVariants: {
@@ -32,7 +35,12 @@ const buttonVariants = cva(
 
 /**
  * Mark a leading or trailing icon with `data-icon="inline-start"` / `"inline-end"`
- * for optical padding. When rendering a link, pass `nativeButton={false}` with `render`.
+ * for optical padding.
+ *
+ * For a link that looks like a button, put `buttonVariants()` on the link itself
+ * (`<Link className={buttonVariants()}>`). Rendering a link through this component with
+ * `nativeButton={false}` makes Base UI add `role="button"`, so screen readers announce it as a
+ * button and it drops out of the links list.
  */
 function Button({
   className,

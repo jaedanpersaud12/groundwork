@@ -88,6 +88,13 @@ async function init(cwd: string, preset: string, { url = DEFAULT_REGISTRY }: { u
   if (readLock(cwd)) {
     throw new Error(`${LOCK_FILE} already exists in ${cwd}. kit init is for a project that hasn't been set up yet.`);
   }
+  // Checked before writing anything: without an app, shadcn init fails later with "No readable
+  // components.json", which reads as a registry problem rather than "there's no project here".
+  if (!existsSync(path.join(cwd, "package.json"))) {
+    throw new Error(
+      `No package.json in ${cwd}. kit init sets up an existing Next.js app — create one first: \`bunx create-next-app@latest <name> --ts --tailwind --eslint --app --use-bun --yes\`, then run kit init inside it.`,
+    );
+  }
 
   let template: ReturnType<typeof readTemplate>;
   try {

@@ -9,6 +9,7 @@ import { Button } from "@/registry/groundwork/ui/button";
 import { Calendar } from "@/registry/groundwork/ui/calendar";
 import { Checkbox } from "@/registry/groundwork/ui/checkbox";
 import { Input } from "@/registry/groundwork/ui/input";
+import { NativeSelect, NativeSelectOption } from "@/registry/groundwork/ui/native-select";
 import { Label } from "@/registry/groundwork/ui/label";
 import {
   Popover,
@@ -68,6 +69,26 @@ const nodes: Record<string, React.ReactNode> = {
       <Input placeholder="Frontend Engineer" />
       <Input aria-invalid defaultValue="not-a-url" />
       <Input disabled placeholder="Disabled" />
+    </div>
+  ),
+  "native-select": (
+    <div className="grid w-full max-w-sm gap-3">
+      <NativeSelect defaultValue="">
+        <NativeSelectOption value="" disabled>
+          Choose a project type
+        </NativeSelectOption>
+        <NativeSelectOption value="kitchen">Kitchen</NativeSelectOption>
+        <NativeSelectOption value="bathroom">Bathroom</NativeSelectOption>
+        <NativeSelectOption value="full-home">Full home</NativeSelectOption>
+      </NativeSelect>
+      <NativeSelect aria-invalid defaultValue="">
+        <NativeSelectOption value="" disabled>
+          Required
+        </NativeSelectOption>
+      </NativeSelect>
+      <NativeSelect disabled defaultValue="a">
+        <NativeSelectOption value="a">Disabled</NativeSelectOption>
+      </NativeSelect>
     </div>
   ),
   textarea: <Textarea className="max-w-sm" placeholder="A short summary of your experience" />,

@@ -196,17 +196,30 @@ motion and copy, each with concrete values traceable to the reference CMS's sour
 feature and imprint reference it; `kit init` into a throwaway project installs it; the site
 lists it; `bun run check` passes.
 
-## 14 — Tokens: three named radii and nav tints
+## 14 — Fixes from real projects
+
+Two projects built on the kit this week (one by a different agent, in a sandboxed non-Claude
+harness) hit the same class of problem: the kit silently doing the wrong thing at an edge the
+happy path never reaches. This fixes the ones that are kit bugs, closes the registry gaps both
+projects hand-rolled around, and writes the environmental traps into docs and knowledge.
+Triage of every reported issue, with the verdict, is in the feature's spec.
+
+**Done when:** every issue triaged "fix" in `context/features/14-real-project-fixes/spec.md`
+has evidence in its log; `bun run check` passes; `@ja3dan/kit` (and any touched package)
+is published; the brian2 consumer takes the update through the new commands.
+
+## 15 — Tokens: three named radii and nav tints
 
 `rounded-chip` 4px / `rounded-control` 6px / `rounded-surface` 10px with the stock
-`rounded-xs…4xl` folded onto them, and optional `nav-1…8` tint tokens (light + dark) for the
-sidebar. Existing registry items move onto the named radii (version bumps).
+`rounded-xs…4xl` folded onto them, optional `nav-1…8` tint tokens (light + dark) for the
+sidebar, and a `scrim` token for dialog and sheet overlays (shadcn's `bg-black/*` has no contract
+equivalent — a consumer had to improvise `bg-background/60`). Existing registry items move onto the named radii (version bumps).
 
 **Done when:** `contract.json` declares both; `bun run tokens` generates them and validates
 every theme; TOKENS.md documents what each radius sits on; every registry item uses the
 named radii; `registry:build` passes with bumped versions.
 
-## 15 — Dropdown, menu, dialog, alert dialog
+## 16 — Dropdown, menu, dialog, alert dialog
 
 `@ja3dan/dropdown` (`Dropdown` listbox + `DropdownMenu` actions with icons, destructive and
 separated items; portalled, fixed, flipping, travelling highlight) and `@ja3dan/dialog` /
@@ -217,17 +230,18 @@ The data-table block's row actions move to the menu and its edits to a dialog.
 (arrows, Home/End, Enter, Escape, typeahead where the source has it) and focus return
 verified in a browser; menu isn't clipped inside a `TableCard`; examples on the docs page.
 
-## 16 — App shell
+## 17 — App shell
 
 `@ja3dan/app-shell`: sidebar (icon rail collapse, cookie, ⌘B with `data-instant`, per-row
 tints, grouped nav from data with permission trimming), sticky header, sticky `PageHeader`,
-`Preamble`, and an error boundary pattern.
+`Preamble`, and an error boundary pattern. Ships its own `use-mobile` on `useSyncExternalStore`
+(shadcn's fails `react-hooks/set-state-in-effect`) and uses the `scrim` token from 15 for the mobile sheet.
 
 **Done when:** a throwaway app using the block matches `app-ui` §1–3 values; collapse
 animates as one piece and the shortcut toggles instantly; mobile sheet works; no layout
 shift between short and long pages.
 
-## 17 — Figures and controls
+## 18 — Figures and controls
 
 `@ja3dan/stats` (`StatStrip`, `Stat`, `Delta`, `Panel`, `PanelHeader`, `BarList`,
 `toBars`, `TabbedPanel`), `@ja3dan/segmented`, `@ja3dan/tabs`, `@ja3dan/loading-button`.
@@ -236,7 +250,7 @@ shift between short and long pages.
 button never changes width across its four states; tabs and segmented are keyboard-operable
 with correct roles; examples on the docs page.
 
-## 18 — Skeletons and fixed-height tables
+## 19 — Skeletons and fixed-height tables
 
 `@ja3dan/skeleton` (Bar, Block, LoadingScreen, PageHeader/StatStrip/Panel/Table/Toolbar/
 CardGrid skeletons reusing the real containers) and `@ja3dan/table-pager` (`usePaged`,

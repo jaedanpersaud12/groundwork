@@ -3,11 +3,13 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 
 import pkg from "../package.json" with { type: "json" };
-import { check } from "./commands/check";
+import { check, LIGHT_ONLY_MARKER } from "./commands/check";
 import { doctor, doctorFailed } from "./commands/doctor";
 import { DEFAULT_REGISTRY, init } from "./commands/init";
 import { link, type LinkResult, unlink } from "./commands/link";
+import { list } from "./commands/list";
 import { lock, type LockedItem } from "./commands/lock";
+import { projectOwnSkills, skillsStatus, skillsUpdate, type SkillState } from "./commands/skills";
 import { status, type ItemStatus } from "./commands/status";
 import { MajorUpdateNeedsReview, update } from "./commands/update";
 import { LOCK_FILE } from "./lockfile";
@@ -22,6 +24,10 @@ Usage:
     [--accept-major]        merge a major update after reading its migration notes
   kit link [--url <url>]    point @ja3dan at a local registry (default http://localhost:3100)
     [--off]                 restore the registry URL from the committed components.json
+  kit list [--url <url>]    every item the registry can install, and which are installed here
+  kit skills status         the project's skills against this kit's: current, outdated, edited, missing, new
+  kit skills update [name…]  install this kit's skills over outdated, missing and new ones, and lock them
+    [--force]               also overwrite skills edited locally
   kit check                 scan locked files for raw colours and a theme missing required tokens
   kit doctor                required files, and the same outdated/missing info as sync status
   kit init <preset>         copy a template, install the skills, shadcn init, and lock both
@@ -147,6 +153,11 @@ async function runCheck(cwd: string): Promise<number> {
   for (const problem of tokenProblems) {
     process.stdout.write(`✗ ${problem.selector} is missing: ${problem.missing.join(", ")}\n`);
   }
+  if (tokenProblems.some((problem) => problem.selector === ".dark")) {
+    process.stdout.write(
+      `  A theme needs a .dark block unless it has no dark mode on purpose. If so, add the comment /* ${LIGHT_ONLY_MARKER} */ to the theme file.\n`,
+    );
+  }
   for (const problem of forbiddenClasses) {
     process.stdout.write(`✗ ${problem.file}:${problem.line} ${problem.message}\n`);
   }
@@ -163,11 +174,57 @@ async function runDoctor(cwd: string): Promise<number> {
       ? result.kickoffChecks.map((entry) => `${entry.ok ? "✓" : "✗"} ${entry.ok ? entry.label : entry.detail}\n`).join("")
       : "○ kickoff-installed files (skills/, context/, hooks) — not checked yet, lands with 06\n",
   );
+  for (const entry of result.kickoffOutputs) {
+    process.stdout.write(`${entry.pending ? "○" : entry.ok ? "✓" : "✗"} ${entry.ok && !entry.pending ? entry.label : entry.detail}\n`);
+  }
   if (result.items) {
     const rows = [["item", "installed", "latest", "status"], ...result.items.items.map((item) => [item.name, item.installed, item.latest, describe(item)])];
     process.stdout.write(`\n${table(rows)}\n`);
   }
   return doctorFailed(result) ? 1 : 0;
+}
+
+async function runList(cwd: string, url: string | undefined): Promise<number> {
+  const items = await list(cwd, { url: url ?? "" });
+  const rows = [
+    ["item", "tier", "latest", "installed", "description"],
+    ...items.map((item) => [item.name, item.tier, item.version, item.installed ?? "—", item.description.length > 72 ? `${item.description.slice(0, 71)}…` : item.description]),
+  ];
+  process.stdout.write(`${table(rows)}\n\n${items.length} items. Install one with \`bunx shadcn@latest add @ja3dan/<item>\`.\n`);
+  return 0;
+}
+
+const SKILL_LABEL: Record<SkillState, string> = {
+  current: "current",
+  outdated: "update available",
+  edited: "edited locally — `--force` to overwrite",
+  missing: "missing — update restores it",
+  new: "new in this kit — update installs it",
+  retired: "no longer shipped by this kit (left in place)",
+};
+
+async function runSkills(cwd: string, sub: string | undefined, names: string[], force: boolean): Promise<number> {
+  if (sub === "status") {
+    const statuses = skillsStatus(cwd);
+    const rows = [["skill", "locked", "status"], ...statuses.map((skill) => [skill.name, skill.locked ?? "—", SKILL_LABEL[skill.state]])];
+    process.stdout.write(`${table(rows)}\n`);
+    const own = projectOwnSkills(cwd);
+    if (own.length) process.stdout.write(`\nProject's own skills (not managed by kit): ${own.join(", ")}.\n`);
+    const pending = statuses.filter((skill) => ["outdated", "missing", "new"].includes(skill.state));
+    if (pending.length) process.stdout.write(`\n${pending.length} to install. \`kit skills update\` applies them.\n`);
+    return 0;
+  }
+  if (sub === "update") {
+    const { updated, skippedEdited } = skillsUpdate(cwd, { names, force });
+    process.stdout.write(updated.length ? `Updated ${updated.join(", ")} to kit ${pkg.version}.\n` : "Skills already current.\n");
+    if (skippedEdited.length) {
+      process.stdout.write(`Left ${skippedEdited.join(", ")} alone: edited locally. Review, then \`kit skills update ${skippedEdited[0]} --force\` to take this kit's version.\n`);
+    }
+    process.stdout.write(`Locked in ${LOCK_FILE}.\n`);
+    return 0;
+  }
+  process.stderr.write("kit: `kit skills status` or `kit skills update [name…] [--force]`.\n");
+  return 1;
 }
 
 async function runInit(cwd: string, preset: string | undefined, url: string | undefined): Promise<number> {
@@ -215,6 +272,8 @@ async function main(argv: string[]): Promise<number> {
   if (positionals[0] === "sync" && positionals[1] === "update") return runUpdate(cwd, positionals[2], values.to, values["accept-major"] ?? false);
   if (command === "link") return runLink(cwd, values.off ?? false, values.url);
   if (command === "check") return runCheck(cwd);
+  if (positionals[0] === "list") return runList(cwd, values.url);
+  if (positionals[0] === "skills") return runSkills(cwd, positionals[1], positionals.slice(2), values.force ?? false);
   if (command === "doctor") return runDoctor(cwd);
   if (positionals[0] === "init") return runInit(cwd, positionals[1], values.url);
 
