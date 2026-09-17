@@ -46,6 +46,9 @@
 - **check** — `bun run check` exit 0 (tokens, 62 kit tests + eslint tests, lint, registry:build
   "Versioned 24 items").
 
-## Not done here
-- `@ja3dan/kit` not republished to npm — existing projects (brian2) won't get `app-ui` from npm
-  until it is. Developer's call.
+## Finish — 2026-09-17
+- Developer: "publish it". `@ja3dan/kit` bumped 0.1.0 → 0.2.0 (minor: new shipped skill).
+  Dry-run tarball: 17 files incl. `dist/skills/app-ui/SKILL.md`; packed package.json resolves
+  `workspace:*` to `@ja3dan/tokens` 0.1.0 and `@ja3dan/eslint-plugin` 0.1.0 (both on npm).
+- `/review` not run for 13 — developer asked to publish directly.
+- Merged to `main` locally, pushed, published.
