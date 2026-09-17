@@ -1,9 +1,9 @@
 # Progress
 
-**Stage:** 12 — Docs refresh, starting with setup
-**Last completed:** 11 — Show, don't tell: the landing page
-**Active feature:** 12 — `feat/12-docs-setup`
-**Next:** the `/docs` pass — `kit init` is described there as not existing (false since 09), and `/docs` still renders the `HALVES` prose the landing page replaced
+**Stage:** 14 — Tokens: three named radii and nav tints
+**Last completed:** 13 — App UI doctrine, from flvs
+**Active feature:** none
+**Next:** 14 — named radii and nav tint tokens (12's `/docs` pass still open)
 **Blocker:** none
 
 Keep this short. Detail belongs in the feature's own folder — `spec.md`, `plan.md`,
@@ -30,6 +30,12 @@ version of it that grew to 450 lines is the reason the feature folders exist.
 - [x] **11** Show, don't tell — the landing page — *narrowed mid-build to `/` only; `/docs` is a
       separate pass, with its two findings held in the feature's spec*
 - [ ] **12** Docs refresh, starting with setup
+- [x] **13** App UI doctrine, from flvs — *published in `@ja3dan/kit` 0.2.0*
+- [ ] **14** Tokens: three named radii and nav tints
+- [ ] **15** Dropdown, menu, dialog, alert dialog
+- [ ] **16** App shell
+- [ ] **17** Figures and controls
+- [ ] **18** Skeletons and fixed-height tables
 
 ## Notes
 

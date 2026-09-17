@@ -180,6 +180,73 @@ kickoff prompts, the checks, the first feature) or only the design system.
 kit's CLI and init.ts; no docs page calls `kit init` unbuilt; the shared docs shell is rebuilt;
 no overflow from 320 to 1920px; checks pass.
 
+
+## 13 — App UI doctrine, from flvs
+
+The registry gives a project parts; nothing tells it what an app screen *is*. flvs's CMS
+settled that the hard way — sidebar shell, instant navigation into skeletons, fixed-height
+paged tables, icon row menus, CRUD in modals, stat strips — and every new project re-decides
+it worse. This writes the rules down where every project's agent reads them: a shippable
+`app-ui` skill, referenced from `/architect`, `/review`, `/feature start` and `/imprint`, and
+from the template's `ui-rules.md`.
+
+**Done when:** `skills/app-ui/SKILL.md` covers shell, page header, navigation/loading,
+radii/depth, tables, row actions, modals, loading buttons, stats/panels, value pickers,
+motion and copy, each with concrete values traceable to flvs source; architect, review,
+feature and imprint reference it; `kit init` into a throwaway project installs it; the site
+lists it; `bun run check` passes.
+
+## 14 — Tokens: three named radii and nav tints
+
+`rounded-chip` 4px / `rounded-control` 6px / `rounded-surface` 10px with the stock
+`rounded-xs…4xl` folded onto them, and optional `nav-1…8` tint tokens (light + dark) for the
+sidebar. Existing registry items move onto the named radii (version bumps).
+
+**Done when:** `contract.json` declares both; `bun run tokens` generates them and validates
+every theme; TOKENS.md documents what each radius sits on; every registry item uses the
+named radii; `registry:build` passes with bumped versions.
+
+## 15 — Dropdown, menu, dialog, alert dialog
+
+`@ja3dan/dropdown` (`Dropdown` listbox + `DropdownMenu` actions with icons, destructive and
+separated items; portalled, fixed, flipping, travelling highlight) and `@ja3dan/dialog` /
+`@ja3dan/alert-dialog` (sizes default/lg/full, media slot) on Base UI, contract tokens only.
+The data-table block's row actions move to the menu and its edits to a dialog.
+
+**Done when:** each item installs into a blank app and passes `no-raw-colors`; keyboard
+(arrows, Home/End, Enter, Escape, typeahead where the source has it) and focus return
+verified in a browser; menu isn't clipped inside a `TableCard`; examples on the docs page.
+
+## 16 — App shell
+
+`@ja3dan/app-shell`: sidebar (icon rail collapse, cookie, ⌘B with `data-instant`, per-row
+tints, grouped nav from data with permission trimming), sticky header, sticky `PageHeader`,
+`Preamble`, and an error boundary pattern.
+
+**Done when:** a throwaway app using the block matches `app-ui` §1–3 values; collapse
+animates as one piece and the shortcut toggles instantly; mobile sheet works; no layout
+shift between short and long pages.
+
+## 17 — Figures and controls
+
+`@ja3dan/stats` (`StatStrip`, `Stat`, `Delta`, `Panel`, `PanelHeader`, `BarList`,
+`toBars`, `TabbedPanel`), `@ja3dan/segmented`, `@ja3dan/tabs`, `@ja3dan/loading-button`.
+
+**Done when:** stat tiles are pixel-identical in height with and without delta/hint; loading
+button never changes width across its four states; tabs and segmented are keyboard-operable
+with correct roles; examples on the docs page.
+
+## 18 — Skeletons and fixed-height tables
+
+`@ja3dan/skeleton` (Bar, Block, LoadingScreen, PageHeader/StatStrip/Panel/Table/Toolbar/
+CardGrid skeletons reusing the real containers) and `@ja3dan/table-pager` (`usePaged`,
+`PadRows`, `TablePager`); `TableCard` density and fixed columns confirmed; the data-table
+block adopts all of it and ships a `loading.tsx` example.
+
+**Done when:** in a throwaway app, navigating to a slow route shows the skeleton immediately
+and content replaces it with no layout shift (measured); a table is the same height on a
+full page, a short last page and an empty filter.
+
 ---
 
 ## Later

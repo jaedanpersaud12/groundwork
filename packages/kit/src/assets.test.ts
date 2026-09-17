@@ -12,9 +12,10 @@ describe("resolveAssetsRoot", () => {
 });
 
 describe("readSkills", () => {
-  test("reads exactly the 7 lifecycle skills, each with real SKILL.md content", () => {
+  test("reads exactly the 7 lifecycle skills and app-ui, each with real SKILL.md content", () => {
     const skills = readSkills();
     expect(skills.map((skill) => skill.name)).toEqual([
+      "app-ui",
       "architect",
       "feature",
       "harvest",

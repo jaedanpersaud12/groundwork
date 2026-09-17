@@ -35,6 +35,17 @@ as the primary typeface.
 
 ---
 
+## App Screens
+
+Signed-in screens — admin, dashboard, portal — follow the **`app-ui` skill**
+(`.claude/skills/app-ui/SKILL.md`), not this file. It fixes the sidebar shell and sticky page
+header, instant navigation with a `loading.tsx` skeleton per route, fixed-height paged
+tables, icon row-action menus, CRUD in modals, destructive confirms in an alert dialog,
+stat strips, panels and loading buttons. Read it before building one; `/review` checks
+against it. Record a deliberate departure here, with its reason.
+
+---
+
 ## Cards
 
 Every content section that groups related information lives in a card, using the contract's
