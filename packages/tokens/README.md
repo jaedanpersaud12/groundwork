@@ -75,7 +75,9 @@ Every token's role is in [`TOKENS.md`](TOKENS.md).
 
 To make your own, copy `neutral.css` into your project, change the values, and import it
 in place of the shipped theme. A theme must define every required token in **both**
-`:root` (light) and `.dark`, and nothing outside the contract.
+`:root` (light) and `.dark`, and nothing outside the contract — unless it has no dark mode on
+purpose (a gallery, a print-first portfolio): then drop `.dark` and add the comment
+`/* @ja3dan/tokens light-only */` to the theme file, and `kit check` requires `:root` only.
 
 ## Files
 

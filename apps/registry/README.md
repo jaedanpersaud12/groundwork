@@ -22,7 +22,7 @@ bunx shadcn@latest add @ja3dan/data-table
 | --- | --- |
 | **Block** | `data-table` |
 | **Pattern** | `sortable-table-head` `pagination` `filter-chip` `date-picker` `date-range-picker` |
-| **Primitive** | `button` `input` `input-group` `textarea` `label` `checkbox` `popover` `status-pill` `progress-meter` `view-toggle` `table-card` `table` `empty-state` `calendar` |
+| **Primitive** | `button` `input` `input-group` `textarea` `native-select` `label` `checkbox` `popover` `status-pill` `progress-meter` `view-toggle` `table-card` `table` `empty-state` `calendar` |
 | **Hook** | `use-data-table` |
 | **Library** | `dates` `motion` |
 
@@ -35,7 +35,7 @@ page at `/docs/components/<name>` with a live preview, its source and what it de
 | --- | --- |
 | `/` | Landing page: the two halves, the loop, the `context/` scaffold, the component index |
 | `/docs` | Start here — setup commands and where to go next |
-| `/docs/loop` · `/docs/context` · `/docs/knowledge` | The agent kit, **read from `skills/`, `context/` and `knowledge/` at build time** |
+| `/docs/loop` · `/docs/context` · `/docs/kickoff` · `/docs/knowledge` | The agent kit, **read from `skills/`, `context/`, `prompts/` and `knowledge/` at build time** |
 | `/docs/tokens` | The contract, generated from `contract.json` |
 | `/docs/components/[name]` | One page per item, generated from `registry.json` |
 
